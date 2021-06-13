@@ -1,0 +1,12 @@
+stages:
+    - build
+
+default:
+    image: platformio:5.1
+
+build-firmware:
+    stage: build
+    script:
+        - echo "Build"
+    only:
+        - main
