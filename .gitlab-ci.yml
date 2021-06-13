@@ -10,6 +10,11 @@ build-firmware:
     stage: build
     script:
         - pio run
-        - ls -al .pio/
+        - mkdir build/
+        - mv .pio/build/d1_mini_pro/firmware.bin build/
+        - sha256sum build/firmware.bin >> build/SHA256SUM
+    artifacts:
+        paths:
+            - ./build/
     only:
         - main
