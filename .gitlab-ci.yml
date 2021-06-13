@@ -7,6 +7,7 @@ default:
 build-firmware:
     stage: build
     script:
-        - pio --version
+        - pio run
+        - ls -al .pio/
     only:
         - main
