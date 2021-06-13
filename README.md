@@ -14,12 +14,12 @@
 
 | GPIO | Função | Periférico |
 |:----:|:------:|:----------:|
-| 15 | CS | SPI - MCP2515 |
+| 4 | CS | SPI - MCP2515 |
 | 13 | MOSI | SPI - MCP2515 |
 | 12 | MISO | SPI - MCP2515 |
 | 14 | SCK | SPI - MCP2515 |
-| 16 | INT | SPI - MCP2515 |
-| 5 | Digital c/ interrupção | Sensor IR |
+| 5 | INT | SPI - MCP2515 |
+| 2 | Digital c/ interrupção | Sensor IR |
 
 ## Dependências
 
