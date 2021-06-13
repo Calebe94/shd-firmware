@@ -7,6 +7,6 @@ default:
 build-firmware:
     stage: build
     script:
-        - echo "Build"
+        - pio --version
     only:
         - main
