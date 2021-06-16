@@ -11,7 +11,7 @@ build-firmware:
     script:
         - pio run
         - mkdir build/
-        - mv .pio/build/d1_mini_pro/firmware.bin build/
+        - mv .pio/build/esp32dev/firmware.bin build/
         - sha256sum build/firmware.bin >> build/SHA256SUM
     artifacts:
         paths:
