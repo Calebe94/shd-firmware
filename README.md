@@ -6,7 +6,7 @@
 
 ### Especificações
 
-* Microcontrolador: [Wemos D1 Mini PRO](https://www.wemos.cc/en/latest/d1/d1_mini_pro.html) (platformio: [d1_mini_pro](https://docs.platformio.org/en/latest/boards/espressif8266/d1_mini_pro.html?highlight=d1_mini_pro))
+* Microcontrolador: [DOIT ESP32 DEVKIT V1](https://docs.platformio.org/en/latest/boards/espressif32/esp32doit-devkit-v1.html#id1)
 * Controlador CAN Bus: [MCP2515](https://www.microchip.com/wwwproducts/en/en010406)
 * Sensor IR: [QRE1113](https://www.sparkfun.com/datasheets/Robotics/QR_QRE1113.GR.pdf)
 
