@@ -49,6 +49,21 @@ Após um período de tempo configurável o microcontrolador deverá enviar estas
 
 A configuração do período de tempo pode ser feita através da interface serial.
 
+### Interrupções
+
+Toda vez que houver um fluxo de água, o sensor de fluxo irá girar a
+roleta interna, ativando o sensor de efeito hall gerando uma interrupção
+no terminal `GPIO4` do `ESP32`.
+
+Quando a interrupção for gerada, o programa irá enviar esta informação
+para uma fila, onde será incrementada uma variável de pulsos.
+
+Haverá uma `task` rodando a cada segundo que irá pegar esta informção e
+calcular quantos litros de água passou neste último segundo.
+
+Mais informações podem ser encontradas [neste
+artigo](https://how2electronics.com/iot-water-flow-meter-using-esp8266-water-flow-sensor/).
+
 ## Utilização
 
 Para compilar o projeto é necessário a instalação do [platformio], e após rodar o seguinte comando:
