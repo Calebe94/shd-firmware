@@ -5,6 +5,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/timers.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
@@ -20,6 +21,17 @@
  * GLOBAL VARIABLES
 ****************************/
 static xQueueHandle gpio_evt_queue = NULL;
+static xQueueHandle flowsensor_queue = NULL;
+uint32_t pulses = 0;
+uint32_t litros = 0;
+
+/***************************
+ * TYPEDEF
+****************************/
+typedef struct flowsensor {
+    uint32_t pulses;
+    uint32_t ticks_ms;
+} flowsensor_t;
 
 /***************************
  * FUNCTIONS
@@ -33,16 +45,28 @@ static void IRAM_ATTR flowsensor_isr_handler(void* arg)
 static void flowsensor_task(void* arg)
 {
     uint32_t io_num = 0;
-    uint32_t pulses = 0;
+
     for(;;)
     {
         if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY))
         {
+            pulses++;
             printf("GPIO[%d] intr, val: %d\n", io_num, gpio_get_level(io_num));
         }
     }
 }
 
+void flowsensor_timer_callback( TimerHandle_t pxTimer )
+{
+    uint32_t l_hour = 0;
+    if (pulses != 0)
+    {
+        l_hour = (uint32_t)(pulses * 60 / 7.5); // (Pulse frequency x 60 min) / 7.5Q = flow rate in L/hour
+        pulses=0;
+        litros+=(l_hour/60);
+        printf("Litros/Hora: %d\n", l_hour);
+    }
+}
 /***************************
  * MAIN
 ****************************/
@@ -69,15 +93,30 @@ void app_main()
     gpio_isr_handler_add(GPIO_INPUT_IO_0, flowsensor_isr_handler, (void*) GPIO_INPUT_IO_0);
 
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
-    xTaskCreate(flowsensor_task, "flowsensor_task", 2048, NULL, 10, NULL);
+    flowsensor_queue = xQueueCreate(10, sizeof(uint32_t));
 
-    uint32_t xStart, xEnd, xDifference;
+    xTaskCreate(flowsensor_task, "flowsensor_task", 2048, NULL, 10, NULL);
+    TimerHandle_t xFlowTimer = xTimerCreate("Timer", pdMS_TO_TICKS( 1000 ), pdTRUE, ( void * ) gpio_evt_queue, flowsensor_timer_callback);
+
+    if( xTimerStart( xFlowTimer, 0 ) != pdPASS )
+    {
+        // The timer could not be set into the Active state.
+        printf("Não foi possível criar o timer!\n");
+    }
+
     while(1)
     {
+        /*
         xStart = xTaskGetTickCount();
         vTaskDelay( pdMS_TO_TICKS( 1000UL ) );
         xEnd = xTaskGetTickCount();
         xDifference = xEnd - xStart;
         printf("Time diff: %lu ticksn\n",(long unsigned int)pdTICKS_TO_MS(xDifference) );
+        */
+        if(litros!=0)
+        {
+            printf("Litros: %d\n", litros);
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
