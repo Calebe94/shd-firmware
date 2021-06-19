@@ -27,16 +27,11 @@ static float litros = 0;
 
 void flowsensor_setup(void)
 {
-    gpio_config_t io_conf;
-    //interrupt of rising edge
-    io_conf.intr_type = GPIO_INTR_NEGEDGE;
-    //bit mask of the pins, use GPIO4/5 here
-    io_conf.pin_bit_mask = ((1ULL<<FLOWSENSOR_GPIO));
-    //set as input mode
-    io_conf.mode = GPIO_MODE_INPUT;
-    //enable pull-up mode
-    io_conf.pull_up_en = 1;
-    gpio_config(&io_conf);
+    gpio_pad_select_gpio(FLOWSENSOR_GPIO);
+    gpio_set_direction(FLOWSENSOR_GPIO, GPIO_MODE_INPUT);
+    gpio_pullup_en(FLOWSENSOR_GPIO);
+    gpio_set_intr_type(FLOWSENSOR_GPIO, GPIO_INTR_NEGEDGE);
+    gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
 
     gpio_install_isr_service(0);
     gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
