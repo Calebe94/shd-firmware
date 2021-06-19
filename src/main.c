@@ -16,6 +16,7 @@
 void app_main()
 {
     flowsensor_init();
+
     while(1)
     {
         printf("pulses: %d - litros: %f\n", flowsensor_get_pulses(), flowsensor_get_litros());
