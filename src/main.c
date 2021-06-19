@@ -23,7 +23,7 @@
 static xQueueHandle gpio_evt_queue = NULL;
 static xQueueHandle flowsensor_queue = NULL;
 uint32_t pulses = 0;
-uint32_t litros = 0;
+float litros = 0;
 
 /***************************
  * TYPEDEF
@@ -62,8 +62,8 @@ void flowsensor_timer_callback( TimerHandle_t pxTimer )
     if (pulses != 0)
     {
         l_hour = (uint32_t)(pulses * 60 / 7.5); // (Pulse frequency x 60 min) / 7.5Q = flow rate in L/hour
+        litros=(float)pulses/(7.5*60); // Litres = Pulses / (7.5 * 60)
         pulses=0;
-        litros+=(l_hour/60);
         printf("Litros/Hora: %d\n", l_hour);
     }
 }
@@ -106,17 +106,7 @@ void app_main()
 
     while(1)
     {
-        /*
-        xStart = xTaskGetTickCount();
-        vTaskDelay( pdMS_TO_TICKS( 1000UL ) );
-        xEnd = xTaskGetTickCount();
-        xDifference = xEnd - xStart;
-        printf("Time diff: %lu ticksn\n",(long unsigned int)pdTICKS_TO_MS(xDifference) );
-        */
-        if(litros!=0)
-        {
-            printf("Litros: %d\n", litros);
-        }
+        printf("pulses: %d - litros: %f\n", pulses, litros);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
