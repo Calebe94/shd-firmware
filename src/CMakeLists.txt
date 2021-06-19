@@ -2,7 +2,9 @@ idf_component_register(
     SRCS 
         "main.c"
         "sensor/flowsensor.c"
+        "rs485/rs485.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
+        "rs485/"
 )
