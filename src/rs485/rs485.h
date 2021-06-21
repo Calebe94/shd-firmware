@@ -17,12 +17,14 @@
 #define UART_PORT   2
 #define READTIMEOUT 3
 
+#define PACKET_READ_TICS        (100 / portTICK_RATE_MS)
+
 /***************************
  * FUNCTIONS PROTOTYPES
 ****************************/
 void rs485_setup(void);
 void rs485_init(void);
-void rs485_send(char *);
-uint32_t rs485_read(char *);
+void rs485_send(const char *);
+uint32_t rs485_read(uint8_t *);
 
 #endif

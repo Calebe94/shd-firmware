@@ -2,6 +2,7 @@
  * INCLUDES
 ****************************/
 #include <stdint.h>
+#include <string.h>
 #include "driver/uart.h"
 
 #include "rs485.h"
@@ -36,15 +37,17 @@ void rs485_setup(void)
 
 void rs485_init(void)
 {
-
+    rs485_setup();
 }
 
-void rs485_send(char *data)
+void rs485_send(const char *data)
 {
-
+    //uart_write_bytes(UART_PORT, data, (sizeof(data) - 1));
+    uart_write_bytes(UART_PORT, data, strlen(data));
 }
 
-uint32_t rs485_read(char *data)
+uint32_t rs485_read(uint8_t *data)
 {
-    return 0;
+    uint32_t length = uart_read_bytes(UART_PORT, data, BUFSIZE, PACKET_READ_TICS);
+    return length;
 }
