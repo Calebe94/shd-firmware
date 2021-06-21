@@ -6,6 +6,7 @@
 #include "driver/uart.h"
 #include "esp_log.h"
 
+#include "rs485/rs485.h"
 #include "console.h"
 
 static const char *TAG = "serial/console";
@@ -65,6 +66,7 @@ void console_task_handler(void *pvParameters)
                 case UART_DATA:
                     uart_read_bytes(UART_NUM_0, dtmp, event.size, portMAX_DELAY);
                     ESP_LOGI(TAG, "[UART DATA]: len(%d) - %s", event.size, (const char*) dtmp);
+                    rs485_send((const char*)dtmp);
                     //uart_write_bytes(UART_NUM_0, (const char*) dtmp, event.size);
                     break;
                 //Event of HW FIFO overflow detected

@@ -23,11 +23,11 @@ void app_main()
     flowsensor_init();
     rs485_init();
 
-    //rs485_send("Teste de RS485 iniciado!");
     while(1)
     {
         uint8_t data[30];
         int len = rs485_read(data);
+        data[len] = '\0';
         if(len > 0)
         {
             printf("Recebido: %s\n", (char*)data);
