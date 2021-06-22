@@ -16,9 +16,9 @@
 
 | GPIO | Função | Periférico |
 |:----:|:------:|:----------:|
-| 23 | TXD | MAX485 |
-| 22 | RXD | MAX485 |
-| 18 | RTS | MAX485 |
+| 23 | TXD | MAX485 - DI |
+| 22 | RXD | MAX485 - RO |
+| 18 | RTS | MAX485 - DE/RE |
 | 4 | Digital c/ interrupção | Sensor de Fluxo |
 
 ## Dependências
@@ -95,6 +95,7 @@ $ pio device monitor --baud 115200 --port /dev/ttyUSB0
 
 ## Referências
 
-* [Platformio: Development Platforms - Espressif 8266](https://docs.platformio.org/en/latest/platforms/espressif8266.html)
+* [Platformio: Development Platforms - Espressif 8266](https://docs.platformio.org/en/latest/platforms/espressif8266.html);
+* [esp-idf: UART RS485 Echo Example](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/uart/uart_echo_rs485);
 
 [platformio]: https://docs.platformio.org/en/latest/core/installation.html
