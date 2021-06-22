@@ -7,19 +7,17 @@
 ### Especificações
 
 * Microcontrolador: [DOIT ESP32 DEVKIT V1](https://docs.platformio.org/en/latest/boards/espressif32/esp32doit-devkit-v1.html#id1)
-* Controlador CAN Bus: [MCP2515](https://www.microchip.com/wwwproducts/en/en010406)
-* Sensor IR: [QRE1113](https://www.sparkfun.com/datasheets/Robotics/QR_QRE1113.GR.pdf)
+* Controlador RS485: [MAX485](https://www.maximintegrated.com/en/products/interface/transceivers/MAX485.html#tech-docs)
+* Sensor de fluxo: [YF-S201](https://www.sparkfun.com/datasheets/Robotics/QR_QRE1113.GR.pdf)
 
 ### Terminais
 
 | GPIO | Função | Periférico |
 |:----:|:------:|:----------:|
-| 4 | CS | SPI - MCP2515 |
-| 13 | MOSI | SPI - MCP2515 |
-| 12 | MISO | SPI - MCP2515 |
-| 14 | SCK | SPI - MCP2515 |
-| 5 | INT | SPI - MCP2515 |
-| 2 | Digital c/ interrupção | Sensor IR |
+| 23 | TXD | MAX485 |
+| 22 | RXD | MAX485 |
+| 18 | RTS | MAX485 |
+| 4 | Digital c/ interrupção | Sensor de Fluxo |
 
 ## Dependências
 
@@ -32,16 +30,17 @@ Este projeto foi testado e compilado no seguinte ambiente:
 
 ```
 PACKAGES:
- - framework-arduinoespressif8266 3.30000.210519 (3.0.0)
- - tool-esptool 1.413.0 (4.13)
+ - framework-espidf 3.40200.210118 (4.2.0)
+ - tool-cmake 3.16.4
  - tool-esptoolpy 1.30000.201119 (3.0.0)
- - toolchain-xtensa 2.100200.0 (10.2.0)
+ - tool-ninja 1.7.1
+ - toolchain-esp32ulp 1.22851.191205 (2.28.51)
+ - toolchain-xtensa32 2.80400.210211 (8.4.0)
 ```
 ## Funcionamento
 
-A placa escrava deve ler rosetta giratória do hidrômetro através de um sensor IR, 
-que irá pulsar toda vez que a aleta da rosetta interromper o feixe de luz, 
-gerando assim uma interrupção digital no microcontrolador.
+Os hardwares devem ler o fluxo de água utilizando o sensor de fluxo YF-S201. 
+Através das informações lidas pelo sensor será possível calcular quantos litros de água passaram pelo sensor.
 
 O microcontrolador será responsável por ler todas estas informações e armazenar na memória flash para previnir se houver falta de luz.
 
