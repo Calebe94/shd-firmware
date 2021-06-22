@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 
+* Added max485 initialization;
+* Added rs485 module interface;
+* Added rs485 echo example to project;
+* Added serial console module interface;
+
 ### Fixed
 
 ### Changed
+
+* Updated README with usefull info and pipeline badge;
 
 ### Removed
 
