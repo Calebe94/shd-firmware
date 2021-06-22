@@ -1,3 +1,5 @@
+![](https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/badges/main/pipeline.svg)
+
 # slave-firmware
 
 ## Hardware
