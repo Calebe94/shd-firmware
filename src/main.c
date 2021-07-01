@@ -12,7 +12,8 @@
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
 #include "rs485/rs485.h"
-
+#include "modbus/modbus_params.h"
+#include "modbus/slave.h"
 
 /***************************
  * MAIN
@@ -21,7 +22,7 @@ void app_main()
 {
     console_init();
     flowsensor_init();
-    rs485_init();
+    modbus_serial_slave_init();
 
     while(1)
     {
