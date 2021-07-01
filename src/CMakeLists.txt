@@ -4,9 +4,12 @@ idf_component_register(
         "sensor/flowsensor.c"
         "rs485/rs485.c"
         "serial/console.c"
+        "modbus/modbus_params.c"
+        "modbus/slave.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
         "rs485/"
         "serial/"
+        "modbus/"
 )
