@@ -34,7 +34,6 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
         {
             data->data[index] = serial_data[3+index];
         }
-        data->crc = serial_data[data->length+4];
         status = true;
     }
     return status;

@@ -21,7 +21,6 @@ typedef struct protocol_data
     uint8_t id;
     uint8_t action;
     uint8_t length;
-    uint32_t crc;
     uint8_t data[MAX_DATA_LENGTH];
 } protocol_data_raw_t;
 
