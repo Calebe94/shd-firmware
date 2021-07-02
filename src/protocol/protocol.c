@@ -55,8 +55,10 @@ bool protocol_create_message(protocol_data_raw_t data, char *serial_data)
         for(uint8_t index = 0; index < data.length; index++)
         {
             serial_data[3+index] = data.data[index];
+            serial_data[4+index] = '\0';
+            serial_data[5+index] = '\n';
         }
-        
+
         status = true;
     }
     return status;
