@@ -16,7 +16,12 @@ bool protocol_init(protocol_peer_t peer, uint8_t id)
     else
     {
         peer_settings.peer = SLAVE;
-        peer_settings.id = id;
+        /* ID = 0 is BROADCAST*/
+        if (id != 0)
+        {
+            peer_settings.id = id;
+            status = true;
+        }
     }
     return status;
 }
