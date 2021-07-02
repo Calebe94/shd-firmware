@@ -12,7 +12,7 @@
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
 #include "rs485/rs485.h"
-
+#include "protocol/protocol.h"
 
 /***************************
  * MAIN
@@ -23,10 +23,14 @@ void app_main()
     flowsensor_init();
     rs485_init();
 
+    protocol_init(SLAVE, 1);
+
     while(1)
     {
-        uint8_t data[30];
+        uint8_t data[128];
         int len = rs485_read(data);
+        protocol_data_raw_t prot_data;
+        protocol_message_parse((char*)data, &prot_data);
         data[len] = '\0';
         if(len > 0)
         {
