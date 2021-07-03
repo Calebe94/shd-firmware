@@ -5,6 +5,7 @@ idf_component_register(
         "rs485/rs485.c"
         "serial/console.c"
         "protocol/protocol.c"
+        "protocol/message_process.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
