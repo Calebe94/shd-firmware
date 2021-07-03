@@ -4,6 +4,7 @@
  * INCLUDES
 ****************************/
 #include <stdint.h>
+#include "freertos/queue.h"
 
 /***************************
  * DEFINES
@@ -19,6 +20,8 @@
 
 #define PACKET_READ_TICS        (100 / portTICK_RATE_MS)
 
+
+extern QueueHandle_t rs485_queue;
 /***************************
  * FUNCTIONS PROTOTYPES
 ****************************/
@@ -26,5 +29,6 @@ void rs485_setup(void);
 void rs485_init(void);
 void rs485_send(const char *);
 uint32_t rs485_read(uint8_t *);
+void rs485_event_handler_task(void *pvParameters);
 
 #endif
