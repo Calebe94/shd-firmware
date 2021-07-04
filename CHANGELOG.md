@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 
+* Added protocol to parse RS485 messages with pretty simple Master-Slave support;
+* Added rs485 event handler;
+
 ### Fixed
 
 ### Changed

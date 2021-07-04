@@ -12,7 +12,8 @@
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
 #include "rs485/rs485.h"
-
+#include "protocol/protocol.h"
+#include "protocol/message_process.h"
 
 /***************************
  * MAIN
@@ -23,17 +24,27 @@ void app_main()
     flowsensor_init();
     rs485_init();
 
+    protocol_init(SLAVE, 1);
+    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
+
     while(1)
     {
-        uint8_t data[30];
+        /*
+        uint8_t data[128];
         int len = rs485_read(data);
+        protocol_data_raw_t data_parsed;
+        if(protocol_message_parse((char*)data, &data_parsed))
+        {
+            printf("A mensagem %s é para mim! \n", (char *)data);
+        }
+
         data[len] = '\0';
         if(len > 0)
         {
             printf("Recebido: %s\n", (char*)data);
-            //rs485_send("Recebido");
         }
         printf("pulses: %d - litros: %f\n", flowsensor_get_pulses(), flowsensor_get_litros());
+        */
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
