@@ -126,6 +126,18 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
+# Wifi Configuration
+#
+CONFIG_USE_WIFI=1
+CONFIG_WIFI_MODE=1
+CONFIG_WIFI_STA_SSID="myssid"
+CONFIG_WIFI_STA_PASS="mypassword"
+CONFIG_WIFI_AP_SSID="hidrometro_digital"
+CONFIG_WIFI_AP_PASS="hidrometro"
+CONFIG_WIFI_AP_MAX_STA_CONN=1
+# end of Wifi Configuration
+
+#
 # Compiler options
 #
 CONFIG_COMPILER_OPTIMIZATION_DEFAULT=y
