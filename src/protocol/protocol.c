@@ -64,6 +64,35 @@ bool protocol_create_message(protocol_data_raw_t data, char *serial_data)
     return status;
 }
 
+protocol_action_t protocol_get_action(protocol_data_raw_t parsed_data)
+{
+    return parsed_data.action&0x01;
+}
+
+protocol_address_t protocol_get_address(protocol_data_raw_t parsed_data)
+{
+    return (parsed_data.action&0xFE)>>1;
+}
+
+uint8_t protocol_get_length(protocol_data_raw_t parsed_data)
+{
+    return parsed_data.length;
+}
+
+bool protocol_get_data(protocol_data_raw_t parsed_data, char *data)
+{
+    bool status = false;
+    if (parsed_data.length > 0)
+    {
+        for(uint8_t index = 0; index < parsed_data.length; index++)
+        {
+            data[index] = parsed_data.data[index];
+            data[index+1] = '\0';
+        }
+    }
+    return status;
+}
+
 bool protocol_check_id(protocol_data_raw_t data)
 {
     bool status = false;

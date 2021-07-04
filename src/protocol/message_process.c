@@ -11,6 +11,37 @@
 
 static const char *TAG = "PROTOCOL/MESSAGE";
 
+static void on_message_event_handler(protocol_data_raw_t data)
+{
+    char data_string[MAX_DATA_LENGTH];
+    protocol_action_t action = protocol_get_action(data);
+    protocol_address_t address = protocol_get_address(data);
+    ESP_LOGI(TAG, "on_message_event_handler");
+    ESP_LOGI(TAG, "action: %d", (uint8_t)action);
+    ESP_LOGI(TAG, "address: %d", (uint8_t)address);
+    switch (address)
+    {
+        case LITERS:
+            if(action == GET)
+            {
+                ESP_LOGI(TAG, "Função GET Litros recebida!");
+            }
+            break;
+        case UTC:
+            if(action == GET)
+            {
+                ESP_LOGI(TAG, "Função GET UTC recebida!");
+            }
+            else
+            {
+                ESP_LOGI(TAG, "Função SET UTC recebida!");
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void message_process_handler(void *pvParameters)
 {
     uart_event_t event;
@@ -34,6 +65,7 @@ void message_process_handler(void *pvParameters)
                     if(protocol_message_parse((char*)dtmp, &data_parsed))
                     {
                         ESP_LOGI(TAG, "A mensagem %s é para mim! \n", (const char*)dtmp);
+                        on_message_event_handler(data_parsed);
                     }
                     //uart_write_bytes(UART_PORT, (const char*) dtmp, event.size);
                     break;

@@ -25,7 +25,7 @@ void app_main()
     rs485_init();
 
     protocol_init(SLAVE, 1);
-    xTaskCreate(message_process_handler, "message_process_handler", 2048, NULL, 12, NULL);
+    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
 
     while(1)
     {

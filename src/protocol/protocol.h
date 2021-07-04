@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "data.h"
 
 #define MAX_DATA_LENGTH 128
 
@@ -35,6 +36,14 @@ bool protocol_init(protocol_peer_t, uint8_t);
 bool protocol_message_parse(char *, protocol_data_raw_t *);
 
 bool protocol_create_message(protocol_data_raw_t, char *);
+
+protocol_action_t protocol_get_action(protocol_data_raw_t);
+
+protocol_address_t protocol_get_address(protocol_data_raw_t);
+
+uint8_t protocol_get_length(protocol_data_raw_t);
+
+bool protocol_get_data(protocol_data_raw_t, char *);
 
 bool protocol_check_id(protocol_data_raw_t);
 
