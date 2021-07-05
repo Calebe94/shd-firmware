@@ -8,7 +8,7 @@
 
 #include "nvs_flash.h"
 
-#include "esp-wifi.h"
+#include "tiny_wifi.h"
 
 #if CONFIG_USE_WIFI == 1
 
