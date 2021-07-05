@@ -8,10 +8,11 @@
 #include "freertos/queue.h"
 #include "sdkconfig.h"
 #include "esp_log.h"
-
 #include "lwip/apps/netbiosns.h"
 
 #include "tiny_wifi.h"
+#include "tiny_webservice.h"
+
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
 #include "rs485/rs485.h"
@@ -33,6 +34,10 @@ void app_main()
     protocol_init(SLAVE, 1);
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
     wifi_ap_init(CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASS);
+    #if CONFIG_USE_MDNS
+    init_mdns();
+    netbiosns_init();
+    #endif
 
     while(1)
     {
