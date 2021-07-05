@@ -12,6 +12,7 @@
 
 #include "tiny_wifi.h"
 #include "tiny_webservice.h"
+#include "flash_storage.h"
 
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
@@ -38,6 +39,7 @@ void app_main()
     init_mdns();
     netbiosns_init();
     #endif
+    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
 
     while(1)
     {

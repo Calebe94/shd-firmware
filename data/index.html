@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<style type="text/css" media="all">
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+</style>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+        <title>Hidrômetro Digital - Configurações</title>
+        <link rel="stylesheet" href="modest.css">
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/">Início</a>
+                        <a href="/">Configurações</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <center>
+                <h3>Configurações</h3>
+            </center>
+            <fieldset>
+                <legend>Modo de Operação:</legend>
+                <form>
+                    <input type="radio" id="master" name="mode" value="master">
+                    <label for="master">Mestre</label><br>
+                    <input type="radio" id="slave" name="mode" value="slave">
+                    <label for="slave">Escravo</label><br>
+                    <input type="submit" value="Confirmar">
+                </form>
+            </fieldset>
+
+            <fieldset>
+                <legend>ID:</legend>
+                <form>
+                    <input type="text" name="id" id="id" value="1">
+                    <input type="submit" value="Confirmar">
+                </form>
+            </fieldset>
+        </main>
+    </body>
+</html>
