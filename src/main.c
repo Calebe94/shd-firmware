@@ -9,6 +9,9 @@
 #include "sdkconfig.h"
 #include "esp_log.h"
 
+#include "lwip/apps/netbiosns.h"
+
+#include "tiny_wifi.h"
 #include "serial/console.h"
 #include "sensor/flowsensor.h"
 #include "rs485/rs485.h"
@@ -20,12 +23,16 @@
 ****************************/
 void app_main()
 {
+    ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(esp_netif_init());
+
     console_init();
     flowsensor_init();
     rs485_init();
 
     protocol_init(SLAVE, 1);
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
+    wifi_ap_init(CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASS);
 
     while(1)
     {
