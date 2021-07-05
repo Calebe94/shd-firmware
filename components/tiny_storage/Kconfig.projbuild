@@ -1,0 +1,38 @@
+menu "T2I Storage Driver"
+    
+    config USE_SDCARD
+        int "Use SD Card Module"
+        range 0 1
+        default 0
+        help
+            Set the SD Card module to be used
+
+    config SD_MISO
+        int "SD Card SPI MISO GPIO"
+        range 0 33
+        default 23
+        help
+            Set the GPIO number used by SPI MISO.
+
+    config SD_MOSI
+        int "SD Card SPI MOSI GPIO"
+        range 0 33
+        default 23
+        help
+            Set the GPIO number used by SPI MOSI.
+
+    config SD_SCK
+        int "SD Card SPI SCK GPIO"
+        range 0 33
+        default 23
+        help
+            Set the GPIO number used by SPI SCK.
+
+    config SD_CS
+        int "SD CardSPI CS GPIO number"
+        range 0 33
+        default 22
+        help
+            Set the GPIO number used by SPI CS.
+    
+endmenu
