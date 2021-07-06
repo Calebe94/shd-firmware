@@ -14,13 +14,10 @@ esp_err_t rest_common_get_handler(httpd_req_t *req)
 
     rest_server_context_t *rest_context = (rest_server_context_t *)req->user_ctx;
     strlcpy(filepath, rest_context->base_path, sizeof(filepath));
+    ESP_LOGI(TAG, "URI requisitada: %s", req->uri);
     if (req->uri[strlen(req->uri) - 1] == '/')
     {
         strlcat(filepath, "/index.html", sizeof(filepath));
-    }
-    else if(req->uri[strlen(req->uri) - 1] == '/js/main.js')
-    {
-        strlcat(filepath, "/main.js", sizeof(filepath));
     }
     else
     {
