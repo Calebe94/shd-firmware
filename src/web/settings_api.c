@@ -62,7 +62,9 @@ esp_err_t id_set_handler(httpd_req_t *req)
 // Creating id route callback get handler.
 esp_err_t id_get_handler(httpd_req_t *req)
 {
-    httpd_resp_sendstr(req, "OK");
+    char buffer[30];
+    sprintf(buffer, "{ \"id\": %d }", settings_get_id());
+    httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }
 
@@ -100,7 +102,9 @@ esp_err_t mode_set_handler(httpd_req_t *req)
 // Creating mode route callback get handler.
 esp_err_t mode_get_handler(httpd_req_t *req)
 {
-    httpd_resp_sendstr(req, "OK");
-	return ESP_OK;
+    char buffer[30];
+    sprintf(buffer, "{ \"mode\": \"%s\" }", ((uint8_t)settings_get_peer()==1?"master":"slave"));
+    httpd_resp_sendstr(req, buffer);
+    return ESP_OK;
 }
 
