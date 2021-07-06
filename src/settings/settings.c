@@ -3,15 +3,18 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "esp_log.h"
 #include "cJSON_Utils.h"
 
 #include "settings.h"
+
+static const char * TAG = "SETTINGS";
 
 static settings_t global_settings;
 
 void settings_load(void)
 {
-    FILE *f = fopen("/spiffs/settings.json", "rb");
+    FILE *f = fopen(SETTINGS_FILE, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
@@ -46,9 +49,25 @@ void settings_load(void)
     }
 }
 
-void settings_update(settings_t new_settings)
+void settings_update()
 {
-    global_settings = new_settings;
+    char *string = NULL;
+    FILE *json_file = NULL;
+    cJSON *json_settings = NULL;
+    cJSON *json_id = NULL;
+    cJSON *json_peer = NULL;
+
+    json_settings = cJSON_CreateObject();
+    json_id = cJSON_CreateNumber(global_settings.id);
+    json_peer = cJSON_CreateString(((uint8_t)global_settings.peer==1?"master":"slave"));
+
+    cJSON_AddItemToObject(json_settings, "id", json_id);
+    cJSON_AddItemToObject(json_settings, "peer", json_peer);
+    string = cJSON_Print(json_settings);
+    ESP_LOGI(TAG, "JSON File: \n%s", string);
+    json_file = fopen(SETTINGS_FILE, "w");
+    fprintf(json_file, string);
+    fclose(json_file);
 }
 
 uint8_t settings_get_id(void)

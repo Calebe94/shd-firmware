@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define SETTINGS_FILE "/spiffs/settings.json"
+
 typedef enum {
     SLAVE_DEVICE=0,
     MASTER_DEVICE=1
@@ -15,7 +17,7 @@ typedef struct settings {
 
 void settings_load(void);
 
-void settings_update(settings_t);
+void settings_update();
 
 uint8_t settings_get_id(void);
 
