@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 typedef enum {
-    SLAVE=0,
-    MASTER=1
+    SLAVE_DEVICE=0,
+    MASTER_DEVICE=1
 } settings_peer_t;
 
 typedef struct settings {
@@ -13,7 +13,7 @@ typedef struct settings {
     settings_peer_t peer;
 } settings_t;
 
-void settings_load(settings_t *);
+void settings_load(void);
 
 void settings_update(settings_t);
 

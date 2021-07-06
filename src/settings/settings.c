@@ -7,11 +7,11 @@
 
 #include "settings.h"
 
-settings_t global_settings;
+static settings_t global_settings;
 
-void settings_load(settings_t *settings)
+void settings_load(void)
 {
-    FILE *f = fopen("settings.json", "rb");
+    FILE *f = fopen("/spiffs/settings.json", "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
@@ -22,25 +22,25 @@ void settings_load(settings_t *settings)
 
     string[fsize] = 0;
 
-    cJSON * json = cJSON_Parse(buffer);
+    cJSON * json = cJSON_Parse(string);
     if(json != NULL)
     {
         cJSON * json_id = cJSON_GetObjectItemCaseSensitive(json, "id");
         cJSON * json_peer = cJSON_GetObjectItemCaseSensitive(json, "peer");
         if (cJSON_IsNumber(json_id))
         {
-            settings->id = json_id->valueint;
+            global_settings.id = json_id->valueint;
         }
 
         if (cJSON_IsString(json_peer))
         {
             if(strcmp("master", json_peer->valuestring) == 0)
             {
-                settings->peer = MASTER;
+                global_settings.peer = MASTER_DEVICE;
             }
             else
             {
-                settings->peer = SLAVE;
+                global_settings.peer = SLAVE_DEVICE;
             }
         }
     }

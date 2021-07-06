@@ -21,6 +21,7 @@
 #include "protocol/message_process.h"
 #include "web/web_common.h"
 #include "web/settings_api.h"
+#include "settings/settings.h"
 
 static const char * TAG = "MAIN";
 
@@ -73,6 +74,9 @@ void app_main()
     flowsensor_init();
     rs485_init();
 
+    settings_load();
+
+    ESP_LOGI(TAG, "ID: %d - PEER: %s", settings_get_id(), ((uint8_t)settings_get_peer()==1?"MASTER":"SLAVE"));
     protocol_init(SLAVE, 1);
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
     
