@@ -19,16 +19,47 @@
 #include "rs485/rs485.h"
 #include "protocol/protocol.h"
 #include "protocol/message_process.h"
+#include "web/web_common.h"
+#include "web/settings_api.h"
 
 static const char * TAG = "MAIN";
+
+esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context)
+{
+    httpd_uri_t common_get_uri = {
+        .uri = "/",
+        .method = HTTP_GET,
+        .handler = rest_common_get_handler,
+        .user_ctx = rest_context
+    };
+    httpd_register_uri_handler(server, &common_get_uri);
+
+    init_settings_routes(server, rest_context);
+    return ESP_OK;
+}
+
 
 /***************************
  * MAIN
 ****************************/
 void app_main()
 {
+    httpd_handle_t server = NULL;
+    rest_server_context_t * rest_context = NULL;
+
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    wifi_ap_init(CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASS);
+
+    #if CONFIG_USE_MDNS
+    init_mdns();
+    netbiosns_init();
+    #endif
+
+    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
+    ESP_ERROR_CHECK(init_webservice("/spiffs", &server, rest_context));
 
     console_init();
     flowsensor_init();
@@ -36,76 +67,7 @@ void app_main()
 
     protocol_init(SLAVE, 1);
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
-    wifi_ap_init(CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASS);
-    #if CONFIG_USE_MDNS
-    init_mdns();
-    netbiosns_init();
-    #endif
-    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
     
-    // Use POSIX and C standard library functions to work with files.
-    // First create a file.
-    ESP_LOGI(TAG, "Opening file");
-    FILE* f = fopen("/spiffs/hello.txt", "w");
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for writing");
-        return;
-    }
-    fprintf(f, "Hello World!\n");
-    fclose(f);
-    ESP_LOGI(TAG, "File written");
-
-    // Check if destination file exists before renaming
-    struct stat st;
-    if (stat("/spiffs/foo.txt", &st) == 0) {
-        // Delete it if it exists
-        unlink("/spiffs/foo.txt");
-    }
-
-    // Rename original file
-    ESP_LOGI(TAG, "Renaming file");
-    if (rename("/spiffs/hello.txt", "/spiffs/foo.txt") != 0) {
-        ESP_LOGE(TAG, "Rename failed");
-        return;
-    }
-
-    // Open renamed file for reading
-    ESP_LOGI(TAG, "Reading file");
-    f = fopen("/spiffs/foo.txt", "r");
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-        return;
-    }
-    char line[64];
-    fgets(line, sizeof(line), f);
-    fclose(f);
-    // strip newline
-    char* pos = strchr(line, '\n');
-    if (pos)
-    {
-        *pos = '\0';
-    }
-    ESP_LOGI(TAG, "Read from file: '%s'", line);
-    
-    ESP_LOGI(TAG, "Reading file");
-    f = fopen("/spiffs/settings.json", "rb");
-    if (f == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-        return;
-    }
-    fseek(f, 0, SEEK_END);
-    long fsize = ftell(f);
-    fseek(f, 0, SEEK_SET);  
-
-    char *string = malloc(fsize + 1);
-    fread(string, 1, fsize, f);
-    fclose(f);
-
-    string[fsize] = 0;
-    
-    ESP_LOGI(TAG, "size: %d - content: %s", (int)fsize,string);
-
     while(1)
     {
         /*

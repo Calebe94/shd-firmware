@@ -4,7 +4,7 @@ ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-}
+}  
 </style>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
     <head>
@@ -19,7 +19,7 @@ ul {
                 <ul>
                     <li>
                         <a href="/">Início</a>
-                        <a href="/">Configurações</a>
+                        <a href="/settings">Configurações</a>
                     </li>
                 </ul>
             </nav>
@@ -30,7 +30,7 @@ ul {
             </center>
             <fieldset>
                 <legend>Modo de Operação:</legend>
-                <form>
+                <form action="/set/mode" id="mode" method="POST">
                     <input type="radio" id="master" name="mode" value="master">
                     <label for="master">Mestre</label><br>
                     <input type="radio" id="slave" name="mode" value="slave">
@@ -41,8 +41,8 @@ ul {
 
             <fieldset>
                 <legend>ID:</legend>
-                <form>
-                    <input type="text" name="id" id="id" value="1">
+                <form action="/set/id" id="mode" method="POST">
+                    <input type="text" name="id" id="id" placeholder="ID de 1 à 254" pattern="([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])$">
                     <input type="submit" value="Confirmar">
                 </form>
             </fieldset>
