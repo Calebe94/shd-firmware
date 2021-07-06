@@ -5,6 +5,8 @@
 #include "web_common.h"
 #include "settings_api.h"
 
+#include "settings/settings.h"
+
 static const char * TAG = "SETTINGS_API";
 
 httpd_uri_t settings_routes[] = {
@@ -37,7 +39,16 @@ esp_err_t id_set_handler(httpd_req_t *req)
 
     if (httpd_query_key_value(buffer, "id", param, sizeof(param)) == ESP_OK)
     {
-        ESP_LOGI(TAG, "id: %s", param);
+        char *ptr;
+        long ret;
+
+        ret = strtol(param, &ptr, 10);
+
+        ESP_LOGI(TAG, "id: %d", (uint8_t)ret);
+
+        settings_set_id((uint8_t)ret);
+
+        settings_update();
         httpd_resp_sendstr(req, "OK");
     }
     else
@@ -60,12 +71,22 @@ esp_err_t mode_set_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
+    settings_peer_t peer_mode = SLAVE_DEVICE;
 
     common_parse_url_query_param(req, buffer);
     ESP_LOGI(TAG, "mode request received: %s", buffer);
     if (httpd_query_key_value(buffer, "mode", param, sizeof(param)) == ESP_OK)
     {
+        if(strcmp("master", param) == 0)
+        {
+            peer_mode = MASTER_DEVICE;
+        }
+
         ESP_LOGI(TAG, "mode: %s", param);
+
+        settings_set_peer((settings_peer_t)peer_mode);
+        settings_update();
+
         httpd_resp_sendstr(req, "OK");
     }
     else
