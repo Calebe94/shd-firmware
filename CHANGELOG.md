@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added wifi AP module;
 * Added flash partition support;
 * Added webserver to enter as device settings;
+* Added settings data persistence;
 
 ### Fixed
 
