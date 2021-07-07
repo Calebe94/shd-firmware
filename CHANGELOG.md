@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added webserver to enter as device settings;
 * Added settings data persistence;
 * Added javascript file to manipulate html elements;
+* Added webpage folder with the web static content;
 
 ### Fixed
 
