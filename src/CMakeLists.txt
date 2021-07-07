@@ -6,10 +6,15 @@ idf_component_register(
         "serial/console.c"
         "protocol/protocol.c"
         "protocol/message_process.c"
+        "web/settings_api.c"
+        "web/web_common.c"
+        "settings/settings.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
         "rs485/"
         "serial/"
         "protocol/"
+        "web/"
+        "settings"
 )

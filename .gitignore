@@ -1,2 +1,5 @@
 .pio
 sdkconfig.esp32dev
+data/*.html
+data/*.css
+data/*.js
