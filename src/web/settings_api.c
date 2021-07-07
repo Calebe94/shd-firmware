@@ -5,6 +5,7 @@
 #include "web_common.h"
 #include "settings_api.h"
 
+#include "sensor/flowsensor.h"
 #include "settings/settings.h"
 
 static const char * TAG = "SETTINGS_API";
@@ -16,6 +17,7 @@ httpd_uri_t settings_routes[] = {
 	// Creating GET and SET route to: mode
 	{ .uri = "/get/mode", .method = HTTP_GET, .handler = mode_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/mode", .method = HTTP_POST, .handler = mode_set_handler, .user_ctx = NULL},
+	{ .uri = "/get/readings", .method = HTTP_GET, .handler = readings_get_handler, .user_ctx = NULL},
 };
 
 // Creating the initialize settings routes.
@@ -108,3 +110,10 @@ esp_err_t mode_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+// Creating readings route callback get handler.
+esp_err_t readings_get_handler(httpd_req_t *req)
+{    char buffer[30];
+    sprintf(buffer, "{ \"litros\": %2.f }", flowsensor_get_litros());
+    httpd_resp_sendstr(req, buffer);
+    return ESP_OK;
+}

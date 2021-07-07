@@ -20,4 +20,6 @@ esp_err_t mode_set_handler(httpd_req_t *req);
 // Creating mode route callback get handler.
 esp_err_t mode_get_handler(httpd_req_t *req);
 
+// Creating readings route callback get handler.
+esp_err_t readings_get_handler(httpd_req_t *req);
 #endif
