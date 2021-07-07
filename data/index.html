@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <style type="text/css" media="all">
 ul {
     list-style-type: none;
@@ -12,7 +13,8 @@ ul {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
         <title>Hidrômetro Digital - Configurações</title>
         <link rel="stylesheet" href="modest.css">
-    </head>
+        <script src="main.js"></script>
+   </head>
     <body>
         <header>
             <nav>
@@ -28,6 +30,7 @@ ul {
             <center>
                 <h3>Configurações</h3>
             </center>
+
             <fieldset>
                 <legend>Modo de Operação:</legend>
                 <form target="_blank" action="/set/mode" id="mode" method="POST">
@@ -35,7 +38,7 @@ ul {
                     <label for="master">Mestre</label><br>
                     <input type="radio" id="slave" name="mode" value="slave">
                     <label for="slave">Escravo</label><br>
-                    <input onclick="window.location.href = 'http://192.168.4.1/';" type="submit" value="Confirmar">
+                    <input onclick="window.location.href = '/';" type="submit" value="Confirmar">
                 </form>
             </fieldset>
 
@@ -43,9 +46,13 @@ ul {
                 <legend>ID:</legend>
                 <form target="_blank" action="/set/id" id="mode" method="POST">
                     <input type="text" name="id" id="id" placeholder="ID de 1 à 254" pattern="([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])$">
-                    <input onclick="window.location.href = 'http://192.168.4.1/';" type="submit" value="Confirmar">
+                    <input onclick="window.location.href = '/';" type="submit" value="Confirmar">
                 </form>
             </fieldset>
         </main>
+        <script>
+            check_id_input_field();
+            check_mode_input_field();
+        </script>
     </body>
 </html>
