@@ -15,7 +15,7 @@ typedef enum {
 typedef enum {
     SLAVE=0,
     MASTER
-} protocol_peer_t;
+} protocol_mode_t;
 
 typedef struct protocol_data
 {
@@ -28,10 +28,10 @@ typedef struct protocol_data
 typedef struct protocol_settings
 {
     uint8_t id;
-    protocol_peer_t peer;
+    protocol_mode_t mode;
 } protocol_settings_t;
 
-bool protocol_init(protocol_peer_t, uint8_t);
+bool protocol_init(protocol_mode_t, uint8_t);
 
 bool protocol_message_parse(char *, protocol_data_raw_t *);
 
