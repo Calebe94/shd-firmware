@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.3.0]
+
 ### Added 
 
 * Added protocol to parse RS485 messages with pretty simple Master-Slave support;
@@ -79,7 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.0...main
+[0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
 [0.2.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.1.0...0.2.0
 [0.1.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/tags/0.1.0
 
