@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Renamed peer to mode in the entire project;
+
 ### Removed
 
 ## [0.3.0]
