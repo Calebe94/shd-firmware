@@ -2,6 +2,8 @@
 
 # slave-firmware
 
+Firmware do dispositivo escravo do projeto **Hidrometro Digital**.
+
 ## Hardware
 
 * [EasyEda - Placa](https://easyeda.com/editor#id=7732b4349d4646e5ac3e3764baabef0e);
@@ -24,10 +26,13 @@
 ## Dependências
 
 * [platformio];
+* [pandoc]
+* [ssg5-pandoc] - para a geração da página web;
 
 Este projeto foi testado e compilado no seguinte ambiente:
 
 * Debian GNU/Linux 11 (bullseye)
+[0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
 * PlatformIO Core, version 5.1.1
 
 ```
@@ -46,9 +51,29 @@ Através das informações lidas pelo sensor será possível calcular quantos li
 
 O microcontrolador será responsável por ler todas estas informações e armazenar na memória flash para previnir se houver falta de luz.
 
-Após um período de tempo configurável o microcontrolador deverá enviar estas informações através do protocolo CAN para o dispositivo **MESTRE**.
+Após um período de tempo (configurável) o dispositivo **MESTRE** deverá enviar uma requisição aos dispositivos **ESCRAVOS** através da interface **RS485** para que os mesmos retornem os valores do volume de água lidos.
 
-A configuração do período de tempo pode ser feita através da interface serial.
+As configurações de modo de operação (**MESTRE** ou **ESCRAVO**) e **ID** serão realizadas através de uma interface WEB.
+
+### MESTRE e ESCRAVO
+
+O dispositivo **MESTRE** é o dispositivo que possui o módulo **GPRS** [SIM7070G]. Módulo este para enviar os dados para o servidor.
+
+O **MESTRE** é responsável por requisitar as leituras realizadas por todos os dispositivos **ESCRAVOS** na sua rede **RS485**.
+
+O **MESTRE** também realiza a leitura de passagem de água.
+
+Já o dispositivo **ESCRAVO** é responsável por realiza a leitura de passagem de água.
+
+### Interface WEB
+
+Sempre que o dispositivo for ligado, uma rede Wifi será acionada com o nome `hidrometro-digital` e a senha será `hidrometro`.
+
+Após estabelecer conexão com a rede, é possível acessar a página de configurações do dispositivo através do IP `http://192.168.4.1`.
+
+A página apresentada possui informações das configurações disponíveis e que podem ser realizadas na aba `Configurações`.
+
+Na aba `Leituras` o usuário poderá acompanhar a leitura do sensor (litros de água) em tempo real.
 
 ### Interrupções
 
@@ -62,8 +87,7 @@ para uma fila, onde será incrementada uma variável de pulsos.
 Haverá uma `task` rodando a cada segundo que irá pegar esta informção e
 calcular quantos litros de água passou neste último segundo.
 
-Mais informações podem ser encontradas [neste
-artigo](https://how2electronics.com/iot-water-flow-meter-using-esp8266-water-flow-sensor/).
+Mais informações podem ser encontradas [neste artigo](https://how2electronics.com/iot-water-flow-meter-using-esp8266-water-flow-sensor/).
 
 ## Utilização
 
@@ -73,21 +97,31 @@ Para compilar o projeto é necessário a instalação do [platformio], e após r
 $ pio run
 ```
 
+Para gerar a página web de configurações do dispositivo, rode:
+
+```sh
+make webpage
+```
+
 Para gravar o projeto no microcontrolador basta rodar:
 
 ```sh
 $ pio run -t upload
 ```
 
+Para gravar o arquivo de configuração e os arquivos da página de configuração, basta rodar:
+
+```sh
+$ pio run -t uploads
+```
+
 Se for necessário analisar o log serial do microcontrolador, rode:
 
 ```sh
-$ pio device monitor --baud 115200 --port /dev/ttyUSB0
+$ pio device monitor --baud 115200 --port /dev/ttyUSB0 -f colorize
 ```
 
 ## Desenvolvedor
-
-## Mantanedor
 
 | ![](https://assets.gitlab-static.net/uploads/-/system/user/avatar/2382314/avatar.png?width=200) |
 |:------:|
@@ -99,3 +133,5 @@ $ pio device monitor --baud 115200 --port /dev/ttyUSB0
 * [esp-idf: UART RS485 Echo Example](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/uart/uart_echo_rs485);
 
 [platformio]: https://docs.platformio.org/en/latest/core/installation.html
+[pandoc]: https://pandoc.org/
+[ssg5-pandoc]: https://gitlab.com/Calebe94/ssg5-pandoc
