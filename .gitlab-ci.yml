@@ -8,13 +8,27 @@ default:
 
 build-firmware:
     stage: build
+    before_script:
+        - apt-get update
+        - apt-get install -y build-essential wget cpio git pandoc
+        - git clone --recursive https://github.com/igrr/mkspiffs
+        - cd mkspiffs && make dist CPPFLAGS="-DSPIFFS_OBJ_META_LEN=4" BUILD_CONFIG_NAME=-custom && cp mkspiffs /usr/bin/ && chmod +x /usr/bin/mkspiffs && cd -
+        - wget https://gitlab.com/Calebe94/ssg5-pandoc/-/raw/main/ssg5
+        - mv ssg5 /usr/bin/
+        - chmod +x /usr/bin/ssg5
+        - ssg5 "webpage/" "data/" "$PAGE_TITLE" "$PAGE_DOMAIN"
+        - rm -fr data/.files data/sitemap.xml
     script:
         - pio run
+        - /usr/bin/mkspiffs -c data -p 256 -b 4096 .pio/build/esp32dev/spiffs.bin
         - mkdir build/
         - mv .pio/build/esp32dev/firmware.bin build/
-        - sha256sum build/firmware.bin >> build/SHA256SUM
+        - mv .pio/build/esp32dev/spiffs.bin build/
+        - sha256sum build/spiffs.bin | sed 's|build/||g' >> build/SHA256SUM
+        - sha256sum build/firmware.bin | sed 's|build/||g'>> build/SHA256SUM
     artifacts:
         paths:
             - ./build/
     only:
-        - main
+        - tags
+
