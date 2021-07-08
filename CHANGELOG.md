@@ -13,7 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Removed
+
+## [0.3.1]
+
+### Added
+
+### Fixed
+
+### Changed
+
 * Renamed peer to mode in the entire project;
+* Updated README with latest changes;
 
 ### Removed
 
@@ -91,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.1...main
+[0.3.1]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.0...0.3.1
 [0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
 [0.2.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.1.0...0.2.0
 [0.1.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/tags/0.1.0
