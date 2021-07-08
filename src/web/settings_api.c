@@ -75,7 +75,7 @@ esp_err_t mode_set_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
-    settings_peer_t peer_mode = SLAVE_DEVICE;
+    settings_mode_t device_mode = SLAVE_DEVICE;
 
     common_parse_url_query_param(req, buffer);
     ESP_LOGI(TAG, "mode request received: %s", buffer);
@@ -83,12 +83,12 @@ esp_err_t mode_set_handler(httpd_req_t *req)
     {
         if(strcmp("master", param) == 0)
         {
-            peer_mode = MASTER_DEVICE;
+            device_mode = MASTER_DEVICE;
         }
 
         ESP_LOGI(TAG, "mode: %s", param);
 
-        settings_set_peer((settings_peer_t)peer_mode);
+        settings_set_mode((settings_mode_t)device_mode);
         settings_update();
 
         httpd_resp_sendstr(req, "OK");
@@ -105,7 +105,7 @@ esp_err_t mode_set_handler(httpd_req_t *req)
 esp_err_t mode_get_handler(httpd_req_t *req)
 {
     char buffer[30];
-    sprintf(buffer, "{ \"mode\": \"%s\" }", ((uint8_t)settings_get_peer()==1?"master":"slave"));
+    sprintf(buffer, "{ \"mode\": \"%s\" }", ((uint8_t)settings_get_mode()==1?"master":"slave"));
     httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }

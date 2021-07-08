@@ -8,11 +8,11 @@
 typedef enum {
     SLAVE_DEVICE=0,
     MASTER_DEVICE=1
-} settings_peer_t;
+} settings_mode_t;
 
 typedef struct settings {
     uint8_t id;
-    settings_peer_t peer;
+    settings_mode_t mode;
 } settings_t;
 
 void settings_load(void);
@@ -23,8 +23,8 @@ uint8_t settings_get_id(void);
 
 void settings_set_id(uint8_t);
 
-settings_peer_t settings_get_peer(void);
+settings_mode_t settings_get_mode(void);
 
-void settings_set_peer(settings_peer_t);
+void settings_set_mode(settings_mode_t);
 
 #endif

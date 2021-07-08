@@ -3,23 +3,23 @@
 
 #include "protocol.h"
 
-protocol_settings_t peer_settings;
+protocol_settings_t device_settings;
 
-bool protocol_init(protocol_peer_t peer, uint8_t id)
+bool protocol_init(protocol_mode_t mode, uint8_t id)
 {
     bool status = false;
-    if (peer == MASTER)
+    if (mode == MASTER)
     {
-        peer_settings.peer = MASTER;
-        peer_settings.id = 255;
+        device_settings.mode = MASTER;
+        device_settings.id = 255;
     }
     else
     {
-        peer_settings.peer = SLAVE;
+        device_settings.mode = SLAVE;
         /* ID = 0 is BROADCAST*/
         if (id != 0)
         {
-            peer_settings.id = id;
+            device_settings.id = id;
             status = true;
         }
     }
@@ -30,7 +30,7 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
 {
     bool status = false;
 
-    if ( ((uint8_t)serial_data[0]) == peer_settings.id)
+    if ( ((uint8_t)serial_data[0]) == device_settings.id)
     {
         data->id = (uint8_t)serial_data[0];
         data->action = (uint8_t)serial_data[1];
@@ -47,7 +47,7 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
 bool protocol_create_message(protocol_data_raw_t data, char *serial_data)
 {
     bool status = false;
-    if (data.id != peer_settings.id)
+    if (data.id != device_settings.id)
     {
         serial_data[0] = data.id;
         serial_data[1] = data.action;
@@ -96,7 +96,7 @@ bool protocol_get_data(protocol_data_raw_t parsed_data, char *data)
 bool protocol_check_id(protocol_data_raw_t data)
 {
     bool status = false;
-    if (data.id == peer_settings.id)
+    if (data.id == device_settings.id)
     {
         status = true;
     }

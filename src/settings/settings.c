@@ -29,21 +29,21 @@ void settings_load(void)
     if(json != NULL)
     {
         cJSON * json_id = cJSON_GetObjectItemCaseSensitive(json, "id");
-        cJSON * json_peer = cJSON_GetObjectItemCaseSensitive(json, "peer");
+        cJSON * json_mode = cJSON_GetObjectItemCaseSensitive(json, "mode");
         if (cJSON_IsNumber(json_id))
         {
             global_settings.id = json_id->valueint;
         }
 
-        if (cJSON_IsString(json_peer))
+        if (cJSON_IsString(json_mode))
         {
-            if(strcmp("master", json_peer->valuestring) == 0)
+            if(strcmp("master", json_mode->valuestring) == 0)
             {
-                global_settings.peer = MASTER_DEVICE;
+                global_settings.mode = MASTER_DEVICE;
             }
             else
             {
-                global_settings.peer = SLAVE_DEVICE;
+                global_settings.mode = SLAVE_DEVICE;
             }
         }
     }
@@ -55,14 +55,14 @@ void settings_update()
     FILE *json_file = NULL;
     cJSON *json_settings = NULL;
     cJSON *json_id = NULL;
-    cJSON *json_peer = NULL;
+    cJSON *json_mode = NULL;
 
     json_settings = cJSON_CreateObject();
     json_id = cJSON_CreateNumber(global_settings.id);
-    json_peer = cJSON_CreateString(((uint8_t)global_settings.peer==1?"master":"slave"));
+    json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"master":"slave"));
 
     cJSON_AddItemToObject(json_settings, "id", json_id);
-    cJSON_AddItemToObject(json_settings, "peer", json_peer);
+    cJSON_AddItemToObject(json_settings, "mode", json_mode);
     string = cJSON_Print(json_settings);
     ESP_LOGI(TAG, "JSON File: \n%s", string);
     json_file = fopen(SETTINGS_FILE, "w");
@@ -80,12 +80,12 @@ void settings_set_id(uint8_t id)
     global_settings.id = id;
 }
 
-settings_peer_t settings_get_peer(void)
+settings_mode_t settings_get_mode(void)
 {
-    return global_settings.peer;
+    return global_settings.mode;
 }
 
-void settings_set_peer(settings_peer_t peer)
+void settings_set_mode(settings_mode_t mode)
 {
-    global_settings.peer = peer;
+    global_settings.mode = mode;
 }
