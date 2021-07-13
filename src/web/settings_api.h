@@ -22,4 +22,13 @@ esp_err_t mode_get_handler(httpd_req_t *req);
 
 // Creating readings route callback get handler.
 esp_err_t readings_get_handler(httpd_req_t *req);
+
+// Creating device add route callback handler.
+esp_err_t device_add_handler(httpd_req_t *req);
+
+// Creating device delete route callback handler.
+esp_err_t device_delete_handler(httpd_req_t *req);
+
+// Creating device get route callback handler.
+esp_err_t devices_get_handler(httpd_req_t *req);
 #endif
