@@ -91,9 +91,42 @@ bool device_add(int device_id)
     return status;
 }
 
+int device_index_of(int device_id)
+{
+    int index_of = 0;
+
+    for (int index = 0; index < devices_ids_length; index++)
+    {
+        if(devices_ids[index] == device_id)
+        {
+            index_of = index;
+            break;
+        }
+    }
+
+    return index_of;
+}
+
 bool device_delete(int device_id)
 {
-    return true;
+    bool status = false;
+
+    //device_id_t aux_devices_ids[MAX_DEV_ID_LENGTH];
+    //memcpy(aux_devices_ids, devices_ids, MAX_DEV_ID_LENGTH);
+
+    //memset(devices_ids, 0, MAX_DEV_ID_LENGTH);
+    
+    if (device_id < MAX_DEV_ID_LENGTH && device_id > 0)
+    {
+        for (int index = device_index_of(device_id); index < devices_ids_length - 1; index++)
+        {
+            devices_ids[index] = devices_ids[index+1];
+        }
+        devices_ids_length--;
+        status = true;
+    }
+
+    return status;
 }
 
 device_id_t device_get_id(int index)

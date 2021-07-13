@@ -15,6 +15,8 @@ void devices_update(void);
 
 bool device_add(int);
 
+int device_index_of(int device_id);
+
 bool device_delete(int);
 
 device_id_t device_get_id(int);
