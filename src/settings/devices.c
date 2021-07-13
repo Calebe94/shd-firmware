@@ -91,6 +91,22 @@ bool devices_add(int device_id)
     return status;
 }
 
+device_id_t devices_get_id(int index)
+{
+    device_id_t id = 0;
+    if (index < MAX_DEV_ID_LENGTH)
+    {
+        id = devices_ids[index];
+    }
+
+    return id;
+}
+
+int devices_get_length(void)
+{
+    return devices_ids_length;
+}
+
 bool devices_check_duplication(int device_id)
 {
     bool status = false;

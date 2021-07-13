@@ -17,6 +17,10 @@ void devices_update(void);
 
 bool devices_add(int);
 
+device_id_t devices_get_id(int);
+
+int devices_get_length(void);
+
 bool devices_check_duplication(int);
 
 #endif
