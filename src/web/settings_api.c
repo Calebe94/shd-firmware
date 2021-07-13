@@ -138,7 +138,7 @@ esp_err_t device_add_handler(httpd_req_t *req)
 
     if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
     {
-        devices_add(ret);
+        device_add(ret);
         httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
         devices_update();
     }
@@ -172,7 +172,7 @@ esp_err_t devices_get_handler(httpd_req_t *req)
     int devices_length = devices_get_length();
     for (uint8_t index = 0; index < devices_length; index++)
     {
-        json_id = cJSON_CreateNumber(devices_get_id(index));
+        json_id = cJSON_CreateNumber(device_get_id(index));
         cJSON_AddItemToArray(json_devices_array, json_id);
     }
 

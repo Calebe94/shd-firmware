@@ -39,7 +39,7 @@ void devices_load(void)
     {
         if(cJSON_IsNumber(device_id_json) )
         {
-            devices_add(device_id_json->valueint);
+            device_add(device_id_json->valueint);
         }
     }
 
@@ -79,11 +79,11 @@ void devices_update(void)
     cJSON_Delete(json_devices);
 }
 
-bool devices_add(int device_id)
+bool device_add(int device_id)
 {
     bool status = false;
     
-    if(devices_ids_length < MAX_DEV_ID_LENGTH && devices_check_duplication(device_id) == false)
+    if(devices_ids_length < MAX_DEV_ID_LENGTH && device_check_duplication(device_id) == false)
     {
         devices_ids[devices_ids_length++] = device_id;
         status = true;
@@ -91,7 +91,12 @@ bool devices_add(int device_id)
     return status;
 }
 
-device_id_t devices_get_id(int index)
+bool device_delete(int device_id)
+{
+    return true;
+}
+
+device_id_t device_get_id(int index)
 {
     device_id_t id = 0;
     if (index < MAX_DEV_ID_LENGTH)
@@ -107,7 +112,7 @@ int devices_get_length(void)
     return devices_ids_length;
 }
 
-bool devices_check_duplication(int device_id)
+bool device_check_duplication(int device_id)
 {
     bool status = false;
 
