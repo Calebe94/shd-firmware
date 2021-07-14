@@ -4,9 +4,13 @@ domain="http://192.168.4.1"
 data_folder=data/
 src_folder=webpage/
 
+TEST_SRCS=test/test.c src/protocol/protocol.c
+CC=gcc
+TEST_BIN=test/test.bin
+
 test:
-	gcc test/test.c src/protocol/protocol.c -o test/test.bin
-	./test/test.bin
+	${CC} ${TEST_SRCS} -o ${TEST_BIN}
+	./${TEST_BIN}
 
 webpage:
 	${SSG5} ${src_folder} ${data_folder} ${page_title} ${domain}

@@ -38,6 +38,7 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
         for (uint8_t index = 0; index < data->length; index++)
         {
             data->data[index] = serial_data[3+index];
+            data->data[index+1] = '\0';
         }
         status = true;
     }
