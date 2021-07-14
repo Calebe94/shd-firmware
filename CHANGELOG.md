@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Added [MinUnit](https://jera.com/techinfo/jtns/jtn002) test to test.c file;
 * Added unit tests to `protocol_create_message` and `protocol_message_parse` from protocol lib;
+* Added a `test` task pipeline;
 
 ### Fixed
 
