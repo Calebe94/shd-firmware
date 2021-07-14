@@ -13,7 +13,7 @@
     </form>
 </fieldset>
 
-<fieldset>
+<fieldset id="slave_id_fieldset">
     <legend>ID:</legend>
     <form target="_top" action="/set/id" id="mode" method="POST">
         <input type="text" name="id" id="id" placeholder="ID de 1 à 254" pattern="([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])$">

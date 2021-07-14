@@ -44,6 +44,8 @@ function check_mode_input_field()
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
             devices_fieldset.style.visibility = 'visible';
+            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
+            slave_id_fieldset.style.visibility = 'hidden';
         }
         else
         {
@@ -51,6 +53,8 @@ function check_mode_input_field()
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
             devices_fieldset.style.visibility = 'hidden';
+            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
+            slave_id_fieldset.style.visibility = 'visible';
         }
     });
 }
