@@ -43,18 +43,22 @@ function check_mode_input_field()
             var input_id = document.getElementById("master");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            devices_fieldset.style.visibility = 'visible';
+            //devices_fieldset.style.visibility = 'visible';
+            devices_fieldset.style.display = 'inline';
             var slave_id_fieldset = document.getElementById("slave_id_fieldset");
-            slave_id_fieldset.style.visibility = 'hidden';
+            //slave_id_fieldset.style.visibility = 'hidden';
+            slave_id_fieldset.style.display = 'none';
         }
         else
         {
             var input_id = document.getElementById("slave");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            devices_fieldset.style.visibility = 'hidden';
+            //devices_fieldset.style.visibility = 'hidden';
+            devices_fieldset.style.display = 'none';
             var slave_id_fieldset = document.getElementById("slave_id_fieldset");
-            slave_id_fieldset.style.visibility = 'visible';
+            //slave_id_fieldset.style.visibility = 'visible';
+            slave_id_fieldset.style.display = 'inline';
         }
     });
 }
@@ -90,4 +94,4 @@ function redirect()
 {
     window.location.href="/settings.html";
     return true;
-}2
+}
