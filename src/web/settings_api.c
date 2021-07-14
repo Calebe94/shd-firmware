@@ -153,8 +153,26 @@ esp_err_t device_add_handler(httpd_req_t *req)
 // Creating device delete route callback handler.
 esp_err_t device_delete_handler(httpd_req_t *req)
 {
-    ESP_LOGI(TAG, "URI: %s", req->uri);
-    httpd_resp_sendstr(req, "OK");
+    char *ptr;
+    long ret = 0;
+    char *token = strtok(req->uri, "/delete/device/");
+
+    if (token != NULL)
+    {
+        ret = strtol(token, &ptr, 10);
+    }
+
+    if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
+    {
+        device_delete(ret);
+        httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+        devices_update();
+    }
+    else
+    {
+        httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
+    }
+
     return ESP_OK;
 }
 
