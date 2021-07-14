@@ -42,11 +42,65 @@ function check_mode_input_field()
         {
             var input_id = document.getElementById("master");
             input_id.checked = true;
+            var devices_fieldset = document.getElementById("devices-fieldset");
+            devices_fieldset.style.visibility = 'visible';
         }
         else
         {
             var input_id = document.getElementById("slave");
             input_id.checked = true;
+            var devices_fieldset = document.getElementById("devices-fieldset");
+            devices_fieldset.style.visibility = 'hidden';
         }
     });
 }
+
+function check_devices_table_list()
+{
+    get_result_from_route("/get/devices", function(result){
+        const obj = JSON.parse(result);
+        devices = obj.devices;
+        console.log(devices);
+        devices.forEach(function(device){
+            console.log(device);
+            var devices_table = document.getElementById("devices-table");
+            console.log(devices_table);
+
+            var row = document.createElement("tr");
+
+            var td1 = document.createElement("td");
+            var td2 = document.createElement("td");
+
+            td1.innerHTML = device.toString();
+            td2.innerHTML = "<form action='/delete/device/"+device.toString()+"' method='post'><input type='submit' value='Excluir'></form>";
+
+            row.appendChild(td1);
+            row.appendChild(td2);
+
+            devices_table.children[0].appendChild(row);
+        });
+    });
+}
+
+/*
+var devices_div = document.getElementById('devices-div');
+devices_div.style.visibility = 'hidden';
+var devices_table = document.getElementById("devices-table");
+console.log(devices_table);
+
+var row = document.createElement("tr");
+
+var td1 = document.createElement("td");
+var td2 = document.createElement("td");
+
+td1.innerHTML = "3";
+td2.innerHTML = "<form action='action.php?id=3' method='post'><input type='submit' value='Excluir'></form>";
+
+row.appendChild(td1);
+row.appendChild(td2);
+
+devices_table.children[0].appendChild(row);
+
+devices_div.style.visibility = 'visible';
+
+*/
