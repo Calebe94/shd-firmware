@@ -42,11 +42,56 @@ function check_mode_input_field()
         {
             var input_id = document.getElementById("master");
             input_id.checked = true;
+            var devices_fieldset = document.getElementById("devices-fieldset");
+            //devices_fieldset.style.visibility = 'visible';
+            devices_fieldset.style.display = 'inline';
+            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
+            //slave_id_fieldset.style.visibility = 'hidden';
+            slave_id_fieldset.style.display = 'none';
         }
         else
         {
             var input_id = document.getElementById("slave");
             input_id.checked = true;
+            var devices_fieldset = document.getElementById("devices-fieldset");
+            //devices_fieldset.style.visibility = 'hidden';
+            devices_fieldset.style.display = 'none';
+            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
+            //slave_id_fieldset.style.visibility = 'visible';
+            slave_id_fieldset.style.display = 'inline';
         }
     });
+}
+
+function check_devices_table_list()
+{
+    get_result_from_route("/get/devices", function(result){
+        const obj = JSON.parse(result);
+        devices = obj.devices;
+        console.log(devices);
+        devices.forEach(function(device){
+            console.log(device);
+            var devices_table = document.getElementById("devices-table");
+            console.log(devices_table);
+
+            var row = document.createElement("tr");
+
+            var td1 = document.createElement("td");
+            var td2 = document.createElement("td");
+
+            td1.innerHTML = device.toString();
+            td2.innerHTML = "<form action='/delete/device/"+device.toString()+"' method='post'><input type='submit' value='Excluir'></form>";
+
+            row.appendChild(td1);
+            row.appendChild(td2);
+
+            devices_table.children[0].appendChild(row);
+        });
+    });
+}
+
+function redirect()
+{
+    window.location.href="/settings.html";
+    return true;
 }

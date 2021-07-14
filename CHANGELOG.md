@@ -9,9 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added device id file handler(will be used by the main device);
+* Added devices uri handlers;
+
 ### Fixed
 
 ### Changed
+
+* Now when the device is master, the form ID is hidden;
+* When the device is master, the form to register slaves ids is shown;
 
 ### Removed
 

@@ -9,6 +9,7 @@ idf_component_register(
         "web/settings_api.c"
         "web/web_common.c"
         "settings/settings.c"
+        "settings/devices.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
