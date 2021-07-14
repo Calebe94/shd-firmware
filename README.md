@@ -32,7 +32,6 @@ Firmware do dispositivo escravo do projeto **Hidrometro Digital**.
 Este projeto foi testado e compilado no seguinte ambiente:
 
 * Debian GNU/Linux 11 (bullseye)
-[0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
 * PlatformIO Core, version 5.1.1
 
 ```
