@@ -20,7 +20,7 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/get/mode", .method = HTTP_GET, .handler = mode_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/mode", .method = HTTP_POST, .handler = mode_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/readings", .method = HTTP_GET, .handler = readings_get_handler, .user_ctx = NULL},
-	{ .uri = "/add/device/*", .method = HTTP_POST, .handler = device_add_handler, .user_ctx = NULL},
+	{ .uri = "/add/device", .method = HTTP_POST, .handler = device_add_handler, .user_ctx = NULL},
 	{ .uri = "/delete/device/*", .method = HTTP_POST, .handler = device_delete_handler, .user_ctx = NULL},
 	{ .uri = "/get/devices", .method = HTTP_GET, .handler = devices_get_handler, .user_ctx = NULL},
 };
@@ -127,27 +127,38 @@ esp_err_t readings_get_handler(httpd_req_t *req)
 // Creating device add route callback handler.
 esp_err_t device_add_handler(httpd_req_t *req)
 {
-    char *ptr;
-    long ret = 0;
-    char *token = strtok(req->uri, "/add/device/");
+    char buffer[100];
+	char param[32];
 
-    if (token != NULL)
-    {
-        ret = strtol(token, &ptr, 10);
-    }
+    common_parse_url_query_param(req, buffer);
+    ESP_LOGI(TAG, "add device id request received: %s", buffer);
 
-    if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
+    if (httpd_query_key_value(buffer, "device", param, sizeof(param)) == ESP_OK)
     {
-        device_add(ret);
-        httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
-        devices_update();
+        char *ptr;
+        long ret;
+
+        ret = strtol(param, &ptr, 10);
+
+        ESP_LOGI(TAG, "device id: %d", (uint8_t)ret);
+
+        if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
+        {
+            device_add(ret);
+            httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+            devices_update();
+        }
+        else
+        {
+            httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
+        }
     }
     else
     {
         httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
     }
 
-    return ESP_OK;
+	return ESP_OK;
 }
 
 // Creating device delete route callback handler.
