@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [0.5.0]
+
+### Added
+
+* Added [MinUnit](https://jera.com/techinfo/jtns/jtn002) test to test.c file;
+* Added unit tests to `protocol_create_message` and `protocol_message_parse` from protocol lib;
+* Added a `test` task pipeline;
+
+### Fixed
+
+* Fixed a bug from `protocol_message_parse` where a null terminator was not beign added;
+
+### Changed
+
+* Changed `test` target to compile the `TEST_SRCS`;
+
+### Removed
+
 ## [0.4.0]
 
 ### Added
@@ -126,7 +144,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.4.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.5.0...main
+[0.5.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.4.0...0.5.0
 [0.4.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.1...0.4.0
 [0.3.1]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.0...0.3.1
 [0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
