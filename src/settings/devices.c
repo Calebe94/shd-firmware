@@ -110,11 +110,6 @@ int device_index_of(int device_id)
 bool device_delete(int device_id)
 {
     bool status = false;
-
-    //device_id_t aux_devices_ids[MAX_DEV_ID_LENGTH];
-    //memcpy(aux_devices_ids, devices_ids, MAX_DEV_ID_LENGTH);
-
-    //memset(devices_ids, 0, MAX_DEV_ID_LENGTH);
     
     if (device_id < MAX_DEV_ID_LENGTH && device_id > 0)
     {
