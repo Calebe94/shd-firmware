@@ -1,8 +1,8 @@
 ![](https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/badges/main/pipeline.svg)
 
-# slave-firmware
+# SHD - Firmware
 
-Firmware do dispositivo escravo do projeto **Hidrometro Digital**.
+Firmware dos dispositivos leitores de fluxo de água do projeto **Hidrometro Digital**.
 
 ## Hardware
 
@@ -10,11 +10,30 @@ Firmware do dispositivo escravo do projeto **Hidrometro Digital**.
 
 ### Especificações
 
-* Microcontrolador: [DOIT ESP32 DEVKIT V1](https://docs.platformio.org/en/latest/boards/espressif32/esp32doit-devkit-v1.html#id1)
+* Microcontrolador: 
+    * Principal: [ESP32 LilyGO T-PCIE + Módulo SIM7070G](https://github.com/Xinyuan-LilyGO/LilyGo-T-PCIE)
+    * Auxiliar: [DOIT ESP32 DEVKIT V1](https://docs.platformio.org/en/latest/boards/espressif32/esp32doit-devkit-v1.html#id1)
 * Controlador RS485: [MAX485](https://www.maximintegrated.com/en/products/interface/transceivers/MAX485.html#tech-docs)
 * Sensor de fluxo: [YF-S201](https://www.sparkfun.com/datasheets/Robotics/QR_QRE1113.GR.pdf)
 
 ### Terminais
+
+<div align="left">
+<div style="float:left">
+#### Principal
+
+| GPIO | Função | Periférico |
+|:----:|:------:|:----------:|
+| 23 | TXD | MAX485 - DI |
+| 22 | RXD | MAX485 - RO |
+| 18 | RTS | MAX485 - DE/RE |
+| 27 | TXD | SIM7070G - RX |
+| 26 | RXD | SIM7070G - TX |
+| 36 | RTS | SIM7070G INT |
+| 4 | Digital c/ interrupção | Sensor de Fluxo |
+</div>
+<div style="float:left">
+#### Auxiliar
 
 | GPIO | Função | Periférico |
 |:----:|:------:|:----------:|
@@ -22,6 +41,9 @@ Firmware do dispositivo escravo do projeto **Hidrometro Digital**.
 | 22 | RXD | MAX485 - RO |
 | 18 | RTS | MAX485 - DE/RE |
 | 4 | Digital c/ interrupção | Sensor de Fluxo |
+</div>
+</div>
+<br style="clear:both;"/>
 
 ## Dependências
 
@@ -130,6 +152,7 @@ $ pio device monitor --baud 115200 --port /dev/ttyUSB0 -f colorize
 
 * [Platformio: Development Platforms - Espressif 8266](https://docs.platformio.org/en/latest/platforms/espressif8266.html);
 * [esp-idf: UART RS485 Echo Example](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/uart/uart_echo_rs485);
+* [esp_lte_modem](https://github.com/olliiiver/esp_lte_modem)
 
 [platformio]: https://docs.platformio.org/en/latest/core/installation.html
 [pandoc]: https://pandoc.org/

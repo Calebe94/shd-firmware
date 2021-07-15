@@ -30,12 +30,13 @@ build-firmware:
         - rm -fr data/.files data/sitemap.xml
     script:
         - pio run
-        - /usr/bin/mkspiffs -c data -p 256 -b 4096 .pio/build/esp32dev/spiffs.bin
         - mkdir build/
-        - mv .pio/build/esp32dev/firmware.bin build/
-        - mv .pio/build/esp32dev/spiffs.bin build/
+        - /usr/bin/mkspiffs -c data -p 256 -b 4096 build/spiffs.bin
+        - mv .pio/build/aux/firmware.bin build/firmware_aux_${CI_COMMIT_TAG}.bin
+        - mv .pio/build/main/firmware.bin build/firmware_main_${CI_COMMIT_TAG}.bin
         - sha256sum build/spiffs.bin | sed 's|build/||g' >> build/SHA256SUM
-        - sha256sum build/firmware.bin | sed 's|build/||g'>> build/SHA256SUM
+        - sha256sum build/firmware_main_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
+        - sha256sum build/firmware_aux_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
     artifacts:
         paths:
             - ./build/
