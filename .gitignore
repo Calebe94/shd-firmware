@@ -4,3 +4,5 @@ data/*.html
 data/*.css
 data/*.js
 test/test.bin
+sdkconfig.aux
+sdkconfig.main
