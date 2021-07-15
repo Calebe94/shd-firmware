@@ -12,11 +12,11 @@ Na página de configurações você pode gerenciar o **Modo de Operação** do d
 
 #### Modo de Operação
 
-O **Modo de Operação** do dispositivo pode ser **Mestre** ou **Escravo**.
+O **Modo de Operação** do dispositivo pode ser **Controlador** ou **Periférico**.
 
-O dispositivo **Mestre** é o dispositivo que possui o módulo **GSM**, ou seja, é o módulo que irá enviar os dados das leituras para a central.
+O dispositivo **Controlador** é o dispositivo que possui o módulo **GSM**, ou seja, é o módulo que irá enviar os dados das leituras para a central.
 
-Já o dispositivo **Escravo** é o dispositivo sem o módulo **GSM**, que por sua vez sómente realiza a leitura da passagem de água.
+Já o dispositivo **Periférico** é o dispositivo sem o módulo **GSM**, que por sua vez sómente realiza a leitura da passagem de água.
 
 #### ID
 

@@ -6,9 +6,9 @@
     <legend>Modo de Operação:</legend>
     <form target="_top" action="/set/mode" id="mode" method="POST">
         <input type="radio" id="controller" name="mode" value="controller">
-        <label for="controller">Mestre</label><br>
+        <label for="controller">Controlador</label><br>
         <input type="radio" id="peripheral" name="mode" value="peripheral">
-        <label for="peripheral">Escravo</label><br>
+        <label for="peripheral">Periférico</label><br>
         <input onclick="redirect();" type="submit" value="Confirmar">
     </form>
 </fieldset>
