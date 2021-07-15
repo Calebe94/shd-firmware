@@ -6,3 +6,5 @@ data/*.js
 test/test.bin
 sdkconfig.aux
 sdkconfig.main
+sdkconfig.controller
+sdkconfig.peripheral
