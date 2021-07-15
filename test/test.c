@@ -30,7 +30,7 @@ static char * test_create_message()
 {
     uint8_t data_to_send[MAX_DATA_LENGTH];
     protocol_data_raw_t raw_data_to_send = {
-        .id = 0xFF, // to master
+        .id = 0xFF, // to controller
         .action = 0x01, // set - on nothing
         .length = strlen((char *)hello) // this info
     };
@@ -86,7 +86,7 @@ static char * all_tests()
  ******************/
 int main(void)
 {
-    protocol_init(SLAVE, 1);
+    protocol_init(PERIPHERAL, 1);
 
     char *result = all_tests();
     if (result != 0) 

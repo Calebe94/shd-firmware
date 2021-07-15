@@ -13,8 +13,8 @@ typedef enum {
 } protocol_action_t;
 
 typedef enum {
-    SLAVE=0,
-    MASTER
+    PERIPHERAL=0,
+    CONTROLLER
 } protocol_mode_t;
 
 typedef struct protocol_data

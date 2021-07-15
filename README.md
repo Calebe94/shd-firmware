@@ -1,4 +1,4 @@
-![](https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/badges/main/pipeline.svg)
+![](https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/badges/main/pipeline.svg)
 
 # SHD - Firmware
 

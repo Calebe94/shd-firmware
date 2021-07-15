@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Renamed terms associeted with slavery to its alternatives;
+
+### Removed
+
 ## [0.6.0]
 
 ### Added
@@ -62,8 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Now when the device is master, the form ID is hidden;
-* When the device is master, the form to register slaves ids is shown;
+* Now when the device is `controler`, the form ID is hidden;
+* When the device is `controller`, the form to register peripherals `ids` is shown;
 
 ### Removed
 
@@ -154,12 +158,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.6.0...main
-[0.6.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.5.0...0.6.0
-[0.5.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.4.0...0.5.0
-[0.4.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.1...0.4.0
-[0.3.1]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.3.0...0.3.1
-[0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.2.0...0.3.0
-[0.2.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/compare/0.1.0...0.2.0
-[0.1.0]: https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/-/tags/0.1.0
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.6.0...main
+[0.6.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.5.0...0.6.0
+[0.5.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.4.0...0.5.0
+[0.4.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.3.1...0.4.0
+[0.3.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.3.0...0.3.1
+[0.3.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.2.0...0.3.0
+[0.2.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.1.0...0.2.0
+[0.1.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/tags/0.1.0
 

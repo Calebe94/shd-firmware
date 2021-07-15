@@ -37,13 +37,13 @@ void settings_load(void)
 
         if (cJSON_IsString(json_mode))
         {
-            if(strcmp("master", json_mode->valuestring) == 0)
+            if(strcmp("controller", json_mode->valuestring) == 0)
             {
-                global_settings.mode = MASTER_DEVICE;
+                global_settings.mode = CONTROLLER_DEVICE;
             }
             else
             {
-                global_settings.mode = SLAVE_DEVICE;
+                global_settings.mode = PERIPHERAL_DEVICE;
             }
         }
     }
@@ -59,7 +59,7 @@ void settings_update()
 
     json_settings = cJSON_CreateObject();
     json_id = cJSON_CreateNumber(global_settings.id);
-    json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"master":"slave"));
+    json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"controller":"peripheral"));
 
     cJSON_AddItemToObject(json_settings, "id", json_id);
     cJSON_AddItemToObject(json_settings, "mode", json_mode);

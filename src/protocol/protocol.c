@@ -8,14 +8,14 @@ protocol_settings_t device_settings;
 bool protocol_init(protocol_mode_t mode, uint8_t id)
 {
     bool status = false;
-    if (mode == MASTER)
+    if (mode == CONTROLLER)
     {
-        device_settings.mode = MASTER;
+        device_settings.mode = CONTROLLER;
         device_settings.id = 255;
     }
     else
     {
-        device_settings.mode = SLAVE;
+        device_settings.mode = PERIPHERAL;
         /* ID = 0 is BROADCAST*/
         if (id != 0)
         {
