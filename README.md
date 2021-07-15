@@ -18,8 +18,6 @@ Firmware dos dispositivos leitores de fluxo de água do projeto **Hidrometro Dig
 
 ### Terminais
 
-<div align="left">
-<div style="float:left">
 #### Principal
 
 | GPIO | Função | Periférico |
@@ -31,8 +29,7 @@ Firmware dos dispositivos leitores de fluxo de água do projeto **Hidrometro Dig
 | 26 | RXD | SIM7070G - TX |
 | 36 | RTS | SIM7070G INT |
 | 4 | Digital c/ interrupção | Sensor de Fluxo |
-</div>
-<div style="float:left">
+
 #### Auxiliar
 
 | GPIO | Função | Periférico |
@@ -41,9 +38,6 @@ Firmware dos dispositivos leitores de fluxo de água do projeto **Hidrometro Dig
 | 22 | RXD | MAX485 - RO |
 | 18 | RTS | MAX485 - DE/RE |
 | 4 | Digital c/ interrupção | Sensor de Fluxo |
-</div>
-</div>
-<br style="clear:both;"/>
 
 ## Dependências
 
