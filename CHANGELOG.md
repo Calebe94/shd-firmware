@@ -71,6 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+* Removed unecessary references to files and comments;
+
 ## [0.3.1]
 
 ### Added
