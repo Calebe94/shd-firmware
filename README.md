@@ -1,4 +1,4 @@
-![](https://gitlab.com/projeto-leitor-hidrometro/slave-firmware/badges/main/pipeline.svg)
+![](https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/badges/main/pipeline.svg)
 
 # SHD - Firmware
 
@@ -66,19 +66,19 @@ Através das informações lidas pelo sensor será possível calcular quantos li
 
 O microcontrolador será responsável por ler todas estas informações e armazenar na memória flash para previnir se houver falta de luz.
 
-Após um período de tempo (configurável) o dispositivo **MESTRE** deverá enviar uma requisição aos dispositivos **ESCRAVOS** através da interface **RS485** para que os mesmos retornem os valores do volume de água lidos.
+Após um período de tempo (configurável) o dispositivo **CONTROLADOR** deverá enviar uma requisição aos dispositivos **PERIFÉRICOS** através da interface **RS485** para que os mesmos retornem os valores do volume de água lidos.
 
-As configurações de modo de operação (**MESTRE** ou **ESCRAVO**) e **ID** serão realizadas através de uma interface WEB.
+As configurações de modo de operação (**CONTROLADOR** ou **PERIFÉRICO**) e **ID** serão realizadas através de uma interface WEB.
 
-### MESTRE e ESCRAVO
+### CONTROLADOR e PERIFÉRICO
 
-O dispositivo **MESTRE** é o dispositivo que possui o módulo **GPRS** [SIM7070G]. Módulo este para enviar os dados para o servidor.
+O dispositivo **CONTROLADOR** é o dispositivo que possui o módulo **GPRS** [SIM7070G]. Módulo este para enviar os dados para o servidor.
 
-O **MESTRE** é responsável por requisitar as leituras realizadas por todos os dispositivos **ESCRAVOS** na sua rede **RS485**.
+O **CONTROLADOR** é responsável por requisitar as leituras realizadas por todos os dispositivos **PERIFÉRICOS** na sua rede **RS485**.
 
-O **MESTRE** também realiza a leitura de passagem de água.
+O **CONTROLADOR** também realiza a leitura de passagem de água.
 
-Já o dispositivo **ESCRAVO** é responsável por realiza a leitura de passagem de água.
+Já o dispositivo **PERIFÉRICO** é responsável por realiza a leitura de passagem de água.
 
 ### Interface WEB
 

@@ -32,11 +32,11 @@ build-firmware:
         - pio run
         - mkdir build/
         - /usr/bin/mkspiffs -c data -p 256 -b 4096 build/spiffs.bin
-        - mv .pio/build/aux/firmware.bin build/firmware_aux_${CI_COMMIT_TAG}.bin
-        - mv .pio/build/main/firmware.bin build/firmware_main_${CI_COMMIT_TAG}.bin
+        - mv .pio/build/peripheral/firmware.bin build/peripheral_firmware_${CI_COMMIT_TAG}.bin
+        - mv .pio/build/controller/firmware.bin build/controller_firmware_${CI_COMMIT_TAG}.bin
         - sha256sum build/spiffs.bin | sed 's|build/||g' >> build/SHA256SUM
-        - sha256sum build/firmware_main_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
-        - sha256sum build/firmware_aux_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
+        - sha256sum build/peripheral_firmware_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
+        - sha256sum build/controller_firmware_${CI_COMMIT_TAG}.bin | sed 's|build/||g'>> build/SHA256SUM
     artifacts:
         paths:
             - ./build/

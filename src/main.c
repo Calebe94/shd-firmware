@@ -102,8 +102,8 @@ void app_main()
 
     settings_load();
 
-    ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"MASTER":"SLAVE"));
-    protocol_init(((uint8_t)settings_get_mode()==1?MASTER:SLAVE), settings_get_id());
+    ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
+    protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
     
     devices_load();

@@ -38,27 +38,27 @@ function check_mode_input_field()
 {
     get_result_from_route("/get/mode", function(result){
         const obj = JSON.parse(result);
-        if(obj.mode === "master")
+        if(obj.mode === "controller")
         {
-            var input_id = document.getElementById("master");
+            var input_id = document.getElementById("controller");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
             //devices_fieldset.style.visibility = 'visible';
             devices_fieldset.style.display = 'inline';
-            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
-            //slave_id_fieldset.style.visibility = 'hidden';
-            slave_id_fieldset.style.display = 'none';
+            var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
+            //peripheral_id_fieldset.style.visibility = 'hidden';
+            peripheral_id_fieldset.style.display = 'none';
         }
         else
         {
-            var input_id = document.getElementById("slave");
+            var input_id = document.getElementById("peripheral");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
             //devices_fieldset.style.visibility = 'hidden';
             devices_fieldset.style.display = 'none';
-            var slave_id_fieldset = document.getElementById("slave_id_fieldset");
-            //slave_id_fieldset.style.visibility = 'visible';
-            slave_id_fieldset.style.display = 'inline';
+            var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
+            //peripheral_id_fieldset.style.visibility = 'visible';
+            peripheral_id_fieldset.style.display = 'inline';
         }
     });
 }

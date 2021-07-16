@@ -6,8 +6,8 @@
 #define SETTINGS_FILE "/spiffs/settings.json"
 
 typedef enum {
-    SLAVE_DEVICE=0,
-    MASTER_DEVICE=1
+    PERIPHERAL_DEVICE=0,
+    CONTROLLER_DEVICE=1
 } settings_mode_t;
 
 typedef struct settings {
