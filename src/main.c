@@ -99,15 +99,24 @@ void app_main()
     console_init();
     flowsensor_init();
     rs485_init();
-
     settings_load();
+
+#ifdef CONTROLLER_FIRMWARE
+    settings_set_mode(CONTROLLER);
+    settings_set_id(255);
+    settings_update();
+    devices_load();
+#else
+    settings_set_mode(PERIPHERAL);
+    settings_update();
+#endif
 
     ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
     protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
-    
-    devices_load();
-
+#ifdef CONTROLLER_FIRMWARE
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
+#endif
     while(1)
     {
         /*

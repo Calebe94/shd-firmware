@@ -3,13 +3,35 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/timers.h"
 #include "driver/uart.h"
 #include "esp_log.h"
 #include "rs485/rs485.h"
 #include "protocol/protocol.h"
 #include "message_process.h"
+#include "sensor/flowsensor.h"
+#include "settings/devices.h"
 
 static const char *TAG = "PROTOCOL/MESSAGE";
+
+static void send_reading_to_master(void)
+{
+    ESP_LOGI(TAG, "send_reading_to_master");
+    uint8_t data_to_send[MAX_DATA_LENGTH];
+    float leitura_litros = flowsensor_get_litros();
+    char string_leitura_litros[10];
+    sprintf(string_leitura_litros, "%.2f", leitura_litros);
+    protocol_data_raw_t raw_data_to_send = {
+        .id = 255, // Para o periférico 1
+        .action = 0b10, // get - leitura
+        .length = strlen(string_leitura_litros) //
+    };
+
+    strcpy((char *)raw_data_to_send.data, (char *)string_leitura_litros);
+    protocol_create_message(raw_data_to_send, (char *)data_to_send);
+    ESP_LOGI(TAG, "Enviando leitura para o controlador: %s", (char*)data_to_send);
+    rs485_send((char*)data_to_send);
+}
 
 static void on_message_event_handler(protocol_data_raw_t data)
 {
@@ -25,6 +47,9 @@ static void on_message_event_handler(protocol_data_raw_t data)
             if(action == GET)
             {
                 ESP_LOGI(TAG, "Função GET Litros recebida!");
+#ifdef PERIPHERAL_FIRMWARE
+                send_reading_to_master();
+#endif
             }
             break;
         case UTC:
@@ -127,4 +152,27 @@ void message_process_handler(void *pvParameters)
     free(dtmp);
     dtmp = NULL;
     vTaskDelete(NULL);
+}
+
+void get_readings_timer_callback(void *argv)
+{
+    while(1)
+    {
+        ESP_LOGI(TAG, "get_readings_timer_callback");
+
+        for (uint8_t index = 0; index < devices_get_length(); index++)
+        {
+            uint8_t data_to_send[MAX_DATA_LENGTH];
+            protocol_data_raw_t raw_data_to_send = {
+                .id = device_get_id(index), // Para o periférico 1
+                .action = 0b10, // get - leitura
+                .length = 0x00 //
+            };
+            protocol_create_message(raw_data_to_send, (char *)data_to_send);
+            ESP_LOGI(TAG, "Enviando para periférico %d: %s", device_get_id(index), (char*)data_to_send);
+            rs485_send((char*)data_to_send);
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
+        vTaskDelay(pdMS_TO_TICKS(10000));
+    }
 }
