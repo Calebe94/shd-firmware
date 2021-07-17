@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.7.0]
+
+### Added
+
 * Added devices communication algorithm;
 * Added `init_routes()` function to `web_api.h` file;
 
@@ -166,7 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.6.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.7.0...main
+[0.7.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.6.0...0.7.0
 [0.6.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.5.0...0.6.0
 [0.5.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.4.0...0.5.0
 [0.4.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.3.1...0.4.0
