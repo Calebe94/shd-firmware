@@ -8,7 +8,7 @@
 /***************************
  * DEFINES
 ****************************/
-#define FLOWSENSOR_GPIO     4
+#define FLOWSENSOR_GPIO     15
 
 /***************************
  * FUNCTIONS PROTOTYPES
