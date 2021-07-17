@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Added devices communication algorithm;
+* Added `init_routes()` function to `web_api.h` file;
 
 ### Fixed
 
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Changed flow sensor gpio from `4` to `15`;
 
 ### Removed
+
+* Removed function `init_routes()` from main file;
 
 ## [0.6.0]
 
