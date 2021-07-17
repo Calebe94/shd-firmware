@@ -23,7 +23,7 @@ static void send_reading_to_master(void)
     char string_leitura_litros[10];
     sprintf(string_leitura_litros, "%.2f", leitura_litros);
     protocol_data_raw_t raw_data_to_send = {
-        .id = 255, // Para o periférico 1
+        .id = 255, // Para o controlador
         .action = 0b11, // get - leitura
         .length = strlen(string_leitura_litros) //
     };
@@ -173,7 +173,7 @@ void get_readings_timer_callback(void *argv)
         {
             uint8_t data_to_send[MAX_DATA_LENGTH];
             protocol_data_raw_t raw_data_to_send = {
-                .id = device_get_id(index), // Para o periférico 1
+                .id = device_get_id(index), // Para o periférico
                 .action = 0b10, // get - leitura
                 .length = 0x00 //
             };
