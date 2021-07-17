@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Renamed terms associeted with slavery to its alternatives;
+* Changed flow sensor gpio from `4` to `15`;
 
 ### Removed
 
