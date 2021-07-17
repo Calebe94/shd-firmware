@@ -7,5 +7,8 @@
 
 void message_process_handler(void *argv);
 
+#ifdef CONTROLLER_FIRMWARE
 void get_readings_timer_callback(void *);
+#endif
+
 #endif

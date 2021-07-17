@@ -14,6 +14,7 @@
 
 static const char *TAG = "PROTOCOL/MESSAGE";
 
+#ifdef PERIPHERAL_FIRMWARE
 static void send_reading_to_master(void)
 {
     ESP_LOGI(TAG, "send_reading_to_master");
@@ -23,7 +24,7 @@ static void send_reading_to_master(void)
     sprintf(string_leitura_litros, "%.2f", leitura_litros);
     protocol_data_raw_t raw_data_to_send = {
         .id = 255, // Para o periférico 1
-        .action = 0b10, // get - leitura
+        .action = 0b11, // get - leitura
         .length = strlen(string_leitura_litros) //
     };
 
@@ -32,6 +33,7 @@ static void send_reading_to_master(void)
     ESP_LOGI(TAG, "Enviando leitura para o controlador: %s", (char*)data_to_send);
     rs485_send((char*)data_to_send);
 }
+#endif
 
 static void on_message_event_handler(protocol_data_raw_t data)
 {
@@ -51,6 +53,12 @@ static void on_message_event_handler(protocol_data_raw_t data)
                 send_reading_to_master();
 #endif
             }
+#ifdef CONTROLLER_FIRMWARE
+            else
+            {
+                ESP_LOGI(TAG, "Função SET Litros recebida!");
+            }
+#endif
             break;
         case UTC:
             if(action == GET)
@@ -154,6 +162,7 @@ void message_process_handler(void *pvParameters)
     vTaskDelete(NULL);
 }
 
+#ifdef CONTROLLER_FIRMWARE
 void get_readings_timer_callback(void *argv)
 {
     while(1)
@@ -176,3 +185,4 @@ void get_readings_timer_callback(void *argv)
         vTaskDelay(pdMS_TO_TICKS(10000));
     }
 }
+#endif
