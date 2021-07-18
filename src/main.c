@@ -74,6 +74,9 @@ void app_main()
     sim7070g_init();
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
     xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192/2, NULL, 1, NULL);
+    sim7070g_send("AT+CPIN?\r\n");
+    sim7070g_send("AT+CMGF=1\r\n");
+    sim7070g_send("AT+GMM\r\n");
 #endif
 
     while(1)

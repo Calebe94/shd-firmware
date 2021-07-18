@@ -20,6 +20,16 @@ static const char *TAG = "SIM7070G";
 static QueueHandle_t sim7070g_queue;
 
 /***************************
+ * STATIC FUNCTIONS
+****************************/
+
+void sim7070g_interruption_handler(void *argv)
+{
+    uint32_t gpio_num = (uint32_t) argv;
+    gpio_set_level(gpio_num, !gpio_get_level(gpio_num));
+}
+
+/***************************
  * FUNCTIONS DEFINITIONS
 ****************************/
 
@@ -39,7 +49,7 @@ void sim7070g_setup(void)
 
     ESP_ERROR_CHECK(uart_set_pin(SIM7070G_PORT, SIM7070G_TXD, SIM7070G_RXD, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
     
-    uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
+    //uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
     uart_pattern_queue_reset(SIM7070G_PORT, 1024);
 }
 
@@ -52,15 +62,18 @@ void sim7070g_init(void)
     gpio_pad_select_gpio(SIM7070G_PWR);
     gpio_set_direction(SIM7070G_PWR, GPIO_MODE_OUTPUT);
     gpio_set_level(SIM7070G_PWR, 1);
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(500/portTICK_PERIOD_MS);
     gpio_set_level(SIM7070G_PWR, 0);
 
     gpio_pad_select_gpio(SIM7070G_INT);
     gpio_set_direction(SIM7070G_INT, GPIO_MODE_INPUT);
+ 
+    gpio_pad_select_gpio(SIM7070G_LED);
+    gpio_set_direction(SIM7070G_LED, GPIO_MODE_OUTPUT);
 
     //gpio_pullup_en(FLOWSENSOR_GPIO);
-    //gpio_set_intr_type(FLOWSENSOR_GPIO, GPIO_INTR_NEGEDGE);
-    //gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
+    gpio_set_intr_type(SIM7070G_INT, GPIO_INTR_ANYEDGE);
+    gpio_isr_handler_add(SIM7070G_INT, sim7070g_interruption_handler, (void*)SIM7070G_LED);
 
     //gpio_install_isr_service(0);
     //gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);

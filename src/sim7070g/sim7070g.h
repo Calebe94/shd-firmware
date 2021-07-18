@@ -2,7 +2,7 @@
 #define _SIM7070G_H_
 
 /***************************
- * FUNCTIONS PROTOTYPES
+ * DEFINES
 ****************************/
 #define SIM7070G_TXD    27
 #define SIM7070G_RXD    26
@@ -11,6 +11,11 @@
 #define SIM7070G_POWER  25
 #define SIM7070G_INT    36
 #define SIM7070G_PORT   1
+#define SIM7070G_LED    12
+
+/***************************
+ * FUNCTIONS PROTOTYPES
+****************************/
 
 void sim7070g_setup(void);
 
