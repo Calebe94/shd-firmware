@@ -24,6 +24,9 @@
 #include "settings/settings.h"
 #include "settings/devices.h"
 #include "web/web_api.h"
+#ifdef CONTROLLER_FIRMWARE
+#include "sim7070g/sim7070g.h"
+#endif
 
 static const char * TAG = "MAIN";
 
@@ -68,8 +71,11 @@ void app_main()
     protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
 #ifdef CONTROLLER_FIRMWARE
+    sim7070g_init();
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
+    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192/2, NULL, 1, NULL);
 #endif
+
     while(1)
     {
         vTaskDelay(pdMS_TO_TICKS(1000));
