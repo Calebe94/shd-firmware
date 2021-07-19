@@ -28,6 +28,9 @@
 #include "sim7070g/sim7070g.h"
 #endif
 
+/***************************
+ * STATIC VARIABLES
+****************************/
 static const char * TAG = "MAIN";
 
 /***************************
@@ -52,7 +55,7 @@ void app_main()
     ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
     ESP_ERROR_CHECK(init_webservice("/spiffs", &server, rest_context));
 
-    console_init();
+    //console_init();
     flowsensor_init();
     rs485_init();
     settings_load();
@@ -69,14 +72,17 @@ void app_main()
 
     ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
     protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
-    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 12, NULL);
+    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
+
 #ifdef CONTROLLER_FIRMWARE
     sim7070g_init();
-    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
+
+    uint8_t retries = 5;
+    while(retries-- && !sim7070g_turn_modem_on());
+    sim7070g_check_signal_quality();
+
     xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192/2, NULL, 1, NULL);
-    sim7070g_send("AT+CPIN?\r\n");
-    sim7070g_send("AT+CMGF=1\r\n");
-    sim7070g_send("AT+GMM\r\n");
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
 #endif
 
     while(1)
