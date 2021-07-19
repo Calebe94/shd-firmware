@@ -49,34 +49,37 @@ void sim7070g_setup(void)
 
     ESP_ERROR_CHECK(uart_set_pin(SIM7070G_PORT, SIM7070G_TXD, SIM7070G_RXD, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
     
-    //uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
+    uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
     uart_pattern_queue_reset(SIM7070G_PORT, 1024);
 }
 
 void sim7070g_init(void)
 {
-    gpio_pad_select_gpio(SIM7070G_POWER);
-    gpio_set_direction(SIM7070G_POWER, GPIO_MODE_OUTPUT);
-    gpio_set_level(SIM7070G_POWER, 1);
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT|GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = SIM7070G_OUTPUT_PIN_SEL;
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
 
-    gpio_pad_select_gpio(SIM7070G_PWR);
-    gpio_set_direction(SIM7070G_PWR, GPIO_MODE_OUTPUT);
-    gpio_set_level(SIM7070G_PWR, 1);
-    vTaskDelay(500/portTICK_PERIOD_MS);
-    gpio_set_level(SIM7070G_PWR, 0);
+    io_conf.intr_type = GPIO_INTR_ANYEDGE;
+    io_conf.pin_bit_mask = SIM7070G_INPUT_PIN_SEL;
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pull_up_en = 1;
+    gpio_config(&io_conf);
 
-    gpio_pad_select_gpio(SIM7070G_INT);
-    gpio_set_direction(SIM7070G_INT, GPIO_MODE_INPUT);
- 
-    gpio_pad_select_gpio(SIM7070G_LED);
-    gpio_set_direction(SIM7070G_LED, GPIO_MODE_OUTPUT);
-
-    //gpio_pullup_en(FLOWSENSOR_GPIO);
-    gpio_set_intr_type(SIM7070G_INT, GPIO_INTR_ANYEDGE);
     gpio_isr_handler_add(SIM7070G_INT, sim7070g_interruption_handler, (void*)SIM7070G_LED);
 
-    //gpio_install_isr_service(0);
-    //gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
+    gpio_set_level(SIM7070G_LED, 0);
+    gpio_set_level(SIM7070G_POWER, 1);
+
+    gpio_set_level(SIM7070G_PWR, 1);
+    vTaskDelay(pdMS_TO_TICKS(500));
+    ESP_LOGI(TAG, "25: %d - 4: %d - 12: %d", gpio_get_level(25), gpio_get_level(4), gpio_get_level(12));
+    gpio_set_level(SIM7070G_PWR, 0);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
     sim7070g_setup();
 }
 
@@ -168,4 +171,46 @@ void sim7070g_event_handler_task(void *pvParameters)
     free(dtmp);
     dtmp = NULL;
     vTaskDelete(NULL);
+}
+
+bool sim7070g_turn_modem_on(void)
+{
+    bool status = false;
+    ESP_LOGI(TAG, "Starting up modem...");
+    gpio_set_level(SIM7070G_PWR, 1);
+    vTaskDelay(pdMS_TO_TICKS(300));
+    gpio_set_level(SIM7070G_PWR, 0);
+    vTaskDelay(pdMS_TO_TICKS(10000));
+
+    int tries = 10;
+
+    ESP_LOGI(TAG, "Testing modem response...");
+    ESP_LOGI(TAG, "**********");
+    while(tries--)
+    {
+        sim7070g_send("AT\r");
+        vTaskDelay(pdMS_TO_TICKS(500));
+
+        uint8_t data[128];
+        int length = 0;
+        ESP_ERROR_CHECK(uart_get_buffered_data_len(1, (size_t*)&length));
+        length = uart_read_bytes(1, data, length, 100);
+        ESP_LOGI(TAG, "len: %d - data: %s", length, (char*)data);
+        if(length > 1 && (strstr((char*)data, "OK") != NULL))
+        {
+            status = true;
+            ESP_LOGI(TAG, "Modem initialized!!!");
+            break;
+        }
+    }
+    return status;
+}
+
+void sim7070g_check_signal_quality(void)
+{
+    uint8_t data[128], length = 0;
+    sim7070g_send("AT+CSQ\r");
+    ESP_ERROR_CHECK(uart_get_buffered_data_len(1, (size_t*)&length));
+    length = uart_read_bytes(1, data, length, 100);
+    ESP_LOGI(TAG, "len: %d - data: %s", length, (char*)data);
 }
