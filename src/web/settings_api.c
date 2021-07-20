@@ -23,6 +23,8 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/add/device", .method = HTTP_POST, .handler = device_add_handler, .user_ctx = NULL},
 	{ .uri = "/delete/device/*", .method = HTTP_POST, .handler = device_delete_handler, .user_ctx = NULL},
 	{ .uri = "/get/devices", .method = HTTP_GET, .handler = devices_get_handler, .user_ctx = NULL},
+	{ .uri = "/set/phone", .method = HTTP_POST, .handler = phone_set_handler, .user_ctx = NULL},
+	{ .uri = "/get/phone", .method = HTTP_GET, .handler = phone_get_handler, .user_ctx = NULL},
 };
 
 // Creating the initialize settings routes.
@@ -166,7 +168,7 @@ esp_err_t device_delete_handler(httpd_req_t *req)
 {
     char *ptr;
     long ret = 0;
-    char *token = strtok(req->uri, "/delete/device/");
+    char *token = strtok((char*)req->uri, "/delete/device/");
 
     if (token != NULL)
     {
@@ -209,5 +211,40 @@ esp_err_t devices_get_handler(httpd_req_t *req)
     httpd_resp_sendstr(req, string);
 
     cJSON_Delete(json_devices);
+    return ESP_OK;
+}
+
+// Creating phone set route callback handler.
+esp_err_t phone_set_handler(httpd_req_t *req)
+{
+    char buffer[100];
+	char param[32];
+
+    common_parse_url_query_param(req, buffer);
+    ESP_LOGI(TAG, "set phone request received: %s", buffer);
+
+    if (httpd_query_key_value(buffer, "phone", param, sizeof(param)) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "phone: %s", param);
+
+        settings_set_phone(param);
+
+        settings_update();
+        httpd_resp_sendstr(req, "OK");
+    }
+    else
+    {
+        httpd_resp_sendstr(req, "ERROR");
+    }
+
+	return ESP_OK;   
+}
+
+// Creating phone get route callback handler.
+esp_err_t phone_get_handler(httpd_req_t *req)
+{
+    char buffer[60];
+    sprintf(buffer, "{ \"phone\": \"%s\" }", settings_get_phone());
+    httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }
