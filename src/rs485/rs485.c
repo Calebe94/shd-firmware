@@ -53,6 +53,7 @@ void rs485_send(const char *data)
 {
     //uart_write_bytes(UART_PORT, data, (sizeof(data) - 1));
     uart_write_bytes(UART_PORT, data, strlen(data));
+    ESP_ERROR_CHECK(uart_wait_tx_done(UART_PORT, 500));
 }
 
 uint32_t rs485_read(uint8_t *data)
