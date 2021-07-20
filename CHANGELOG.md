@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.9.0]
+
+### Added
+
 * Added phone to settings handler;
 * Added get and set phone routes;
 * Added phone section to settings page;
@@ -196,7 +206,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.8.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.9.0...main
+[0.9.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.8.0...0.9.0
 [0.8.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.7.0...0.8.0
 [0.7.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.6.0...0.7.0
 [0.6.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.5.0...0.6.0
