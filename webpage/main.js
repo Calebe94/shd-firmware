@@ -43,22 +43,22 @@ function check_mode_input_field()
             var input_id = document.getElementById("controller");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            //devices_fieldset.style.visibility = 'visible';
             devices_fieldset.style.display = 'inline';
             var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
-            //peripheral_id_fieldset.style.visibility = 'hidden';
             peripheral_id_fieldset.style.display = 'none';
+            var device_mode_filedset = document.getElementById("device_mode_filedset");
+            device_mode_filedset.style.display = 'none';
         }
         else
         {
             var input_id = document.getElementById("peripheral");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            //devices_fieldset.style.visibility = 'hidden';
             devices_fieldset.style.display = 'none';
             var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
-            //peripheral_id_fieldset.style.visibility = 'visible';
             peripheral_id_fieldset.style.display = 'inline';
+            var device_mode_filedset = document.getElementById("device_mode_filedset");
+            device_mode_filedset.style.display = 'inline';
         }
     });
 }

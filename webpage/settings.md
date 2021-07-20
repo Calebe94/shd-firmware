@@ -2,7 +2,7 @@
     <h3>Configurações</h3>
 </center>
 
-<fieldset>
+<fieldset id="device_mode_filedset">
     <legend>Modo de Operação:</legend>
     <form target="_top" action="/set/mode" id="mode" method="POST">
         <input type="radio" id="controller" name="mode" value="controller">
