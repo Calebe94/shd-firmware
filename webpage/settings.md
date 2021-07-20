@@ -2,7 +2,7 @@
     <h3>Configurações</h3>
 </center>
 
-<fieldset>
+<fieldset id="device_mode_filedset">
     <legend>Modo de Operação:</legend>
     <form target="_top" action="/set/mode" id="mode" method="POST">
         <input type="radio" id="controller" name="mode" value="controller">
@@ -41,5 +41,13 @@
             </div>
         </div>
     </div>
+</fieldset>
+
+<fieldset id="phone_number_fieldset">
+    <legend>Telefone:</legend>
+    <form target="_top" action="/set/phone" id="phone_number" method="POST">
+        <input type="tel" name="phone" id="phone" placeholder="Telefone" pattern="^\(?(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\)? ?(?:[2-8]|9[1-9])[0-9]{3}\-?[0-9]{4}$">
+        <input onclick="redirect();" type="submit" value="Confirmar">
+    </form>
 </fieldset>
 

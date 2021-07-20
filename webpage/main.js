@@ -43,22 +43,26 @@ function check_mode_input_field()
             var input_id = document.getElementById("controller");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            //devices_fieldset.style.visibility = 'visible';
             devices_fieldset.style.display = 'inline';
             var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
-            //peripheral_id_fieldset.style.visibility = 'hidden';
             peripheral_id_fieldset.style.display = 'none';
+            var device_mode_filedset = document.getElementById("device_mode_filedset");
+            device_mode_filedset.style.display = 'none';
+            var phone_number_fieldset = document.getElementById("phone_number_fieldset");
+            phone_number_fieldset.style.display = 'inline';
         }
         else
         {
             var input_id = document.getElementById("peripheral");
             input_id.checked = true;
             var devices_fieldset = document.getElementById("devices-fieldset");
-            //devices_fieldset.style.visibility = 'hidden';
             devices_fieldset.style.display = 'none';
             var peripheral_id_fieldset = document.getElementById("peripheral_id_fieldset");
-            //peripheral_id_fieldset.style.visibility = 'visible';
             peripheral_id_fieldset.style.display = 'inline';
+            var device_mode_filedset = document.getElementById("device_mode_filedset");
+            device_mode_filedset.style.display = 'inline';
+            var phone_number_fieldset = document.getElementById("phone_number_fieldset");
+            phone_number_fieldset.style.display = 'none';
         }
     });
 }
@@ -87,6 +91,18 @@ function check_devices_table_list()
 
             devices_table.children[0].appendChild(row);
         });
+    });
+}
+
+function check_phone_input_field()
+{
+    get_result_from_route("/get/phone", function(result){
+        const obj = JSON.parse(result);
+        if (obj.phone)
+        {
+            var input_phone = document.getElementsByName("phone")[0]; 
+            input_phone.placeholder = obj.phone;
+        }
     });
 }
 

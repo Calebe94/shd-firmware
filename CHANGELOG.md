@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added phone to settings handler;
+* Added get and set phone routes;
+* Added phone section to settings page;
+* Added dynamic phone placeholder;
+
 ### Changed
+
+* Device mode section is now hide when device is controller;
 
 ### Fixed
 
