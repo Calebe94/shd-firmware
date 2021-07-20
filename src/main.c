@@ -81,8 +81,8 @@ void app_main()
     while(retries-- && !sim7070g_turn_modem_on());
     sim7070g_check_signal_quality();
 
-    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192/2, NULL, 1, NULL);
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
+
 #endif
 
     while(1)
