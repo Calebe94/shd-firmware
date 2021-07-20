@@ -94,6 +94,18 @@ function check_devices_table_list()
     });
 }
 
+function check_phone_input_field()
+{
+    get_result_from_route("/get/phone", function(result){
+        const obj = JSON.parse(result);
+        if (obj.phone)
+        {
+            var input_phone = document.getElementsByName("phone")[0]; 
+            input_phone.placeholder = obj.phone;
+        }
+    });
+}
+
 function redirect()
 {
     window.location.href="/settings.html";
