@@ -10,6 +10,7 @@ idf_component_register(
         "web/web_common.c"
         "settings/settings.c"
         "settings/devices.c"
+        "sim7070g/sim7070g.c"
     INCLUDE_DIRS 
         "."
         "sensor/"
@@ -17,5 +18,6 @@ idf_component_register(
         "serial/"
         "protocol/"
         "web/"
-        "settings"
+        "settings/"
+        "sim7070g/"
 )
