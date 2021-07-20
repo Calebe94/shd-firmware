@@ -48,6 +48,8 @@ function check_mode_input_field()
             peripheral_id_fieldset.style.display = 'none';
             var device_mode_filedset = document.getElementById("device_mode_filedset");
             device_mode_filedset.style.display = 'none';
+            var phone_number_fieldset = document.getElementById("phone_number_fieldset");
+            phone_number_fieldset.style.display = 'inline';
         }
         else
         {
@@ -59,6 +61,8 @@ function check_mode_input_field()
             peripheral_id_fieldset.style.display = 'inline';
             var device_mode_filedset = document.getElementById("device_mode_filedset");
             device_mode_filedset.style.display = 'inline';
+            var phone_number_fieldset = document.getElementById("phone_number_fieldset");
+            phone_number_fieldset.style.display = 'none';
         }
     });
 }
