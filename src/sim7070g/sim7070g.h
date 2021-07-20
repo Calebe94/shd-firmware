@@ -24,9 +24,13 @@ void sim7070g_setup(void);
 
 void sim7070g_init(void);
 
-void sim7070g_send(const char*);
+void sim7070g_send(const char *);
 
-void sim7070g_event_handler_task(void *pvParameters);
+void sim7070g_send_at(const char *);
+
+void sim7070g_send_sms(const char *, const char *);
+
+void sim7070g_event_handler_task(void *);
 
 bool sim7070g_turn_modem_on(void);
 

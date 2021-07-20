@@ -87,6 +87,57 @@ void sim7070g_send(const char *command)
 {
     ESP_LOGI(TAG, "sim7070g_send: %s", command);
     uart_write_bytes(SIM7070G_PORT, command, strlen(command));
+    ESP_ERROR_CHECK(uart_wait_tx_done(SIM7070G_PORT, 500));
+}
+
+void sim7070g_send_at(const char *command)
+{
+    uart_write_bytes(SIM7070G_PORT, command, strlen(command));
+    uart_write_bytes(SIM7070G_PORT, "\r", 1);
+    ESP_ERROR_CHECK(uart_wait_tx_done(SIM7070G_PORT, 500));
+}
+
+void sim7070g_send_sms(const char *number, const char *message)
+{
+    ESP_LOGI(TAG, "Enviando sms: %s - %s", number, message);
+    uint8_t data[128], length = 0;
+    char command[64];
+    ESP_LOGI(TAG, "Enviando: AT+CMGF=1");
+    sim7070g_send_at("AT+CMGF=1");
+    vTaskDelay(pdMS_TO_TICKS(300));
+
+    uart_get_buffered_data_len(1, (size_t*)&length);
+
+    length = uart_read_bytes(1, data, length, 100);
+    ESP_LOGI(TAG, "resposta: %s", data);
+    if(length > 1 && (strstr((char*)data, "OK") != NULL))
+    {
+        snprintf(command, 64, "AT+CMGS=\"%s\"", number);
+        ESP_LOGI(TAG, "comando: %s", command);
+        sim7070g_send_at(command);
+        vTaskDelay(pdMS_TO_TICKS(300));
+        memset(data, '\0', 128);
+        uart_get_buffered_data_len(1, (size_t*)&length);
+        length = uart_read_bytes(1, data, length, 100);
+        ESP_LOGI(TAG, "resposta: %s", data);
+        if(length > 1 && (strstr((char*)data, ">") != NULL))
+        {
+            memset(data, '\0', 128);
+            memset(command, '\0', 64);
+            snprintf(command, 64, "%s%c", message, (char)0x1A);
+            ESP_LOGI(TAG, "mensagem: %s", message);
+            sim7070g_send(command);
+            vTaskDelay(pdMS_TO_TICKS(300));
+            uart_get_buffered_data_len(1, (size_t*)&length);
+            length = uart_read_bytes(1, data, length, 100);
+            ESP_LOGI(TAG, "resposta: %s", data);
+            if(length > 1 && (strstr((char*)data, "OK") != NULL))
+            {
+                ESP_LOGI(TAG, "Message Sended!");
+            }
+        }
+
+    }
 }
 
 void sim7070g_event_handler_task(void *pvParameters)
