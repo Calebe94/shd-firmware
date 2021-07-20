@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added support to **SIM7070G** module;
+* Added function to send **SMS**;
+
 ### Changed
 
 ### Fixed
