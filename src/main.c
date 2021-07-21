@@ -100,7 +100,7 @@ void app_main()
     settings_set_mode(PERIPHERAL);
     settings_update();
 #endif
-wifi_ap_ssid
+
     init_wifi_ap();
 
     ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
