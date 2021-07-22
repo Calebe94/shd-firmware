@@ -32,8 +32,11 @@ void rs485_setup(void)
         .rx_flow_ctrl_thresh = 122,
         .source_clk = UART_SCLK_APB,
     };
-
+    #ifdef CONTROLLER_FIRMWARE
+    ESP_ERROR_CHECK(uart_driver_install(UART_PORT, BUFSIZE * 2, 0, 127, &rs485_queue, 0));
+    #else
     ESP_ERROR_CHECK(uart_driver_install(UART_PORT, BUFSIZE * 2, BUFSIZE*2, 127, &rs485_queue, 0));
+    #endif
 
     // Configure UART parameters
     ESP_ERROR_CHECK(uart_param_config(UART_PORT, &uart_config));
@@ -141,4 +144,9 @@ void rs485_event_handler_task(void *pvParameters)
     free(dtmp);
     dtmp = NULL;
     vTaskDelete(NULL);
+}
+
+void rs485_flush(void)
+{
+    uart_flush_input(UART_PORT);
 }

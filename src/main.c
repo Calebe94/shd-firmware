@@ -105,7 +105,7 @@ void app_main()
 
     ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
     protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
-    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
+
 
 #ifdef CONTROLLER_FIRMWARE
     sim7070g_init();
@@ -115,7 +115,8 @@ void app_main()
     sim7070g_check_signal_quality();
 
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
-
+#else
+    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
 #endif
 
     while(1)

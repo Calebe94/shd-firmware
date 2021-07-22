@@ -30,5 +30,6 @@ void rs485_init(void);
 void rs485_send(const char *);
 uint32_t rs485_read(uint8_t *);
 void rs485_event_handler_task(void *pvParameters);
+void rs485_flush();
 
 #endif

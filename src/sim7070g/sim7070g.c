@@ -44,13 +44,14 @@ void sim7070g_setup(void)
         .source_clk = UART_SCLK_APB,
     };
 
-    ESP_ERROR_CHECK(uart_driver_install(SIM7070G_PORT, 1024 * 2, 1024*2, 127, &sim7070g_queue, 0));
+    //ESP_ERROR_CHECK(uart_driver_install(SIM7070G_PORT, 1024 * 2, 1024*2, 127, &sim7070g_queue, 0));
+    ESP_ERROR_CHECK(uart_driver_install(SIM7070G_PORT, 127*2, 0, 0, NULL, 0));
     ESP_ERROR_CHECK(uart_param_config(SIM7070G_PORT, &uart_config));
 
     ESP_ERROR_CHECK(uart_set_pin(SIM7070G_PORT, SIM7070G_TXD, SIM7070G_RXD, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
     
-    uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
-    uart_pattern_queue_reset(SIM7070G_PORT, 1024);
+    //uart_enable_pattern_det_baud_intr(SIM7070G_PORT, '\n', 1, 9, 0, 0);
+    uart_pattern_queue_reset(SIM7070G_PORT, 127);
 }
 
 void sim7070g_init(void)
