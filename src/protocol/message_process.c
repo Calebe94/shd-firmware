@@ -171,6 +171,7 @@ void get_readings_timer_callback(void *argv)
 
         for (uint8_t index = 0; index < devices_get_length(); index++)
         {
+            uint8_t data[128], length = 0;
             uint8_t data_to_send[MAX_DATA_LENGTH];
             protocol_data_raw_t raw_data_to_send = {
                 .id = device_get_id(index), // Para o periférico
@@ -179,8 +180,21 @@ void get_readings_timer_callback(void *argv)
             };
             protocol_create_message(raw_data_to_send, (char *)data_to_send);
             ESP_LOGI(TAG, "Enviando para periférico %d: %s", device_get_id(index), (char*)data_to_send);
+            rs485_flush();
             rs485_send((char*)data_to_send);
+
             vTaskDelay(pdMS_TO_TICKS(1000));
+
+            uart_get_buffered_data_len(UART_PORT, (size_t*)&length);
+            length = uart_read_bytes(UART_PORT, data, length, 100);
+            protocol_data_raw_t data_parsed;
+            if(protocol_message_parse((char*)data, &data_parsed))
+            {
+                ESP_LOGI(TAG, "resposta: %d - %s", length, data);
+                on_message_event_handler(data_parsed);
+                ESP_LOGI(TAG, "id: %d - action: %d - data: %s",
+                    data_parsed.id, data_parsed.action, (char*)data_parsed.data);
+            }
         }
         vTaskDelay(pdMS_TO_TICKS(10000));
     }
