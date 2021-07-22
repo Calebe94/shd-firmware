@@ -10,16 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Added rs485 wait transmission
+* Added rs485 flush function;
+* Added macro condition to initialize rs485 module. Now only the peripheral firmware will have RX queue;
 
 ### Changed
 
 * Updated wifi ssid name depending on the mode and settings;
+* Changed SIM7070G queues sizes;
+* Changed get readings function to send request and read the response;
 
 ### Fixed
 
 * Fixed typo in main;
 
 ### Removed
+
+* Removed SIM7070G TX queue;
+* Removed `message_process_handler()` from controller firmware;
 
 ## [0.9.0]
 
