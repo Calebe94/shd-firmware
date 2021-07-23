@@ -12,21 +12,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added rs485 wait transmission
 * Added rs485 flush function;
 * Added macro condition to initialize rs485 module. Now only the peripheral firmware will have RX queue;
+* Added response box classes and ids to `modest.css`;
+* Added functions to create`success` and `failure` responses;
 
 ### Changed
 
 * Updated wifi ssid name depending on the mode and settings;
 * Changed SIM7070G queues sizes;
 * Changed get readings function to send request and read the response;
+* Moved css from `_header.html` to `modest.css` file;
+* Chaged `POST` routes to return the new response page with `success` or `failure` messages;
 
 ### Fixed
 
 * Fixed typo in main;
+* Fixed index page links;
 
 ### Removed
 
 * Removed SIM7070G TX queue;
 * Removed `message_process_handler()` from controller firmware;
+* Removed `style css` from `_header.html` file;
 
 ## [0.9.0]
 

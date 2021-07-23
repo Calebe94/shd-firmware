@@ -42,6 +42,7 @@ esp_err_t id_set_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
+    char response[1024];
 
     common_parse_url_query_param(req, buffer);
     ESP_LOGI(TAG, "id request received: %s", buffer);
@@ -58,11 +59,13 @@ esp_err_t id_set_handler(httpd_req_t *req)
         settings_set_id((uint8_t)ret);
 
         settings_update();
-        httpd_resp_sendstr(req, "OK");
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
     }
     else
     {
-        httpd_resp_sendstr(req, "ERROR");
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
     }
 
 	return ESP_OK;
@@ -82,6 +85,8 @@ esp_err_t mode_set_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
+    char response[1024];
+
     settings_mode_t device_mode = PERIPHERAL_DEVICE;
 
     common_parse_url_query_param(req, buffer);
@@ -98,11 +103,13 @@ esp_err_t mode_set_handler(httpd_req_t *req)
         settings_set_mode((settings_mode_t)device_mode);
         settings_update();
 
-        httpd_resp_sendstr(req, "OK");
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
     }
     else
     {
-        httpd_resp_sendstr(req, "ERROR");
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
     }
 
 	return ESP_OK;
@@ -131,6 +138,7 @@ esp_err_t device_add_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
+    char response[1024];
 
     common_parse_url_query_param(req, buffer);
     ESP_LOGI(TAG, "add device id request received: %s", buffer);
@@ -147,12 +155,14 @@ esp_err_t device_add_handler(httpd_req_t *req)
         if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
         {
             device_add(ret);
-            httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+            web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+            httpd_resp_sendstr(req, response);
             devices_update();
         }
         else
         {
-            httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
+            web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+            httpd_resp_sendstr(req, response);
         }
     }
     else
@@ -169,6 +179,7 @@ esp_err_t device_delete_handler(httpd_req_t *req)
     char *ptr;
     long ret = 0;
     char *token = strtok((char*)req->uri, "/delete/device/");
+    char response[1024];
 
     if (token != NULL)
     {
@@ -178,12 +189,15 @@ esp_err_t device_delete_handler(httpd_req_t *req)
     if(ret > 0 && ret < MAX_DEV_ID_LENGTH)
     {
         device_delete(ret);
-        httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+        //httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
         devices_update();
     }
     else
     {
-        httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
     }
 
     return ESP_OK;
@@ -219,7 +233,7 @@ esp_err_t phone_set_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
-
+    char response[1024];
     common_parse_url_query_param(req, buffer);
     ESP_LOGI(TAG, "set phone request received: %s", buffer);
 
@@ -230,11 +244,13 @@ esp_err_t phone_set_handler(httpd_req_t *req)
         settings_set_phone(param);
 
         settings_update();
-        httpd_resp_sendstr(req, "OK");
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
     }
     else
     {
-        httpd_resp_sendstr(req, "ERROR");
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
     }
 
 	return ESP_OK;   
