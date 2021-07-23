@@ -15,6 +15,7 @@ typedef struct settings {
     settings_mode_t mode;
     char phone[20]; // O máximo pode ser 18 com terminador nulo. 20 é o coeficiente de cagaço.
     char local[128];
+    int interval;
 } settings_t;
 
 void settings_load(void);
@@ -36,5 +37,9 @@ void settings_set_mode(settings_mode_t);
 void settings_set_local(char*);
 
 char *settings_get_local(void);
+
+int settings_get_interval(void);
+
+void settings_set_interval(int);
 
 #endif
