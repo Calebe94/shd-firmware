@@ -38,4 +38,10 @@ esp_err_t phone_set_handler(httpd_req_t *req);
 // Creating phone get route callback handler.
 esp_err_t phone_get_handler(httpd_req_t *req);
 
+// Creating local set route callback handler.
+esp_err_t local_set_handler(httpd_req_t *req);
+
+// Creating local get route callback handler.
+esp_err_t local_get_handler(httpd_req_t *req);
+
 #endif

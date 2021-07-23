@@ -31,6 +31,7 @@ void settings_load(void)
         cJSON * json_id = cJSON_GetObjectItemCaseSensitive(json, "id");
         cJSON * json_mode = cJSON_GetObjectItemCaseSensitive(json, "mode");
         cJSON * json_phone = cJSON_GetObjectItemCaseSensitive(json, "phone");
+        cJSON * json_local = cJSON_GetObjectItemCaseSensitive(json, "local");
 
         if (cJSON_IsNumber(json_id))
         {
@@ -53,7 +54,13 @@ void settings_load(void)
         {
             strncpy(global_settings.phone, json_phone->valuestring, 20);
         }
+
+        if (cJSON_IsString(json_local))
+        {
+            strncpy(global_settings.local, json_local->valuestring, 128);
+        }
     }
+    cJSON_Delete(json);
 }
 
 void settings_update()
@@ -64,21 +71,25 @@ void settings_update()
     cJSON *json_id = NULL;
     cJSON *json_mode = NULL;
     cJSON *json_phone = NULL;
+    cJSON *json_local = NULL;
 
     json_settings = cJSON_CreateObject();
     json_id = cJSON_CreateNumber(global_settings.id);
     json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"controller":"peripheral"));
     json_phone = cJSON_CreateString(global_settings.phone);
+    json_local = cJSON_CreateString(global_settings.local);
 
     cJSON_AddItemToObject(json_settings, "id", json_id);
     cJSON_AddItemToObject(json_settings, "mode", json_mode);
     cJSON_AddItemToObject(json_settings, "phone", json_phone);
+    cJSON_AddItemToObject(json_settings, "local", json_local);
     string = cJSON_Print(json_settings);
 
     ESP_LOGI(TAG, "JSON File: \n%s", string);
     json_file = fopen(SETTINGS_FILE, "w");
     fprintf(json_file, string);
     fclose(json_file);
+    cJSON_Delete(json_settings);
 }
 
 uint8_t settings_get_id(void)
@@ -109,4 +120,14 @@ void settings_set_phone(char *phone)
 char *settings_get_phone(void)
 {
     return global_settings.phone;
+}
+
+void settings_set_local(char *local)
+{
+    strncpy(global_settings.local, local, 128);
+}
+
+char *settings_get_local(void)
+{
+    return (char*)global_settings.local;
 }

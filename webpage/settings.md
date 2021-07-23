@@ -51,3 +51,10 @@
     </form>
 </fieldset>
 
+<fieldset id="local_fieldset">
+    <legend>Endereço:</legend>
+    <form target="_top" action="/set/local" id="local" method="POST">
+        <input type="text" name="local" id="local_address" placeholder="Endereço">
+        <input onclick="redirect();" type="submit" value="Confirmar">
+    </form>
+</fieldset>

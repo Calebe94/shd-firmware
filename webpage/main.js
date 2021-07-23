@@ -50,6 +50,8 @@ function check_mode_input_field()
             device_mode_filedset.style.display = 'none';
             var phone_number_fieldset = document.getElementById("phone_number_fieldset");
             phone_number_fieldset.style.display = 'inline';
+            var local_fieldset = document.getElementById("local_fieldset");
+            local_fieldset.style.display = 'inline';
         }
         else
         {
@@ -63,6 +65,8 @@ function check_mode_input_field()
             device_mode_filedset.style.display = 'inline';
             var phone_number_fieldset = document.getElementById("phone_number_fieldset");
             phone_number_fieldset.style.display = 'none';
+            var local_fieldset = document.getElementById("local_fieldset");
+            local_fieldset.style.display = 'none';
         }
     });
 }
@@ -102,6 +106,18 @@ function check_phone_input_field()
         {
             var input_phone = document.getElementsByName("phone")[0]; 
             input_phone.placeholder = obj.phone;
+        }
+    });
+}
+
+function check_local_input_field()
+{
+    get_result_from_route("/get/local", function(result){
+        const obj = JSON.parse(result);
+        if (obj.local)
+        {
+            var input_local = document.getElementsByName("local")[0]; 
+            input_local.placeholder = obj.local;
         }
     });
 }
