@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added `utils` library with some helpers such as `str_replace()`, `str_split()` and `url_decode()`;
+
 ### Changed
 
 ### Fixed
