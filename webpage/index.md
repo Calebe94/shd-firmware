@@ -6,7 +6,7 @@ Nesta página você consegue configurar o seu dispositivo para operar de acordo 
 e também pode verificar as últimas leituras.
 
 
-### [Configurações]
+### [Configurações](/settings.html)
 
 Na página de configurações você pode gerenciar o **Modo de Operação** do dispositivo, e o seu respectivo **ID**.
 
@@ -24,11 +24,9 @@ O **ID** é a identificação do dispositivo na rede **RS485** (Rede utilizada p
 
 Este **ID** é um número compreendido entre **1** e **254**.
 
-### [Leituras]
+### [Leituras](/readings.html)
 
 ###### Esta página apresenta a última leitura do sensor.
 
 Portanto nesta página você pode acompanhar em tempo real a leitura do hidrômetro.
 
-[Configurações]: /settings.html
-[Leituras]: /readings.html
