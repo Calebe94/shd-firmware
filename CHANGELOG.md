@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.11.0]
+
+### Added
+
 * Added `utils` library with some helpers such as `str_replace()`, `str_split()` and `url_decode()`;
 * Added settings `set` and `get` address routes;
 * Added address section on settings page;
@@ -240,7 +250,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.10.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.11.0...main
+[0.11.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.10.0...0.11.0
 [0.10.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.9.0...0.10.0
 [0.9.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.8.0...0.9.0
 [0.8.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.7.0...0.8.0
