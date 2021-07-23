@@ -9,6 +9,7 @@
 #include "sensor/flowsensor.h"
 #include "settings/settings.h"
 #include "settings/devices.h"
+#include "utils/utils.h"
 
 static const char * TAG = "SETTINGS_API";
 
@@ -25,6 +26,8 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/get/devices", .method = HTTP_GET, .handler = devices_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/phone", .method = HTTP_POST, .handler = phone_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/phone", .method = HTTP_GET, .handler = phone_get_handler, .user_ctx = NULL},
+	{ .uri = "/set/local", .method = HTTP_POST, .handler = local_set_handler, .user_ctx = NULL},
+	{ .uri = "/get/local", .method = HTTP_GET, .handler = local_get_handler, .user_ctx = NULL},
 };
 
 // Creating the initialize settings routes.
@@ -261,6 +264,45 @@ esp_err_t phone_get_handler(httpd_req_t *req)
 {
     char buffer[60];
     sprintf(buffer, "{ \"phone\": \"%s\" }", settings_get_phone());
+    httpd_resp_sendstr(req, buffer);
+    return ESP_OK;
+}
+
+// Creating local set route callback handler.
+esp_err_t local_set_handler(httpd_req_t *req)
+{
+    char buffer[200];
+	char param[128];
+    char response[1024];
+    common_parse_url_query_param(req, buffer);
+    ESP_LOGI(TAG, "set local request received: %s", buffer);
+
+    if (httpd_query_key_value(buffer, "local", param, sizeof(param)) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "local: %s", param);
+        str_remove_junk_char(param);
+        char * address = url_decode(param);
+
+        settings_set_local(address);
+
+        settings_update();
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
+    }
+    else
+    {
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
+    }
+
+    return ESP_OK;
+}
+
+// Creating local get route callback handler.
+esp_err_t local_get_handler(httpd_req_t *req)
+{
+    char buffer[160];
+    sprintf(buffer, "{\"local\": \"%s\"}", settings_get_local());
     httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }
