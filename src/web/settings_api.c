@@ -28,6 +28,8 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/get/phone", .method = HTTP_GET, .handler = phone_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/local", .method = HTTP_POST, .handler = local_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/local", .method = HTTP_GET, .handler = local_get_handler, .user_ctx = NULL},
+	{ .uri = "/set/interval", .method = HTTP_POST, .handler = interval_set_handler, .user_ctx = NULL},
+	{ .uri = "/get/interval", .method = HTTP_GET, .handler = interval_get_handler, .user_ctx = NULL},
 };
 
 // Creating the initialize settings routes.
@@ -303,6 +305,49 @@ esp_err_t local_get_handler(httpd_req_t *req)
 {
     char buffer[160];
     sprintf(buffer, "{\"local\": \"%s\"}", settings_get_local());
+    httpd_resp_sendstr(req, buffer);
+    return ESP_OK;
+}
+
+// Creating interval set route callback handler.
+esp_err_t interval_set_handler(httpd_req_t *req)
+{
+    char buffer[100];
+	char param[32];
+    char response[1024];
+
+    common_parse_url_query_param(req, buffer);
+    ESP_LOGI(TAG, "interval request received: %s", buffer);
+
+    if (httpd_query_key_value(buffer, "interval", param, sizeof(param)) == ESP_OK)
+    {
+        char *ptr;
+        long ret;
+
+        ret = strtol(param, &ptr, 10);
+
+        ESP_LOGI(TAG, "interval: %d", (int)ret);
+
+        settings_set_interval((int)ret);
+
+        settings_update();
+        web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+        httpd_resp_sendstr(req, response);
+    }
+    else
+    {
+        web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+        httpd_resp_sendstr(req, response);
+    }
+
+	return ESP_OK;
+}
+
+// Creating interval get route callback handler.
+esp_err_t interval_get_handler(httpd_req_t *req)
+{
+    char buffer[60];
+    sprintf(buffer, "{ \"interval\": \"%d\" }", settings_get_interval());
     httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }

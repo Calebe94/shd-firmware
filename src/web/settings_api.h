@@ -44,4 +44,10 @@ esp_err_t local_set_handler(httpd_req_t *req);
 // Creating local get route callback handler.
 esp_err_t local_get_handler(httpd_req_t *req);
 
+// Creating interval set route callback handler.
+esp_err_t interval_set_handler(httpd_req_t *req);
+
+// Creating interval get route callback handler.
+esp_err_t interval_get_handler(httpd_req_t *req);
+
 #endif
