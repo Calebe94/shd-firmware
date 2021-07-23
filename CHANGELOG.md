@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.10.0]
+
+### Added
+
 * Added rs485 wait transmission
 * Added rs485 flush function;
 * Added macro condition to initialize rs485 module. Now only the peripheral firmware will have RX queue;
@@ -225,7 +235,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.9.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.10.0...main
+[0.10.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.9.0...0.10.0
 [0.9.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.8.0...0.9.0
 [0.8.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.7.0...0.8.0
 [0.7.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.6.0...0.7.0
