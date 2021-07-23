@@ -58,3 +58,11 @@
         <input onclick="redirect();" type="submit" value="Confirmar">
     </form>
 </fieldset>
+
+<fieldset id="interval_fieldset">
+    <legend>Intervalo de envio(minutos):</legend>
+    <form target="_top" action="/set/interval" id="interval" method="POST">
+        <input type="text" name="interval" id="interval_field" placeholder="Minutos (padrão 30 min.)" pattern="^[1-9][0-9]*$">
+        <input onclick="redirect();" type="submit" value="Confirmar">
+    </form>
+</fieldset>

@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Added interval `set` and `get` settings helpers;
+* Added local address section on settings page;
+* Added settings set and get interval routes;
 
 ### Changed
 
