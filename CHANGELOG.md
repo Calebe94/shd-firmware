@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added rs485 flush function;
 * Added macro condition to initialize rs485 module. Now only the peripheral firmware will have RX queue;
 * Added response box classes and ids to `modest.css`;
+* Added functions to create`success` and `failure` responses;
 
 ### Changed
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Changed SIM7070G queues sizes;
 * Changed get readings function to send request and read the response;
 * Moved css from `_header.html` to `modest.css` file;
+* Chaged `POST` routes to return the new response page with `success` or `failure` messages;
 
 ### Fixed
 
