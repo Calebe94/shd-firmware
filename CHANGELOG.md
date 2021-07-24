@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.13.1]
+
+### Added
+
 * Added `compile`, `flash` and `monitor` Makefile targets;
 * Added `partition` Makefile target to upload `data` folder to flash memory;
 
@@ -280,7 +290,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.1...main
+[0.13.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.0...0.13.1
 [0.13.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.12.0...0.13.0
 [0.12.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.11.0...0.12.0
 [0.11.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.10.0...0.11.0
