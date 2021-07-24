@@ -11,6 +11,8 @@
 #include "message_process.h"
 #include "sensor/flowsensor.h"
 #include "settings/devices.h"
+#include "settings/settings.h"
+#include "sim7070g/sim7070g.h"
 
 static const char *TAG = "PROTOCOL/MESSAGE";
 
@@ -194,6 +196,13 @@ void get_readings_timer_callback(void *argv)
                 on_message_event_handler(data_parsed);
                 ESP_LOGI(TAG, "id: %d - action: %d - data: %s",
                     data_parsed.id, data_parsed.action, (char*)data_parsed.data);
+                char *phone = settings_get_phone();
+                if(strcmp(phone, "") > 0)
+                {
+                    char message[512];
+                    snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)data_parsed.data);
+                    sim7070g_send_sms(phone, message);
+                }
             }
         }
         vTaskDelay(pdMS_TO_TICKS(10000));
