@@ -29,4 +29,7 @@ flash:
 monitor:
 	pio device monitor --baud ${baudrate} --port ${port} -f colorize
 
+partition:
+	pio run -e ${device} -t uploadfs --upload-port ${port}
+
 .PHONY: test webpage
