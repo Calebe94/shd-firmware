@@ -205,7 +205,7 @@ void get_readings_timer_callback(void *argv)
                 }
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));
     }
 }
 #endif
