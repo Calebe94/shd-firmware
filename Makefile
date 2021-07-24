@@ -8,6 +8,10 @@ TEST_SRCS=test/test.c src/protocol/protocol.c
 CC=gcc
 TEST_BIN=test/test.bin
 
+device=controller
+port=/dev/ttyUSB0
+baudrate=115200
+
 test:
 	${CC} ${TEST_SRCS} -o ${TEST_BIN}
 	./${TEST_BIN}
@@ -15,5 +19,14 @@ test:
 webpage:
 	${SSG5} ${src_folder} ${data_folder} ${page_title} ${domain}
 	rm -fr ${data_folder}/.files ${data_folder}/sitemap.xml
+
+compile:
+	pio run -e ${device}
+
+flash:
+	pio run -e ${device} -t upload --upload-port ${port}
+
+monitor:
+	pio device monitor --baud ${baudrate} --port ${port} -f colorize
 
 .PHONY: test webpage
