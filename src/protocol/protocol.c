@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -30,7 +31,7 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
 {
     bool status = false;
 
-    if ( ((uint8_t)serial_data[0]) == device_settings.id)
+    if ( serial_data != NULL )
     {
         data->id = (uint8_t)serial_data[0];
         data->action = (uint8_t)serial_data[1];
@@ -48,7 +49,7 @@ bool protocol_message_parse(char *serial_data, protocol_data_raw_t *data)
 bool protocol_create_message(protocol_data_raw_t data, char *serial_data)
 {
     bool status = false;
-    if (data.id != device_settings.id)
+    if (serial_data != NULL)
     {
         serial_data[0] = data.id;
         serial_data[1] = data.action;
