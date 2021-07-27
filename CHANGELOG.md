@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Changed create and parse message verification;
+* Changed controller and peripheral communication;
 
 ### Fixed
 
