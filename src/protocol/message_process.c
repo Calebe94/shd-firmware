@@ -21,19 +21,32 @@ static void send_reading_to_master(void)
 {
     ESP_LOGI(TAG, "send_reading_to_master");
     uint8_t data_to_send[MAX_DATA_LENGTH];
+    uint8_t response_to_send[MAX_DATA_LENGTH];
     float leitura_litros = flowsensor_get_litros();
     char string_leitura_litros[10];
     sprintf(string_leitura_litros, "%.2f", leitura_litros);
-    protocol_data_raw_t raw_data_to_send = {
+    protocol_data_raw_t response = {
         .id = 255, // Para o controlador
-        .action = 0b11, // get - leitura
-        .length = strlen(string_leitura_litros) //
+        .action = 0b11, // set - leitura
+        //.length = strlen(string_leitura_litros)
     };
 
+    protocol_data_raw_t raw_data_to_send = {
+        .id = settings_get_id(),
+        .action = 0b11,
+        .length = strlen(string_leitura_litros)
+    };
     strcpy((char *)raw_data_to_send.data, (char *)string_leitura_litros);
     protocol_create_message(raw_data_to_send, (char *)data_to_send);
-    ESP_LOGI(TAG, "Enviando leitura para o controlador: %s", (char*)data_to_send);
-    rs485_send((char*)data_to_send);
+
+    response.length = strlen((char*)data_to_send);
+    strcpy((char *)response.data, (char *)data_to_send);
+
+    protocol_create_message(response, (char *)response_to_send);
+
+    ESP_LOGI(TAG, "data_to_send: %s", (char*)data_to_send);
+    ESP_LOGI(TAG, "Enviando leitura para o controlador: %s", (char*)response_to_send);
+    rs485_send((char*)response_to_send);
 }
 #endif
 
@@ -43,6 +56,7 @@ static void on_message_event_handler(protocol_data_raw_t data)
     protocol_action_t action = protocol_get_action(data);
     protocol_address_t address = protocol_get_address(data);
     ESP_LOGI(TAG, "on_message_event_handler");
+    ESP_LOGI(TAG, "id: %d", (uint8_t)data.id);
     ESP_LOGI(TAG, "action: %d", (uint8_t)action);
     ESP_LOGI(TAG, "address: %d", (uint8_t)address);
     switch (address)
@@ -99,8 +113,11 @@ void message_process_handler(void *pvParameters)
                     protocol_data_raw_t data_parsed;
                     if(protocol_message_parse((char*)dtmp, &data_parsed))
                     {
-                        ESP_LOGI(TAG, "A mensagem %s é para mim! \n", (const char*)dtmp);
-                        on_message_event_handler(data_parsed);
+                        if(protocol_check_id(data_parsed))
+                        {
+                            ESP_LOGI(TAG, "A mensagem %s é para mim! \n", (const char*)dtmp);
+                            on_message_event_handler(data_parsed);
+                        }
                     }
                     //uart_write_bytes(UART_PORT, (const char*) dtmp, event.size);
                     break;
@@ -175,6 +192,8 @@ void get_readings_timer_callback(void *argv)
         {
             uint8_t data[128], length = 0;
             uint8_t data_to_send[MAX_DATA_LENGTH];
+            protocol_data_raw_t response, leitura;
+
             protocol_data_raw_t raw_data_to_send = {
                 .id = device_get_id(index), // Para o periférico
                 .action = 0b10, // get - leitura
@@ -189,21 +208,37 @@ void get_readings_timer_callback(void *argv)
 
             uart_get_buffered_data_len(UART_PORT, (size_t*)&length);
             length = uart_read_bytes(UART_PORT, data, length, 100);
-            protocol_data_raw_t data_parsed;
-            if(protocol_message_parse((char*)data, &data_parsed))
+            if(length > 0)
             {
-                ESP_LOGI(TAG, "resposta: %d - %s", length, data);
-                on_message_event_handler(data_parsed);
-                ESP_LOGI(TAG, "id: %d - action: %d - data: %s",
-                    data_parsed.id, data_parsed.action, (char*)data_parsed.data);
-                char *phone = settings_get_phone();
-                if(strcmp(phone, "") > 0)
+                ESP_LOGI(TAG, "Dados recebidos! %d", length);
+                if(protocol_message_parse((char*)data, &response))
                 {
-                    char message[512];
-                    snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)data_parsed.data);
-                    sim7070g_send_sms(phone, message);
+                    if(response.id == settings_get_id())
+                    {
+                        protocol_message_parse((char*)response.data, &leitura);
+                        if(leitura.id == device_get_id(index))
+                        {
+                            ESP_LOGI(TAG, "leitura id: %d - action: %d - data: %s",
+                                leitura.id, leitura.action, (char*)leitura.data);
+                            on_message_event_handler(leitura);
+                        }
+
+                        char *phone = settings_get_phone();
+                        if(strcmp(phone, "") > 0)
+                        {
+                            char message[512];
+                            snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)leitura.data);
+                            sim7070g_send_sms(phone, message);
+                        }
+                    }
                 }
             }
+            else
+            {
+                ESP_LOGI(TAG, "Dispositivo %d não respondeu a requisição...", device_get_id(index));
+            }
+
+            rs485_flush();
         }
         vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));
     }
