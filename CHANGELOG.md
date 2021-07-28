@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Changed create and parse message verification;
 * Changed controller and peripheral communication;
+* Changed `get_readings_timer_callback()` to check if any data is received by the `peripherals`;
 
 ### Fixed
 

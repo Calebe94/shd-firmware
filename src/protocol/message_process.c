@@ -192,6 +192,8 @@ void get_readings_timer_callback(void *argv)
         {
             uint8_t data[128], length = 0;
             uint8_t data_to_send[MAX_DATA_LENGTH];
+            protocol_data_raw_t response, leitura;
+
             protocol_data_raw_t raw_data_to_send = {
                 .id = device_get_id(index), // Para o periférico
                 .action = 0b10, // get - leitura
@@ -206,29 +208,37 @@ void get_readings_timer_callback(void *argv)
 
             uart_get_buffered_data_len(UART_PORT, (size_t*)&length);
             length = uart_read_bytes(UART_PORT, data, length, 100);
-            protocol_data_raw_t response;
-            if(protocol_message_parse((char*)data, &response))
+            if(length > 0)
             {
-                if(response.id == settings_get_id())
+                ESP_LOGI(TAG, "Dados recebidos! %d", length);
+                if(protocol_message_parse((char*)data, &response))
                 {
-                    protocol_data_raw_t leitura;
-                    protocol_message_parse((char*)response.data, &leitura);
-                    if(leitura.id == device_get_id(index))
+                    if(response.id == settings_get_id())
                     {
-                        ESP_LOGI(TAG, "leitura id: %d - action: %d - data: %s",
-                            leitura.id, leitura.action, (char*)leitura.data);
-                        on_message_event_handler(leitura);
-                    }
+                        protocol_message_parse((char*)response.data, &leitura);
+                        if(leitura.id == device_get_id(index))
+                        {
+                            ESP_LOGI(TAG, "leitura id: %d - action: %d - data: %s",
+                                leitura.id, leitura.action, (char*)leitura.data);
+                            on_message_event_handler(leitura);
+                        }
 
-                    char *phone = settings_get_phone();
-                    if(strcmp(phone, "") > 0)
-                    {
-                        char message[512];
-                        snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)data_parsed.data);
-                        sim7070g_send_sms(phone, message);
+                        char *phone = settings_get_phone();
+                        if(strcmp(phone, "") > 0)
+                        {
+                            char message[512];
+                            snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)leitura.data);
+                            sim7070g_send_sms(phone, message);
+                        }
                     }
                 }
             }
+            else
+            {
+                ESP_LOGI(TAG, "Dispositivo %d não respondeu a requisição...", device_get_id(index));
+            }
+
+            rs485_flush();
         }
         vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));
     }
