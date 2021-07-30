@@ -266,3 +266,11 @@ void sim7070g_check_signal_quality(void)
     length = uart_read_bytes(1, data, length, 100);
     ESP_LOGI(TAG, "len: %d - data: %s", length, (char*)data);
 }
+
+size_t sim7070g_read(char *data)
+{
+    size_t length = 0;
+    ESP_ERROR_CHECK(uart_get_buffered_data_len(SIM7070G_PORT, &length));
+    length = uart_read_bytes(SIM7070G_PORT, data, 100);
+    return length;
+}
