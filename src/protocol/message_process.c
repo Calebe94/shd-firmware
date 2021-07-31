@@ -50,13 +50,13 @@ static void send_reading_to_master(void)
 }
 #endif
 
-static void on_message_event_handler(protocol_data_raw_t data)
+static void on_message_event_handler(protocol_data_raw_t leitura)
 {
     char data_string[MAX_DATA_LENGTH];
-    protocol_action_t action = protocol_get_action(data);
-    protocol_address_t address = protocol_get_address(data);
+    protocol_action_t action = protocol_get_action(leitura);
+    protocol_address_t address = protocol_get_address(leitura);
     ESP_LOGI(TAG, "on_message_event_handler");
-    ESP_LOGI(TAG, "id: %d", (uint8_t)data.id);
+    ESP_LOGI(TAG, "id: %d", (uint8_t)leitura.id);
     ESP_LOGI(TAG, "action: %d", (uint8_t)action);
     ESP_LOGI(TAG, "address: %d", (uint8_t)address);
     switch (address)
@@ -73,6 +73,16 @@ static void on_message_event_handler(protocol_data_raw_t data)
             else
             {
                 ESP_LOGI(TAG, "Função SET Litros recebida!");
+                char *phone = settings_get_phone();
+                if(strcmp(phone, "") > 0)
+                {
+                    char message[512];
+                    snprintf(message, 512, "%s - %d - %s", settings_get_local(), leitura.id, (char*)leitura.data);
+                    sim7070g_flush();
+                    sim7070g_send_sms(phone, message);
+                    vTaskDelay(pdMS_TO_TICKS(10000));
+                    sim7070g_flush();
+                }
             }
 #endif
             break;
@@ -221,14 +231,6 @@ void get_readings_timer_callback(void *argv)
                             ESP_LOGI(TAG, "leitura id: %d - action: %d - data: %s",
                                 leitura.id, leitura.action, (char*)leitura.data);
                             on_message_event_handler(leitura);
-                        }
-
-                        char *phone = settings_get_phone();
-                        if(strcmp(phone, "") > 0)
-                        {
-                            char message[512];
-                            snprintf(message, 512, "%s - %d - %s", settings_get_local(), device_get_id(index), (char*)leitura.data);
-                            sim7070g_send_sms(phone, message);
                         }
                     }
                 }
