@@ -43,4 +43,6 @@ void sim7070g_check_signal_quality(void);
 
 size_t sim7070g_read(char *data);
 
+void sim7070g_flush(void);
+
 #endif

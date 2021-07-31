@@ -271,6 +271,12 @@ size_t sim7070g_read(char *data)
 {
     size_t length = 0;
     ESP_ERROR_CHECK(uart_get_buffered_data_len(SIM7070G_PORT, &length));
-    length = uart_read_bytes(SIM7070G_PORT, data, 100);
+    length = uart_read_bytes(SIM7070G_PORT, data, length, 100);
     return length;
+}
+
+void sim7070g_flush(void)
+{
+    uart_flush(SIM7070G_PORT);
+    uart_flush_input(SIM7070G_PORT);
 }

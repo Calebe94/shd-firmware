@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Added function `sim7070g_read()` to get buffered data from `SIM7070G` module;
+* Added function `sim7070g_flush()` to flush buffer from `SIM7070G` module;
 
 ### Changed
 
