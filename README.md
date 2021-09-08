@@ -138,9 +138,10 @@ $ pio device monitor --baud 115200 --port /dev/ttyUSB0 -f colorize
 
 ## Desenvolvedor
 
-| ![](https://assets.gitlab-static.net/uploads/-/system/user/avatar/2382314/avatar.png?width=200) |
-|:------:|
-| [Edimar Calebe Castanho(calebe94@disroot.org)](https://gitlab.com/Calebe94) |
+<div style="align: center; text-align:center;">
+<img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/2382314/avatar.png" width="200px" />
+<div style="text-align: center;"><a href="https://gitlab.com/Calebe94">Edimar Calebe Castanho</a></div>
+</div>
 
 ## Referências
 
