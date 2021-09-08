@@ -50,6 +50,22 @@ static void send_reading_to_master(void)
 }
 #endif
 
+static bool send_readings_by_sms(char *message)
+{
+    bool status = false;
+    char *phone = settings_get_phone();
+
+    if(strcmp(phone, "") > 0)
+    {
+        sim7070g_flush();
+        sim7070g_send_sms(phone, message);
+        vTaskDelay(pdMS_TO_TICKS(10000));
+        sim7070g_flush();
+        status = true;
+    }
+    return status;
+}
+
 static void on_message_event_handler(protocol_data_raw_t leitura)
 {
     char data_string[MAX_DATA_LENGTH];
@@ -73,16 +89,9 @@ static void on_message_event_handler(protocol_data_raw_t leitura)
             else
             {
                 ESP_LOGI(TAG, "Função SET Litros recebida!");
-                char *phone = settings_get_phone();
-                if(strcmp(phone, "") > 0)
-                {
-                    char message[512];
-                    snprintf(message, 512, "%s - %d - %s", settings_get_local(), leitura.id, (char*)leitura.data);
-                    sim7070g_flush();
-                    sim7070g_send_sms(phone, message);
-                    vTaskDelay(pdMS_TO_TICKS(10000));
-                    sim7070g_flush();
-                }
+                char message[512];
+                snprintf(message, 512, "%s - %d - %s", settings_get_local(), leitura.id, (char*)leitura.data);
+                send_readings_by_sms(message);
             }
 #endif
             break;
@@ -242,6 +251,10 @@ void get_readings_timer_callback(void *argv)
 
             rs485_flush();
         }
+
+        char message[512];
+        snprintf(message, 512, "%s - controlador - %.2f", settings_get_local(), flowsensor_get_litros());
+        send_readings_by_sms(message);
         vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));
     }
 }
