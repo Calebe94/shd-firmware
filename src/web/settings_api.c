@@ -246,7 +246,7 @@ esp_err_t phone_set_handler(httpd_req_t *req)
     {
         ESP_LOGI(TAG, "phone: %s", param);
 
-        settings_set_phone(param);
+        settings_set_phone(1, param);
 
         settings_update();
         web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
@@ -265,7 +265,7 @@ esp_err_t phone_set_handler(httpd_req_t *req)
 esp_err_t phone_get_handler(httpd_req_t *req)
 {
     char buffer[60];
-    sprintf(buffer, "{ \"phone\": \"%s\" }", settings_get_phone());
+    sprintf(buffer, "{ \"phone\": \"%s\" }", settings_get_phone(1));
     httpd_resp_sendstr(req, buffer);
     return ESP_OK;
 }

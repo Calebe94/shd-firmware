@@ -50,20 +50,20 @@ static void send_reading_to_master(void)
 }
 #endif
 
-static bool send_readings_by_sms(char *message)
+static void send_readings_by_sms(char *message)
 {
-    bool status = false;
-    char *phone = settings_get_phone();
-
-    if(strcmp(phone, "") > 0)
+    for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
-        sim7070g_flush();
-        sim7070g_send_sms(phone, message);
-        vTaskDelay(pdMS_TO_TICKS(10000));
-        sim7070g_flush();
-        status = true;
+        char *phone = settings_get_phone(index);
+
+        if(strcmp(phone, "") > 0)
+        {
+            sim7070g_flush();
+            sim7070g_send_sms(phone, message);
+            vTaskDelay(pdMS_TO_TICKS(10000));
+            sim7070g_flush();
+        }
     }
-    return status;
 }
 
 static void on_message_event_handler(protocol_data_raw_t leitura)
