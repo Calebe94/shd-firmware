@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.14.0]
+
+### Added
+
 * Enabled sending controller readings via sms;
 
 ### Changed
@@ -312,7 +322,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.2...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.0...main
+[0.14.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.2...0.14.0
 [0.13.2]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.1...0.13.2
 [0.13.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.0...0.13.1
 [0.13.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.12.0...0.13.0
