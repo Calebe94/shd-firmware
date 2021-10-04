@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Changed interrupt type from falling(`GPIO_INTR_NEGEDGE`) to rising edge(`GPIO_INTR_POSEDGE`);
+
 ### Fixed
 
 ### Removed
+
+* Removed additional interrupt function registration;
 
 ## [0.14.0]
 

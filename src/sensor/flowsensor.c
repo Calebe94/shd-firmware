@@ -30,8 +30,7 @@ void flowsensor_setup(void)
     gpio_pad_select_gpio(FLOWSENSOR_GPIO);
     gpio_set_direction(FLOWSENSOR_GPIO, GPIO_MODE_INPUT);
     gpio_pullup_en(FLOWSENSOR_GPIO);
-    gpio_set_intr_type(FLOWSENSOR_GPIO, GPIO_INTR_NEGEDGE);
-    gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
+    gpio_set_intr_type(FLOWSENSOR_GPIO, GPIO_INTR_POSEDGE);
 
     gpio_install_isr_service(0);
     gpio_isr_handler_add(FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
