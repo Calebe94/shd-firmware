@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Fixed
+
+### Removed
+
+## [0.14.1]
+
+### Added
+
+### Changed
+
 * Changed interrupt type from falling(`GPIO_INTR_NEGEDGE`) to rising edge(`GPIO_INTR_POSEDGE`);
 
 ### Fixed
@@ -326,7 +336,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.1...main
+[0.14.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.0...0.14.1
 [0.14.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.2...0.14.0
 [0.13.2]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.1...0.13.2
 [0.13.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.0...0.13.1
