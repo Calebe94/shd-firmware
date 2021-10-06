@@ -32,4 +32,7 @@ monitor:
 partition:
 	pio run -e ${device} -t uploadfs --upload-port ${port}
 
+sim: webpage
+	python data/routes_sim.py
+
 .PHONY: test webpage
