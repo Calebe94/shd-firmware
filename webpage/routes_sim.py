@@ -1,5 +1,5 @@
-from flask import Flask, request, render_template, send_from_directory
-import os, json
+from flask import Flask, request, render_template, send_from_directory, redirect
+import os, json, random
 
 file_path = os.path.realpath(__file__)
 data_path = os.path.dirname(file_path)
@@ -58,7 +58,7 @@ def set_id():
     req = request.form
     global_settings['id'] = req["id"]
     print(global_settings)
-    return 'OK'
+    return redirect('/settings.html')
 
 @app.route("/get/mode", methods=['GET'])
 def get_mode():
@@ -69,47 +69,61 @@ def set_mode():
     req = request.form
     global_settings['mode'] = req["mode"]
     print(global_settings)
-    return 'OK'
+    return redirect('/settings.html')
 
 @app.route("/get/readings", methods=['GET'])
 def get_readings():
-    return '{"litros": 700}'
+    return '{"litros": '+str(random.randint(0, 1000))+'}'
 
 @app.route("/add/device", methods=['POST'])
 def add_device():
+    req = request.form
+    global_devices["devices"].append(int(req["device"]))
+    print(global_devices)
     return 'OK'
 
-@app.route("/delete/device", methods=['POST'])
-def delete_device():
+@app.route("/delete/device/<device>", methods=['POST'])
+def delete_device(device):
+    global_devices["devices"].remove(int(device))
+    print(global_devices)
     return 'OK'
 
 @app.route("/get/devices", methods=['GET'])
 def get_device():
-    return 'OK'
+    return str(json.dumps(global_devices, indent=4))
 
 @app.route("/set/phone", methods=['POST'])
 def set_device():
-    return 'OK'
+    req = request.form
+    global_devices["phone"] = req["phone"]
+    print(global_devices)
+    return redirect('/settings.html')
 
 @app.route("/get/phone", methods=['GET'])
 def get_phone():
-    return '{"phone": "teste"}'
+    return '{"phone": '+str(global_devices["phone"])+'}'
 
 @app.route("/set/local", methods=['POST'])
 def set_local():
-    return 'OK'
+    req = request.form
+    global_devices["local"] = req["local"]
+    print(global_devices)
+    return redirect('/settings.html')
 
 @app.route("/get/local", methods=['GET'])
 def get_local():
-    return '{"local": "teste"}'
+    return '{"local": '+str(global_devices["local"])+'}'
 
 @app.route("/set/interval", methods=['POST'])
 def set_interval():
-    return 'OK'
+    req = request.form
+    global_devices["interval"] = req["interval"]
+    print(global_devices)
+    return redirect('/settings.html')
 
 @app.route("/get/interval", methods=['GET'])
 def get_interval():
-    return '{"interval": "1"}'
+    return '{"interval":'+str(global_devices["interval"])+'}'
 
 ###################################################################################################
 # Main
