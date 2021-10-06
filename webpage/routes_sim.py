@@ -25,6 +25,16 @@ def load_devices():
         devices_json = json.load(devices_file)
     return devices_json
 
+def update_settings():
+    print(global_settings)
+    with open(os.path.join(data_path, "settings.json"), "w") as settings_file:
+        settings_file.write(json.dumps(global_settings, indent = 4))
+
+def update_devices():
+    print(global_devices)
+    with open(os.path.join(data_path, "devices.json"), "w") as devices_file:
+        devices_file.write(json.dumps(global_devices, indent = 4))
+
 ###################################################################################################
 # Flask Routes
 ###################################################################################################
@@ -57,36 +67,36 @@ def get_id():
 def set_id():
     req = request.form
     global_settings['id'] = req["id"]
-    print(global_settings)
+    update_settings()
     return redirect('/settings.html')
 
 @app.route("/get/mode", methods=['GET'])
 def get_mode():
-    return '{"mode": '+str(global_settings["mode"])+'}'
+    return '{"mode": "'+str(global_settings["mode"])+'"}\n'
 
 @app.route("/set/mode", methods=['POST'])
 def set_mode():
     req = request.form
     global_settings['mode'] = req["mode"]
-    print(global_settings)
+    update_settings()
     return redirect('/settings.html')
 
 @app.route("/get/readings", methods=['GET'])
 def get_readings():
-    return '{"litros": '+str(random.randint(0, 1000))+'}'
+    return '{"litros": '+str(random.randint(0, 1000))+'}\n'
 
 @app.route("/add/device", methods=['POST'])
 def add_device():
     req = request.form
     global_devices["devices"].append(int(req["device"]))
-    print(global_devices)
-    return 'OK'
+    update_devices()
+    return redirect('/settings.html')
 
 @app.route("/delete/device/<device>", methods=['POST'])
 def delete_device(device):
     global_devices["devices"].remove(int(device))
-    print(global_devices)
-    return 'OK'
+    update_devices()
+    return redirect('/settings.html')
 
 @app.route("/get/devices", methods=['GET'])
 def get_device():
@@ -95,35 +105,35 @@ def get_device():
 @app.route("/set/phone", methods=['POST'])
 def set_device():
     req = request.form
-    global_devices["phone"] = req["phone"]
-    print(global_devices)
+    global_settings["phone"] = req["phone"]
+    print(global_settings)
     return redirect('/settings.html')
 
 @app.route("/get/phone", methods=['GET'])
 def get_phone():
-    return '{"phone": '+str(global_devices["phone"])+'}'
+    return '{"phone": "'+str(global_settings["phone"])+'"}'
 
 @app.route("/set/local", methods=['POST'])
 def set_local():
     req = request.form
-    global_devices["local"] = req["local"]
-    print(global_devices)
+    global_settings["local"] = req["local"]
+    update_settings()
     return redirect('/settings.html')
 
 @app.route("/get/local", methods=['GET'])
 def get_local():
-    return '{"local": '+str(global_devices["local"])+'}'
+    return '{"local": "'+str(global_settings["local"])+'"}'
 
 @app.route("/set/interval", methods=['POST'])
 def set_interval():
     req = request.form
-    global_devices["interval"] = req["interval"]
-    print(global_devices)
+    global_settings["interval"] = req["interval"]
+    update_settings()
     return redirect('/settings.html')
 
 @app.route("/get/interval", methods=['GET'])
 def get_interval():
-    return '{"interval":'+str(global_devices["interval"])+'}'
+    return '{"interval":'+str(global_settings["interval"])+'}'
 
 ###################################################################################################
 # Main
