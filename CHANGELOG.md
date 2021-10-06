@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.15.0]
+
+### Added
+
 * Added a flask simulator to test webpage and API;
 
 ### Changed
@@ -338,7 +348,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.1...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.15.0...main
+[0.15.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.1...0.15.0
 [0.14.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.0...0.14.1
 [0.14.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.2...0.14.0
 [0.13.2]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.13.1...0.13.2
