@@ -5,3 +5,4 @@ data/*.js
 test/test.bin
 sdkconfig.controller
 sdkconfig.peripheral
+web_sim/
