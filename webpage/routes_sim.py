@@ -102,16 +102,23 @@ def delete_device(device):
 def get_device():
     return str(json.dumps(global_devices, indent=4))
 
-@app.route("/set/phone", methods=['POST'])
-def set_device():
+@app.route("/add/phone", methods=['POST'])
+def set_phone():
     req = request.form
-    global_settings["phone"] = req["phone"]
+    global_settings["phones"].append(req["phone"])
     print(global_settings)
     return redirect('/settings.html')
 
-@app.route("/get/phone", methods=['GET'])
+@app.route("/delete/phone/<phone>", methods=['POST'])
+def delete_phone(phone):
+    global_settings["phones"].remove(str(phone))
+    return redirect('/settings.html')
+
+@app.route("/get/phones", methods=['GET'])
 def get_phone():
-    return '{"phone": "'+str(global_settings["phone"])+'"}'
+    phones_dict = dict()
+    phones_dict["phones"] = global_settings["phones"]
+    return str(json.dumps(phones_dict, indent=4))
 
 @app.route("/set/local", methods=['POST'])
 def set_local():
