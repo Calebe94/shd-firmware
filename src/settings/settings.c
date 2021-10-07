@@ -57,12 +57,9 @@ void settings_load(void)
         uint8_t index = 0;
         cJSON_ArrayForEach(json_phone, json_phones)
         {
-            cJSON *json_phone_string = cJSON_GetObjectItemCaseSensitive(json_phone, "phone");
-
-            if (cJSON_IsString(json_phone_string))
+            if (cJSON_IsString(json_phone))
             {
-                settings_set_phone(index++, json_phone_string->valuestring);
-                //strncpy(global_settings.phone, json_phone_string->valuestring, 20);
+                settings_set_phone(index++, json_phone->valuestring);
             }
         }
 
@@ -98,10 +95,8 @@ void settings_update()
 
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
-        cJSON *json_phone = cJSON_CreateObject();
+        cJSON *json_phone = cJSON_CreateString(global_settings.phone[index]);
         cJSON_AddItemToArray(json_phones, json_phone);
-        cJSON *json_phone_string = cJSON_CreateString(global_settings.phone[index]);
-        cJSON_AddItemToObject(json_phone, "phone", json_phone_string);
     }
 
     json_local = cJSON_CreateString(global_settings.local);
