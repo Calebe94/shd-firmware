@@ -163,10 +163,41 @@ char *settings_get_phone(uint8_t index)
     return phone;
 }
 
+uint8_t settings_find_phone_id(char *phone)
+{
+    uint8_t id = 255;
+    for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
+    {
+        if(strcmp(global_settings.phone[index], phone) ==0)
+        {
+            id = index;
+            break;
+        }
+    }
+    return id;
+}
+
+bool settings_delete_phone_by_id(uint8_t phone_index)
+{
+    bool status = false;
+
+    if (phone_index < MAX_PHONES)
+    {
+        memset(global_settings.phone[phone_index], 0, 20);
+        for (uint8_t index = phone_index; index < settings_get_phones_list_length() - 1; index++)
+        {
+            memcpy(global_settings.phone[index], global_settings.phone[index+1], 20);
+        }
+        status = true;
+    }
+
+    return status;
+}
+
 uint8_t settings_get_phones_list_length()
 {
     uint8_t lenght = 0;
-    for (uint8_t index = 0; index < 255; index++)
+    for (uint8_t index = 0; index < MAX_PHONES; index++)
     {
         if(strcmp(global_settings.phone[index], "") == 0)
         {

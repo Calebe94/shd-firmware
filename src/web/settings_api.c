@@ -26,7 +26,7 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/get/devices", .method = HTTP_GET, .handler = devices_get_handler, .user_ctx = NULL},
 	{ .uri = "/add/phone", .method = HTTP_POST, .handler = phone_add_handler, .user_ctx = NULL},
 	{ .uri = "/delete/phone/*", .method = HTTP_POST, .handler = phone_delete_handler, .user_ctx = NULL},
-	{ .uri = "/get/phone", .method = HTTP_GET, .handler = phones_get_handler, .user_ctx = NULL},
+	{ .uri = "/get/phones", .method = HTTP_GET, .handler = phones_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/local", .method = HTTP_POST, .handler = local_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/local", .method = HTTP_GET, .handler = local_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/interval", .method = HTTP_POST, .handler = interval_set_handler, .user_ctx = NULL},
@@ -250,7 +250,8 @@ esp_err_t phone_add_handler(httpd_req_t *req)
 
         if(settings_get_phones_list_length() < MAX_PHONES)
         {
-            settings_set_phone(settings_get_phones_list_length()+1, param);
+            ESP_LOGI(TAG, "phone number length: %d", settings_get_phones_list_length()+1);
+            settings_set_phone(settings_get_phones_list_length(), param);
             web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
             httpd_resp_sendstr(req, response);
             settings_update();
@@ -272,20 +273,14 @@ esp_err_t phone_add_handler(httpd_req_t *req)
 // Creating phone delete route callback handler.
 esp_err_t phone_delete_handler(httpd_req_t *req)
 {
-    char *ptr;
-    long ret = 0;
     char *token = strtok((char*)req->uri, "/delete/phone/");
     char response[1024];
 
-    if (token != NULL)
-    {
-        ret = strtol(token, &ptr, 10);
-    }
-
-    if(settings_get_phones_list_length() > 0)
+    if(token != NULL && settings_get_phones_list_length() > 0)
     {
         //device_delete(ret);
         //httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+        settings_delete_phone_by_id(settings_find_phone_id(token));
         web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
         httpd_resp_sendstr(req, response);
         //devices_update();

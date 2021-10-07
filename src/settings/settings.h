@@ -32,6 +32,10 @@ bool settings_set_phone(uint8_t, char*);
 
 char *settings_get_phone(uint8_t);
 
+uint8_t settings_find_phone_id(char *);
+
+bool settings_delete_phone_by_id(uint8_t);
+
 uint8_t settings_get_phones_list_length();
 
 settings_mode_t settings_get_mode(void);
