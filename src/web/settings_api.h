@@ -32,11 +32,14 @@ esp_err_t device_delete_handler(httpd_req_t *req);
 // Creating device get route callback handler.
 esp_err_t devices_get_handler(httpd_req_t *req);
 
-// Creating phone set route callback handler.
-esp_err_t phone_set_handler(httpd_req_t *req);
+// Creating phone add route callback handler.
+esp_err_t phone_add_handler(httpd_req_t *req);
+
+// Creating phone delete route callback handler.
+esp_err_t phone_delete_handler(httpd_req_t *req);
 
 // Creating phone get route callback handler.
-esp_err_t phone_get_handler(httpd_req_t *req);
+esp_err_t phones_get_handler(httpd_req_t *req);
 
 // Creating local set route callback handler.
 esp_err_t local_set_handler(httpd_req_t *req);
