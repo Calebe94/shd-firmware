@@ -132,7 +132,7 @@ function check_phones_table_list()
 
 function check_phone_input_field()
 {
-    get_result_from_route("/get/phone", function(result){
+    get_result_from_route("/get/phones", function(result){
         const obj = JSON.parse(result);
         if (obj.phone)
         {
