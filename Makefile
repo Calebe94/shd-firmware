@@ -33,7 +33,7 @@ flash:
 monitor:
 	pio device monitor --baud ${baudrate} --port ${port} -f colorize
 
-partition:
+partition: webpage
 	pio run -e ${device} -t uploadfs --upload-port ${port}
 
 sim: ${sim_folder}

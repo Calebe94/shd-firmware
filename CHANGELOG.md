@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Fixed `partition` target. Now it calls `webpage` target before;
+
 ### Removed
 
 ## [0.16.0]
