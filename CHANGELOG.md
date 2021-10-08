@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added a simple runtime event handler, to handle events such as `sigterm`, `system restart` and others `#WIP`;
 * Added `/restart` route to simulator;
 * Added `restart` form to webpage;
+* Added `/restart` route to `settings_api`;
 
 ### Changed
 
