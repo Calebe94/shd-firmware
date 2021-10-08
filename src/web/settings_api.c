@@ -24,8 +24,9 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/add/device", .method = HTTP_POST, .handler = device_add_handler, .user_ctx = NULL},
 	{ .uri = "/delete/device/*", .method = HTTP_POST, .handler = device_delete_handler, .user_ctx = NULL},
 	{ .uri = "/get/devices", .method = HTTP_GET, .handler = devices_get_handler, .user_ctx = NULL},
-	{ .uri = "/set/phone", .method = HTTP_POST, .handler = phone_set_handler, .user_ctx = NULL},
-	{ .uri = "/get/phone", .method = HTTP_GET, .handler = phone_get_handler, .user_ctx = NULL},
+	{ .uri = "/add/phone", .method = HTTP_POST, .handler = phone_add_handler, .user_ctx = NULL},
+	{ .uri = "/delete/phone/*", .method = HTTP_POST, .handler = phone_delete_handler, .user_ctx = NULL},
+	{ .uri = "/get/phones", .method = HTTP_GET, .handler = phones_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/local", .method = HTTP_POST, .handler = local_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/local", .method = HTTP_GET, .handler = local_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/interval", .method = HTTP_POST, .handler = interval_set_handler, .user_ctx = NULL},
@@ -233,24 +234,56 @@ esp_err_t devices_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-// Creating phone set route callback handler.
-esp_err_t phone_set_handler(httpd_req_t *req)
+// Creating phone add route callback handler.
+esp_err_t phone_add_handler(httpd_req_t *req)
 {
     char buffer[100];
 	char param[32];
     char response[1024];
+
     common_parse_url_query_param(req, buffer);
-    ESP_LOGI(TAG, "set phone request received: %s", buffer);
+    ESP_LOGI(TAG, "add phone number request received: %s", buffer);
 
     if (httpd_query_key_value(buffer, "phone", param, sizeof(param)) == ESP_OK)
     {
-        ESP_LOGI(TAG, "phone: %s", param);
+        ESP_LOGI(TAG, "phone number: %s", param);
 
-        settings_set_phone(param);
+        if(settings_get_phones_list_length() < MAX_PHONES)
+        {
+            ESP_LOGI(TAG, "phone number length: %d", settings_get_phones_list_length()+1);
+            settings_set_phone(settings_get_phones_list_length(), param);
+            web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
+            httpd_resp_sendstr(req, response);
+            settings_update();
+        }
+        else
+        {
+            web_create_failure_response(response, "Falha!", "Houve uma falha ao configurar o dispositivo!");
+            httpd_resp_sendstr(req, response);
+        }
+    }
+    else
+    {
+        httpd_resp_sendstr(req, "{\"status\": \"FAILED\"}");
+    }
 
-        settings_update();
+	return ESP_OK;
+}
+
+// Creating phone delete route callback handler.
+esp_err_t phone_delete_handler(httpd_req_t *req)
+{
+    char *token = strtok((char*)req->uri, "/delete/phone/");
+    char response[1024];
+
+    if(token != NULL && settings_get_phones_list_length() > 0)
+    {
+        //device_delete(ret);
+        //httpd_resp_sendstr(req, "{\"status\": \"OK\"}");
+        settings_delete_phone_by_id(settings_find_phone_id(token));
         web_create_success_response(response, "Sucesso!", "Configuração realizada com sucesso!");
         httpd_resp_sendstr(req, response);
+        //devices_update();
     }
     else
     {
@@ -258,15 +291,30 @@ esp_err_t phone_set_handler(httpd_req_t *req)
         httpd_resp_sendstr(req, response);
     }
 
-	return ESP_OK;   
+    return ESP_OK;
 }
 
 // Creating phone get route callback handler.
-esp_err_t phone_get_handler(httpd_req_t *req)
+esp_err_t phones_get_handler(httpd_req_t *req)
 {
-    char buffer[60];
-    sprintf(buffer, "{ \"phone\": \"%s\" }", settings_get_phone());
-    httpd_resp_sendstr(req, buffer);
+    char *string = NULL;
+    cJSON *json_id = NULL;
+
+    cJSON *json_phones = cJSON_CreateObject();
+    cJSON *json_phones_array = cJSON_CreateArray();
+
+    cJSON_AddItemToObject(json_phones, "phones", json_phones_array);
+
+    int phones_length = settings_get_phones_list_length();
+    for (uint8_t index = 0; index < phones_length; index++)
+    {
+        json_id = cJSON_CreateString(settings_get_phone(index));
+        cJSON_AddItemToArray(json_phones_array, json_id);
+    }
+
+    string = cJSON_Print(json_phones);
+    httpd_resp_sendstr(req, string);
+
     return ESP_OK;
 }
 

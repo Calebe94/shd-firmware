@@ -102,9 +102,37 @@ function check_devices_table_list()
     });
 }
 
+function check_phones_table_list()
+{
+    get_result_from_route("/get/phones", function(result){
+        const obj = JSON.parse(result);
+        phones = obj.phones;
+        console.log(phones);
+        var index = 0;
+        phones.forEach(function(phone){
+            console.log(phone);
+            var phones_table = document.getElementById("phones-table");
+            console.log(phones_table);
+
+            var row = document.createElement("tr");
+
+            var td1 = document.createElement("td");
+            var td2 = document.createElement("td");
+
+            td1.innerHTML = phone.toString();
+            td2.innerHTML = "<form action='/delete/phone/"+phone.toString()+"' method='post'><input type='submit' value='Excluir'></form>";
+
+            row.appendChild(td1);
+            row.appendChild(td2);
+
+            phones_table.children[0].appendChild(row);
+        });
+    });
+}
+
 function check_phone_input_field()
 {
-    get_result_from_route("/get/phone", function(result){
+    get_result_from_route("/get/phones", function(result){
         const obj = JSON.parse(result);
         if (obj.phone)
         {

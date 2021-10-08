@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "esp_log.h"
 #include "cJSON_Utils.h"
@@ -30,9 +31,11 @@ void settings_load(void)
     {
         cJSON * json_id = cJSON_GetObjectItemCaseSensitive(json, "id");
         cJSON * json_mode = cJSON_GetObjectItemCaseSensitive(json, "mode");
-        cJSON * json_phone = cJSON_GetObjectItemCaseSensitive(json, "phone");
+        cJSON * json_phones = cJSON_GetObjectItemCaseSensitive(json, "phones");
         cJSON * json_local = cJSON_GetObjectItemCaseSensitive(json, "local");
         cJSON * json_interval = cJSON_GetObjectItemCaseSensitive(json, "interval");
+        cJSON *json_phone = NULL;
+
 
         if (cJSON_IsNumber(json_id))
         {
@@ -51,9 +54,13 @@ void settings_load(void)
             }
         }
 
-        if (cJSON_IsString(json_phone))
+        uint8_t index = 0;
+        cJSON_ArrayForEach(json_phone, json_phones)
         {
-            strncpy(global_settings.phone, json_phone->valuestring, 20);
+            if (cJSON_IsString(json_phone))
+            {
+                settings_set_phone(index++, json_phone->valuestring);
+            }
         }
 
         if (cJSON_IsString(json_local))
@@ -76,20 +83,28 @@ void settings_update()
     cJSON *json_settings = NULL;
     cJSON *json_id = NULL;
     cJSON *json_mode = NULL;
-    cJSON *json_phone = NULL;
+    cJSON *json_phones = NULL;
     cJSON *json_local = NULL;
     cJSON *json_interval = NULL;
 
     json_settings = cJSON_CreateObject();
     json_id = cJSON_CreateNumber(global_settings.id);
     json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"controller":"peripheral"));
-    json_phone = cJSON_CreateString(global_settings.phone);
+    json_phones = cJSON_CreateArray();
+    cJSON_AddItemToObject(json_settings, "phones", json_phones);
+
+    for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
+    {
+        cJSON *json_phone = cJSON_CreateString(global_settings.phone[index]);
+        cJSON_AddItemToArray(json_phones, json_phone);
+    }
+
     json_local = cJSON_CreateString(global_settings.local);
     json_interval = cJSON_CreateNumber(global_settings.interval);
 
     cJSON_AddItemToObject(json_settings, "id", json_id);
     cJSON_AddItemToObject(json_settings, "mode", json_mode);
-    cJSON_AddItemToObject(json_settings, "phone", json_phone);
+    cJSON_AddItemToObject(json_settings, "phones", json_phones);
     cJSON_AddItemToObject(json_settings, "local", json_local);
     cJSON_AddItemToObject(json_settings, "interval", json_interval);
 
@@ -122,14 +137,70 @@ void settings_set_mode(settings_mode_t mode)
     global_settings.mode = mode;
 }
 
-void settings_set_phone(char *phone)
+bool settings_set_phone(uint8_t index, char *phone)
 {
-    strncpy(global_settings.phone, phone, 20);
+    bool status = false;
+    if( index < 20 )
+    {
+        strncpy(global_settings.phone[index], phone, 20);
+        status = true;
+    }
+    return status;
 }
 
-char *settings_get_phone(void)
+char *settings_get_phone(uint8_t index)
 {
-    return global_settings.phone;
+    char *phone = NULL;
+    if(index < 20)
+    {
+        phone = global_settings.phone[index];
+    }
+    return phone;
+}
+
+uint8_t settings_find_phone_id(char *phone)
+{
+    uint8_t id = 255;
+    for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
+    {
+        if(strcmp(global_settings.phone[index], phone) ==0)
+        {
+            id = index;
+            break;
+        }
+    }
+    return id;
+}
+
+bool settings_delete_phone_by_id(uint8_t phone_index)
+{
+    bool status = false;
+
+    if (phone_index < MAX_PHONES)
+    {
+        memset(global_settings.phone[phone_index], 0, 20);
+        for (uint8_t index = phone_index; index < settings_get_phones_list_length() - 1; index++)
+        {
+            memcpy(global_settings.phone[index], global_settings.phone[index+1], 20);
+        }
+        status = true;
+    }
+
+    return status;
+}
+
+uint8_t settings_get_phones_list_length()
+{
+    uint8_t lenght = 0;
+    for (uint8_t index = 0; index < MAX_PHONES; index++)
+    {
+        if(strcmp(global_settings.phone[index], "") == 0)
+        {
+            lenght = index;
+            break;
+        }
+    }
+    return lenght;
 }
 
 void settings_set_local(char *local)

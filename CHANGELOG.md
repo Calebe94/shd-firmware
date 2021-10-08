@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added phones list;
+* Added phones list on webpage;
+
 ### Changed
 
 ### Fixed
+
+* Fixed route typo;
 
 ### Removed
 

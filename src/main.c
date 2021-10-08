@@ -42,8 +42,8 @@ static void init_wifi_ap(void)
     char wifi_ap_ssid[32];
 
 #ifdef CONTROLLER_FIRMWARE
-    char *phone = settings_get_phone();
-    if(strcmp(phone, "") == 0)
+    uint8_t phone_list_length = settings_get_phones_list_length();
+    if(phone_list_length == 0)
     {
         snprintf(wifi_ap_ssid, 32, "shd_controlador_ñ_configurado");
     }

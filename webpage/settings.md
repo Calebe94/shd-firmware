@@ -27,15 +27,15 @@
         <div style="display: table-row">
             <div style="width: 600px; display: table-cell;">
             <form target="_top" action="/add/device" id="mode" method="POST">
-                <input type="text" name="device" id="device" placeholder="New Device" pattern="([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])$">
-                <input onclick="redirect();" type="submit" value="Confirmar">
+                <input type="text" name="device" id="device" placeholder="Novo dispositivo" pattern="([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])$">
+                <input onclick="redirect();" type="submit" value="Adicionar">
             </form>
             </div>
             <div id="devices-div" style="display: table-cell;">
                 <table id="devices-table">
                     <tr>
-                        <th>Device ID</th>
-                        <th>Delete</th>
+                        <th>Dispositivo</th>
+                        <th>Excluir</th>
                     </tr>
                 </table>
             </div>
@@ -44,11 +44,25 @@
 </fieldset>
 
 <fieldset id="phone_number_fieldset">
-    <legend>Telefone:</legend>
-    <form target="_top" action="/set/phone" id="phone_number" method="POST">
-        <input type="tel" name="phone" id="phone" placeholder="Telefone" pattern="^\(?(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\)? ?(?:[2-8]|9[1-9])[0-9]{3}\-?[0-9]{4}$">
-        <input onclick="redirect();" type="submit" value="Confirmar">
-    </form>
+    <legend>Telefones:</legend>
+    <div style="width: 100%; display: table;">
+        <div style="display: table-row">
+            <div style="width: 600px; display: table-cell;">
+            <form target="_top" action="/add/phone" id="mode" method="POST">
+                <input type="tel" name="phone" id="phone" placeholder="Novo telefone" pattern="^\(?(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\)? ?(?:[2-8]|9[1-9])[0-9]{3}\-?[0-9]{4}$">
+                <input onclick="redirect();" type="submit" value="Adicionar">
+            </form>
+            </div>
+            <div id="phones-div" style="display: table-cell;">
+                <table id="phones-table">
+                    <tr>
+                        <th>Telefone</th>
+                        <th>Excluir</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </fieldset>
 
 <fieldset id="local_fieldset">
