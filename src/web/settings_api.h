@@ -53,4 +53,7 @@ esp_err_t interval_set_handler(httpd_req_t *req);
 // Creating interval get route callback handler.
 esp_err_t interval_get_handler(httpd_req_t *req);
 
+// Creating restart esp route callback handler.
+esp_err_t restart_esp_handler(httpd_req_t *req);
+
 #endif

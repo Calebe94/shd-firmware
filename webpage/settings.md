@@ -80,3 +80,10 @@
         <input onclick="redirect();" type="submit" value="Confirmar">
     </form>
 </fieldset>
+
+<fieldset id="restart_fieldset">
+    <legend>Aplicar configurações</legend>
+    <form target="_top" action="/restart" id="restart" method="POST">
+        <input onclick="alert_restart();" type="submit" value="Confirmar">
+    </form>
+</fieldset>

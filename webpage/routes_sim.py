@@ -138,6 +138,10 @@ def set_interval():
     update_settings()
     return redirect('/settings.html')
 
+@app.route("/restart", methods=['POST'])
+def restart():
+    return redirect('/settings.html')
+
 @app.route("/get/interval", methods=['GET'])
 def get_interval():
     return '{"interval":'+str(global_settings["interval"])+'}'

@@ -9,9 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added `MAX_URI_HANDLERS` config macro to `tiny_webservice` to chose how many URIs will be used;
+* Added a simple runtime event handler, to handle events such as `sigterm`, `system restart` and others `#WIP`;
+* Added `/restart` route to simulator;
+* Added `restart` form to webpage;
+* Added `/restart` route to `settings_api`;
+
 ### Changed
 
 ### Fixed
+
+* Fixed `partition` target. Now it calls `webpage` target before;
 
 ### Removed
 

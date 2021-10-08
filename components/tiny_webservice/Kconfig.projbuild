@@ -20,4 +20,11 @@ menu "ESP Webservice Configuration"
             Specify the domain name used in the mDNS service.
             Note that webpage also take it as a part of URL where it will send GET/POST requests to.
 
+    config MAX_URI_HANDLERS
+        int "Select the maximum URI handlers to be used"
+        range 0 100
+        default 25 
+        help
+            Select how many URIs will be used.
+
 endmenu

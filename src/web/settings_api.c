@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "esp_log.h"
 #include "cJSON_Utils.h"
+#include "esp_system.h"
 #include "esp_http_server.h"
 #include "tiny_webservice.h"
 #include "web_common.h"
@@ -12,6 +13,7 @@
 #include "utils/utils.h"
 
 static const char * TAG = "SETTINGS_API";
+extern QueueHandle_t event_handler_queue;
 
 httpd_uri_t settings_routes[] = {
 	// Creating GET and SET route to: id
@@ -31,6 +33,7 @@ httpd_uri_t settings_routes[] = {
 	{ .uri = "/get/local", .method = HTTP_GET, .handler = local_get_handler, .user_ctx = NULL},
 	{ .uri = "/set/interval", .method = HTTP_POST, .handler = interval_set_handler, .user_ctx = NULL},
 	{ .uri = "/get/interval", .method = HTTP_GET, .handler = interval_get_handler, .user_ctx = NULL},
+	{ .uri = "/restart", .method = HTTP_POST, .handler = restart_esp_handler, .user_ctx = NULL},
 };
 
 // Creating the initialize settings routes.
@@ -397,5 +400,19 @@ esp_err_t interval_get_handler(httpd_req_t *req)
     char buffer[60];
     sprintf(buffer, "{ \"interval\": \"%d\" }", settings_get_interval());
     httpd_resp_sendstr(req, buffer);
+    return ESP_OK;
+}
+
+// Creating restart esp route callback handler.
+esp_err_t restart_esp_handler(httpd_req_t *req)
+{
+    char response[1024];
+    ESP_LOGI(TAG, "restart request received");
+    char command[30] = "restart";
+    xQueueSend(event_handler_queue,
+                       ( void * ) command,
+                       ( TickType_t ) 10 );
+    web_create_success_response(response, "Sucesso!", "o sistema será reinicializado em 5 segundos...");
+    httpd_resp_sendstr(req, response);
     return ESP_OK;
 }

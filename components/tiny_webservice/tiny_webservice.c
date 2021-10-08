@@ -58,7 +58,7 @@ esp_err_t init_webservice(char * base_path, httpd_handle_t * auxserver, rest_ser
         .server_port        = 80,
         .ctrl_port          = 32768,
         .max_open_sockets   = 7,
-        .max_uri_handlers   = 20,
+        .max_uri_handlers   = CONFIG_MAX_URI_HANDLERS,
         .max_resp_headers   = 8,
         .backlog_conn       = 5,
         .lru_purge_enable   = false,
