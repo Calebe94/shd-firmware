@@ -171,3 +171,9 @@ function redirect()
     window.location.href="/settings.html";
     return true;
 }
+
+function alert_restart()
+{
+    alert("O hardware será reinicializado, você terá que se conectar manualmente mais tarde...");
+    redirect();
+}
