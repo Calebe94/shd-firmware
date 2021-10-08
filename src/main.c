@@ -32,6 +32,7 @@
  * STATIC VARIABLES
 ****************************/
 static const char * TAG = "MAIN";
+QueueHandle_t event_handler_queue = NULL;
 
 /***************************
  * STATIC FUNCTIONS
@@ -64,6 +65,24 @@ static void init_wifi_ap(void)
 #endif
     ESP_LOGI(TAG, "Iniciando Access Point %s", wifi_ap_ssid);
     wifi_ap_init(wifi_ap_ssid, CONFIG_WIFI_AP_PASS);
+}
+
+static void events_handler(void *argv)
+{
+    char event[30];
+    while(1)
+    {
+        if(xQueueReceive(event_handler_queue, (void * )&event, (portTickType)portMAX_DELAY))
+        {
+            if(strncmp(event, "restart", 30) == 0)
+            {
+                ESP_LOGI(TAG, "restart request received");
+                vTaskDelay(pdMS_TO_TICKS(5000));
+                esp_restart();
+            }
+            memset(event, '\0', 30);
+        }
+    }
 }
 
 /***************************
@@ -118,7 +137,8 @@ void app_main()
 #else
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
 #endif
-
+    event_handler_queue = xQueueCreate( 10, 30*sizeof( char ) );
+    xTaskCreate(events_handler, "events_handler", 2048, NULL, 1, NULL);
     while(1)
     {
         vTaskDelay(pdMS_TO_TICKS(1000));
