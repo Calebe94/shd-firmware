@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.17.0]
+
+### Added
+
 * Added `MAX_URI_HANDLERS` config macro to `tiny_webservice` to chose how many URIs will be used;
 * Added a simple runtime event handler, to handle events such as `sigterm`, `system restart` and others `#WIP`;
 * Added `/restart` route to simulator;
@@ -371,7 +381,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.16.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.17.0...main
+[0.17.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.16.0...0.17.0
 [0.16.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.15.0...0.16.0
 [0.15.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.1...0.15.0
 [0.14.1]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.0...0.14.1
