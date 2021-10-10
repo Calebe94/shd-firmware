@@ -1,3 +1,8 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+#ifdef USE_RS485
 #include <stdint.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -257,5 +262,9 @@ void get_readings_timer_callback(void *argv)
         send_readings_by_sms(message);
         vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));
     }
+}
+#endif
+#endif
+#ifdef __cplusplus
 }
 #endif

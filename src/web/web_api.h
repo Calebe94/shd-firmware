@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _WEB_API_H_
 #define _WEB_API_H_
 
@@ -47,4 +50,7 @@ esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context
     init_settings_routes(server, rest_context);
     return ESP_OK;
 }
+#endif
+#ifdef __cplusplus
+    }
 #endif

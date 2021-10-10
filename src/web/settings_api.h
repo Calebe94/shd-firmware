@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _SETTINGS_API_H_
 #define _SETTINGS_API_H_
 
@@ -56,4 +59,7 @@ esp_err_t interval_get_handler(httpd_req_t *req);
 // Creating restart esp route callback handler.
 esp_err_t restart_esp_handler(httpd_req_t *req);
 
+#endif
+#ifdef __cplusplus
+    }
 #endif

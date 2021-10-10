@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -222,3 +226,7 @@ void settings_set_interval(int interval)
 {
     global_settings.interval = interval;
 }
+
+#ifdef __cplusplus
+}
+#endif

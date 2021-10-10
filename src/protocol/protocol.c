@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -104,3 +108,7 @@ bool protocol_check_id(protocol_data_raw_t data)
     }
     return status;
 }
+
+#ifdef __cplusplus
+}
+#endif

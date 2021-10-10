@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /***************************
  * INCLUDES
 ****************************/
@@ -87,3 +91,7 @@ float flowsensor_get_litros(void)
 {
     return litros;
 }
+
+#ifdef __cplusplus
+}
+#endif

@@ -124,7 +124,7 @@ static esp_err_t wifi_ap_handler(void* ctx, system_event_t * event)
 
 void wifi_ap_init(char * wifi_ssid, char * wifi_pass)
 {
-    esp_netif_create_default_wifi_ap();
+    //esp_netif_create_default_wifi_ap();
     ESP_ERROR_CHECK( esp_event_loop_init(wifi_ap_handler, NULL) );
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();

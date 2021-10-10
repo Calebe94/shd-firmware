@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _SIM7070G_H_
 #define _SIM7070G_H_
 
@@ -45,4 +48,7 @@ size_t sim7070g_read(char *data);
 
 void sim7070g_flush(void);
 
+#endif
+#ifdef __cplusplus
+    }
 #endif

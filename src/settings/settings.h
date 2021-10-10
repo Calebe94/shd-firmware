@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _SETTINGS_H_
 #define _SETTINGS_H_
 
@@ -50,4 +53,7 @@ int settings_get_interval(void);
 
 void settings_set_interval(int);
 
+#endif
+#ifdef __cplusplus
+}
 #endif

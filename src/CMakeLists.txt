@@ -1,6 +1,5 @@
 idf_component_register(
     SRCS 
-        "main.c"
         "sensor/flowsensor.c"
         "rs485/rs485.c"
         "serial/console.c"
@@ -12,6 +11,7 @@ idf_component_register(
         "settings/devices.c"
         "sim7070g/sim7070g.c"
         "utils/utils.c"
+        "main.cpp"
     INCLUDE_DIRS 
         "."
         "sensor/"

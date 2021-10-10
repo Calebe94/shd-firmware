@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -155,3 +159,7 @@ bool device_check_duplication(int device_id)
 
     return status;
 }
+
+#ifdef __cplusplus
+}
+#endif

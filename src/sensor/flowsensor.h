@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #ifndef _FLOWSENSOR_H_
 #define _FLOWSENSOR_H_
 /***************************
@@ -28,4 +32,7 @@ uint32_t flowsensor_get_pulses(void);
 
 float flowsensor_get_litros(void);
 
+#endif
+#ifdef __cplusplus
+    }
 #endif

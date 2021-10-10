@@ -1,3 +1,8 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
+#ifdef USE_RS485
 #ifndef _RS485_H_
 #define _RS485_H_
 /***************************
@@ -32,4 +37,8 @@ uint32_t rs485_read(uint8_t *);
 void rs485_event_handler_task(void *pvParameters);
 void rs485_flush();
 
+#endif
+#endif
+#ifdef __cplusplus
+    }
 #endif

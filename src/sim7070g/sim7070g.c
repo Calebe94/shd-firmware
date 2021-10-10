@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /***************************
  * INCLUDES
 ****************************/
@@ -41,7 +45,7 @@ void sim7070g_setup(void)
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_APB,
+        //.source_clk = UART_SCLK_APB,
     };
 
     //ESP_ERROR_CHECK(uart_driver_install(SIM7070G_PORT, 1024 * 2, 1024*2, 127, &sim7070g_queue, 0));
@@ -271,7 +275,7 @@ size_t sim7070g_read(char *data)
 {
     size_t length = 0;
     ESP_ERROR_CHECK(uart_get_buffered_data_len(SIM7070G_PORT, &length));
-    length = uart_read_bytes(SIM7070G_PORT, data, length, 100);
+    length = uart_read_bytes(SIM7070G_PORT, (uint8_t*)data, length, 100);
     return length;
 }
 
@@ -280,3 +284,7 @@ void sim7070g_flush(void)
     uart_flush(SIM7070G_PORT);
     uart_flush_input(SIM7070G_PORT);
 }
+
+#ifdef __cplusplus
+}
+#endif

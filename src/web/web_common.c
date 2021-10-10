@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <fcntl.h>
 #include <string.h>
 #include <sys/param.h>
@@ -129,3 +133,7 @@ void web_create_failure_response(char * response, char *title, char *message)
 {
     snprintf(response, 1024, response_html_template, title, "failed", message, "failed");
 }
+
+#ifdef __cplusplus
+}
+#endif

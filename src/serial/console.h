@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+#ifdef USE_CONSOLE
 #ifndef _CONSOLE_H_
 #define _CONSOLE_H_
 
@@ -16,4 +20,8 @@ void console_init(void);
 
 void console_task_handler(void *pvParameters);
 
+#endif
+#endif
+#ifdef __cplusplus
+    }
 #endif

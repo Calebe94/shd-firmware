@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <string.h>
@@ -160,3 +164,7 @@ char *url_decode(const char *str)
 
     return dStr;
 }
+
+#ifdef __cplusplus
+}
+#endif

@@ -1,6 +1,11 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /***************************
  * INCLUDES
 ****************************/
+#ifdef USE_RS485
 #include <stdint.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -150,3 +155,8 @@ void rs485_flush(void)
 {
     uart_flush_input(UART_PORT);
 }
+#endif
+
+#ifdef __cplusplus
+}
+#endif

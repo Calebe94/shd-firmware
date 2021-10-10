@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <stdlib.h>
 #include "esp_log.h"
 #include "cJSON_Utils.h"
@@ -416,3 +420,7 @@ esp_err_t restart_esp_handler(httpd_req_t *req)
     httpd_resp_sendstr(req, response);
     return ESP_OK;
 }
+
+#ifdef __cplusplus
+}
+#endif
