@@ -1,4 +1,4 @@
-set(srcs "tiny_wifi.c")
+set(srcs "tiny_wifi.cpp")
 
 set(COMPONENT_NAME "tiny_wifi")
 

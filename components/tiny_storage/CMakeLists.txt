@@ -1,7 +1,7 @@
 set(
     srcs 
-        "flash_storage.c"
-        "sdcard.c"
+        "flash_storage.cpp"
+        "sdcard.cpp"
 )
 
 idf_component_register(
