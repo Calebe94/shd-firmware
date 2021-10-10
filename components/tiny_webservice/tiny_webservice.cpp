@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #include <string.h>
 #include <fcntl.h>
 #include "esp_http_server.h"
@@ -11,7 +15,7 @@
 #include "tiny_webservice.h"
 
 // This function should be defined externally.
-extern esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context);
+//extern esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context);
 
 const char *WEB_TAG = "esp-webservice";
 
@@ -80,7 +84,7 @@ esp_err_t init_webservice(char * base_path, httpd_handle_t * auxserver, rest_ser
         free(rest_context);
     }
 
-    init_routes(server, rest_context);
+    //init_routes(server, rest_context);
 
     return ESP_OK;
 }
@@ -114,3 +118,7 @@ esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)
 
     return httpd_resp_set_type(req, type);
 }
+#ifdef __cplusplus
+}
+#endif
+

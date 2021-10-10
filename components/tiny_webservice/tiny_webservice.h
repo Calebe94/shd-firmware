@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _ESP_WEBSERVICE_
 #define _ESP_WEBSERVICE_
 
@@ -33,4 +36,7 @@ esp_err_t init_webservice(char *, httpd_handle_t *, rest_server_context_t *);
 
 esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath);
 
+#endif
+#ifdef __cplusplus
+}
 #endif
