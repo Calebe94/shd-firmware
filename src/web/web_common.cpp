@@ -7,6 +7,8 @@ extern "C"
 #include <sys/param.h>
 #include "esp_log.h"
 #include "esp_system.h"
+#include "tiny_webservice.h"
+
 #include "web_common.h"
 
 const char *TAG = "SETTINGS_COMMON";

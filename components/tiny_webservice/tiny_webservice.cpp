@@ -38,7 +38,7 @@ esp_err_t init_webservice(char * base_path, httpd_handle_t * auxserver, rest_ser
         ESP_LOGE(WEB_TAG, "%s(%d): " "wrong base path", __FUNCTION__, __LINE__);
         return ESP_FAIL;
     }
-    rest_server_context_t *rest_context = calloc(1, sizeof(rest_server_context_t));
+    rest_server_context_t *rest_context = (rest_server_context_t*)calloc(1, sizeof(rest_server_context_t));
     // rest_context = calloc(1, sizeof(rest_server_context_t));
 
     if(!(rest_context))

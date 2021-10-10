@@ -24,7 +24,7 @@ void settings_load(void)
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    char *string = malloc(fsize + 1);
+    char *string = (char*)malloc(fsize + 1);
     fread(string, 1, fsize, f);
     fclose(f);
 

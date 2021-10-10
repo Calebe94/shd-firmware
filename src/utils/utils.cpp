@@ -11,7 +11,6 @@ extern "C"
 
 void str_remove_junk_char(char *string) 
 {
-    char *t = string;
     while (*string) 
     {
         if (*string == '\n') 
@@ -46,7 +45,7 @@ char *str_replace(char *search , char *replace , char *subject)
 	c = ( strlen(replace) - search_size )*c + strlen(subject);
 	
 	//New subject with new size
-	new_subject = malloc( c );
+	new_subject = (char*)malloc( c );
 	
 	//Set it to blank
 	strcpy(new_subject , "");
@@ -100,7 +99,7 @@ char** str_split(char* a_str, const char a_delim)
        knows where the list of returned strings ends. */
     count++;
 
-    result = malloc(sizeof(char*) * count);
+    result = (char**)malloc(sizeof(char*) * count);
 
     if (result)
     {
@@ -125,7 +124,7 @@ char *url_decode(const char *str)
 {
     int d = 0; /* whether or not the string is decoded */
 
-    char *dStr = malloc(strlen(str) + 1);
+    char *dStr = (char*)malloc(strlen(str) + 1);
     char eStr[] = "00"; /* for a hex code */
 
     strcpy(dStr, str);
@@ -135,7 +134,7 @@ char *url_decode(const char *str)
         d = 1;
         int i; /* the counter for the string */
 
-        for(i=0;i<strlen(dStr);++i)
+        for(i=0;i<(int)strlen(dStr);++i)
         {
             if(dStr[i] == '%')
             {

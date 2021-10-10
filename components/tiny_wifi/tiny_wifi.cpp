@@ -129,16 +129,13 @@ void wifi_ap_init(char * wifi_ssid, char * wifi_pass)
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    wifi_config_t wifi_config = {
-        .ap = {
-            // .ssid = wifi_ssid,
-            .ssid_len = strlen(wifi_ssid),
-            // .password = wifi_pass,
-            .max_connection = CONFIG_WIFI_AP_MAX_STA_CONN,
-            .authmode = WIFI_AUTH_WPA_WPA2_PSK
-        }
-    };
+    
+    wifi_config_t wifi_config;
+    // .ssid = wifi_ssid,
+    wifi_config.ap.ssid_len = strlen((const char*)wifi_ssid);
+    // .password = wifi_pass,
+    wifi_config.ap.max_connection = CONFIG_WIFI_AP_MAX_STA_CONN;
+    wifi_config.ap.authmode = WIFI_AUTH_WPA_WPA2_PSK;
 
     strcpy((char *)wifi_config.ap.ssid, wifi_ssid);
     strcpy((char *)wifi_config.ap.password, wifi_pass);
