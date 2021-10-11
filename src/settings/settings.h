@@ -25,7 +25,7 @@ typedef struct settings {
 
 void settings_load(void);
 
-void settings_update();
+void settings_update(void *argv);
 
 uint8_t settings_get_id(void);
 

@@ -8,6 +8,9 @@ extern "C"
 #include <string.h>
 #include <stdbool.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include "esp_log.h"
 #include "cJSON_Utils.h"
 
@@ -77,10 +80,15 @@ void settings_load(void)
             global_settings.interval = json_interval->valueint;
         }
     }
+    ESP_LOGI(TAG, "SETTINGS LOADED");
+    ESP_LOGI(TAG, "SETTINGS.id: %d", global_settings.id);
+    ESP_LOGI(TAG, "SETTINGS.mode: %d", (int)global_settings.mode);
+    ESP_LOGI(TAG, "SETTINGS.local: %s", (char*)global_settings.local);
+    ESP_LOGI(TAG, "SETTINGS.interval: %d", (int)global_settings.interval);
     cJSON_Delete(json);
 }
 
-void settings_update()
+void settings_update(void *argv)
 {
     char *string = NULL;
     FILE *json_file = NULL;
@@ -90,28 +98,69 @@ void settings_update()
     cJSON *json_phones = NULL;
     cJSON *json_local = NULL;
     cJSON *json_interval = NULL;
-
+    
+    ESP_LOGI(TAG, "settings_update:");
     json_settings = cJSON_CreateObject();
+    if(json_settings == NULL)
+    {
+        ESP_LOGI(TAG, "json_settings is NULL");
+        vTaskDelete(NULL);
+    }
     json_id = cJSON_CreateNumber(global_settings.id);
+    if(json_id == NULL)
+    {
+        ESP_LOGI(TAG, "json_id is NULL");
+        vTaskDelete(NULL);
+    }
     json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"controller":"peripheral"));
+    if(json_mode == NULL)
+    {
+        ESP_LOGI(TAG, "json_mode is NULL");
+        vTaskDelete(NULL);
+    }
     json_phones = cJSON_CreateArray();
+    if(json_phones == NULL)
+    {
+        ESP_LOGI(TAG, "json_phones is NULL");
+        vTaskDelete(NULL);
+    }
     cJSON_AddItemToObject(json_settings, "phones", json_phones);
 
+    ESP_LOGI(TAG, "created phone array");
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
         cJSON *json_phone = cJSON_CreateString(global_settings.phone[index]);
+        if(json_phone == NULL)
+        {
+            ESP_LOGI(TAG, "json_phone is NULL");
+            vTaskDelete(NULL);
+        }
         cJSON_AddItemToArray(json_phones, json_phone);
+        ESP_LOGI(TAG, "global_settings.phone[index]: %s", global_settings.phone[index]);
     }
 
+    ESP_LOGI(TAG, "creating local, and interval notes");
     json_local = cJSON_CreateString(global_settings.local);
+    if(json_local == NULL)
+    {
+        ESP_LOGI(TAG, "json_local is NULL");
+        vTaskDelete(NULL);
+    }
     json_interval = cJSON_CreateNumber(global_settings.interval);
+    if(json_interval == NULL)
+    {
+        ESP_LOGI(TAG, "json_interval is NULL");
+        vTaskDelete(NULL);
+    }
 
+    ESP_LOGI(TAG, "Adding objects to json_settings");
     cJSON_AddItemToObject(json_settings, "id", json_id);
     cJSON_AddItemToObject(json_settings, "mode", json_mode);
     cJSON_AddItemToObject(json_settings, "phones", json_phones);
     cJSON_AddItemToObject(json_settings, "local", json_local);
     cJSON_AddItemToObject(json_settings, "interval", json_interval);
 
+    ESP_LOGI(TAG, "created other keys");
     string = cJSON_Print(json_settings);
 
     ESP_LOGI(TAG, "JSON File: \n%s", string);
@@ -119,6 +168,7 @@ void settings_update()
     fprintf(json_file, string);
     fclose(json_file);
     cJSON_Delete(json_settings);
+    vTaskDelete(NULL);
 }
 
 uint8_t settings_get_id(void)

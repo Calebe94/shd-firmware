@@ -35,6 +35,13 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
+#include <esp_wifi.h>
+#include <esp_event_loop.h>
+#include <esp_system.h>
+#include <nvs_flash.h>
+#include <sys/param.h>
+
+
 /***************************
  * STATIC VARIABLES
 ****************************/
@@ -44,7 +51,7 @@ QueueHandle_t event_handler_queue = NULL;
 /***************************
  * STATIC FUNCTIONS
 ****************************/
-esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context)
+static esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context)
 {
     httpd_uri_t common_get_uri = {
         .uri = "/",
@@ -87,7 +94,7 @@ esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context
     httpd_register_uri_handler(server, &get_js_uri);
     httpd_register_uri_handler(server, &get_readings_uri);
 
-    init_settings_routes(server, rest_context);
+
     return ESP_OK;
 }
 #if CONFIG_USE_WIFI == 1
@@ -153,7 +160,7 @@ void app_main()
     Serial.print("AP IP address: ");
     Serial.println(myIP);
 
-    //ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(nvs_flash_init());
     //ESP_ERROR_CHECK(esp_netif_init());
     //ESP_ERROR_CHECK(esp_event_loop_create_default());
 
@@ -214,28 +221,47 @@ void app_main()
     }
 }
 #else
+static void hello_world(void *argv)
+{
+    while(1)
+    {
+        Serial.println("Hello!");
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
 void setup() {
-    // Set WiFi to station mode and disconnect from an AP if it was previously connected
-    Serial.begin(115200);
-    nvs_flash_init();
     httpd_handle_t server = NULL;
     rest_server_context_t * rest_context = NULL;
+    // Set WiFi to station mode and disconnect from an AP if it was previously connected
+    Serial.begin(115200);
+    WiFi.softAP("hidrometro", "hidrometro");
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.print("AP IP address: ");
+    Serial.println(myIP);
 
     ESP_ERROR_CHECK(nvs_flash_init());
-    
+    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
+    settings_load();
+    settings_set_mode(CONTROLLER_DEVICE);
+    settings_set_id(255);
+    //settings_update();
+    xTaskCreate(settings_update, "settings_update", 8192, NULL, 1, NULL);
+    /*
     tcpip_adapter_init();
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     init_mdns();
-    netbiosns_init();
+    //netbiosns_init();
 
-    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
+
     ESP_ERROR_CHECK(init_webservice("/spiffs", &server, rest_context));
-
+    init_routes(server, rest_context);
 #ifdef CONTROLLER_FIRMWARE
     settings_set_mode(CONTROLLER_DEVICE);
     settings_set_id(255);
     settings_update();
     devices_load();
+    //init_settings_routes(server, rest_context);
 #else
     settings_set_mode(PERIPHERAL_DEVICE);
     settings_update();
@@ -243,8 +269,10 @@ void setup() {
     ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
     protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
 
+    */
     Serial.println("Hello");
     delay(100);
+    xTaskCreate(hello_world, "hello_world", 8192, NULL, 1, NULL);
 }
 
 void loop() {
@@ -252,4 +280,4 @@ void loop() {
     delay(5000);
     Serial.println("Hello");
 }
-#endif 
+#endif
