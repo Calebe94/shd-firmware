@@ -1,283 +1,172 @@
 /***************************
  * INCLUDES
 ****************************/
-#include <stdio.h>
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "sdkconfig.h"
-#include "esp_log.h"
-#include "lwip/apps/netbiosns.h"
-
-#if CONFIG_USE_WIFI == 1
-#include "tiny_wifi.h"
-#endif
-#include "tiny_webservice.h"
-#include "flash_storage.h"
-#ifdef USE_CONSOLE
-#include "serial/console.h"
-#endif
-#include "sensor/flowsensor.h"
-#ifdef USE_RS485
-#include "rs485/rs485.h"
-#endif
-#include "protocol/protocol.h"
-#include "protocol/message_process.h"
-#include "web/web_common.h"
-#include "web/settings_api.h"
-#include "settings/settings.h"
-#include "settings/devices.h"
-//#include "web/web_api.h"
-#ifdef CONTROLLER_FIRMWARE
-#include "sim7070g/sim7070g.h"
-#endif
 #include <Arduino.h>
 #include <WiFi.h>
+// Select your modem:
+// #define TINY_GSM_MODEM_SIM868
+// #define TINY_GSM_MODEM_SIM7000  
+// #define TINY_GSM_MODEM_SIM7600
+//#define TINY_GSM_MODEM_SIM7070
+// Set serial for debug console (to the Serial Monitor, default speed 115200)
+#define SerialMon Serial
 
-#include <esp_wifi.h>
-#include <esp_event_loop.h>
-#include <esp_system.h>
-#include <nvs_flash.h>
-#include <sys/param.h>
+// Set serial for AT commands (to the module)
+// Use Hardware Serial on Mega, Leonardo, Micro
+#define SerialAT Serial1
+// See all AT commands, if wanted
+// #define DUMP_AT_COMMANDS
 
+// Define the serial console for debug prints, if needed
+#define TINY_GSM_DEBUG SerialMon
 
-/***************************
- * STATIC VARIABLES
-****************************/
-static const char * TAG = "MAIN";
-QueueHandle_t event_handler_queue = NULL;
+// Range to attempt to autobaud
+#define GSM_AUTOBAUD_MIN 9600
+#define GSM_AUTOBAUD_MAX 57600
 
-/***************************
- * STATIC FUNCTIONS
-****************************/
-static esp_err_t init_routes(httpd_handle_t server, rest_server_context_t *rest_context)
-{
-    httpd_uri_t common_get_uri = {
-        .uri = "/",
-        .method = HTTP_GET,
-        .handler = rest_common_get_handler,
-        .user_ctx = rest_context
-    };
-
-    httpd_uri_t get_css_uri = {
-        .uri = "/modest.css",
-        .method = HTTP_GET,
-        .handler = rest_common_get_handler,
-        .user_ctx = rest_context
-    };
-
-    httpd_uri_t get_js_uri = {
-        .uri = "/main.js",
-        .method = HTTP_GET,
-        .handler = rest_common_get_handler,
-        .user_ctx = rest_context
-    };
-
-    httpd_uri_t get_settings_uri = {
-        .uri = "/settings.html",
-        .method = HTTP_GET,
-        .handler = rest_common_get_handler,
-        .user_ctx = rest_context
-    };
-
-    httpd_uri_t get_readings_uri = {
-        .uri = "/readings.html",
-        .method = HTTP_GET,
-        .handler = rest_common_get_handler,
-        .user_ctx = rest_context
-    };
-
-    httpd_register_uri_handler(server, &common_get_uri);
-    httpd_register_uri_handler(server, &get_css_uri);
-    httpd_register_uri_handler(server, &get_settings_uri);
-    httpd_register_uri_handler(server, &get_js_uri);
-    httpd_register_uri_handler(server, &get_readings_uri);
-
-
-    return ESP_OK;
-}
-#if CONFIG_USE_WIFI == 1
-static void init_wifi_ap(void)
-{
-    char wifi_ap_ssid[32];
-
-#ifdef CONTROLLER_FIRMWARE
-    uint8_t phone_list_length = settings_get_phones_list_length();
-    if(phone_list_length == 0)
-    {
-        snprintf(wifi_ap_ssid, 32, "shd_controlador_ñ_configurado");
-    }
-    else
-    {
-        snprintf(wifi_ap_ssid, 32, "shd_controlador");
-    }
-#elif PERIPHERAL_FIRMWARE
-    uint8_t id = settings_get_id();
-    if(id == 0)
-    {
-        snprintf(wifi_ap_ssid, 32, "shd_periférico_ñ_configurado");
-    }
-    else
-    {
-        snprintf(wifi_ap_ssid, 32, "shd_periférico_%d", id);
-    }
+/*
+#include <TinyGsmClient.h>
+#ifdef DUMP_AT_COMMANDS
+#include <StreamDebugger.h>
+StreamDebugger debugger(SerialAT, SerialMon);
+TinyGsm modem(debugger);
+#else
+TinyGsm modem(SerialAT);
 #endif
-    ESP_LOGI(TAG, "Iniciando Access Point %s", wifi_ap_ssid);
-    wifi_ap_init(wifi_ap_ssid, CONFIG_WIFI_AP_PASS);
-}
-#endif
+*/
 
-static void events_handler(void *argv)
+#define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP           60          /* Time ESP32 will go to sleep (in seconds) */
+
+#define PIN_TX                  27
+#define PIN_RX                  26
+#define UART_BAUD               115200
+#define PWR_PIN                 4
+#define LED_PIN                 12
+#define POWER_PIN               25
+
+bool reply = false;
+
+void modem_on()
 {
-    char event[30];
-    while(1)
+    // Set-up modem  power pin
+    Serial.println("\nStarting Up Modem...");
+    pinMode(PWR_PIN, OUTPUT);
+    digitalWrite(PWR_PIN, HIGH);
+    delay(300);
+    digitalWrite(PWR_PIN, LOW);
+    delay(10000);
+    int i = 10;
+    Serial.println("\nTesting Modem Response...\n");
+    Serial.println("****");
+    while (i)
     {
-        if(xQueueReceive(event_handler_queue, (void * )&event, (portTickType)portMAX_DELAY))
+        SerialAT.print("AT\r");
+        delay(500);
+        if (SerialAT.available())
         {
-            if(strncmp(event, "restart", 30) == 0)
+            String r = SerialAT.readString();
+            Serial.println(r);
+            if ( r.indexOf("OK") >= 0 )
             {
-                ESP_LOGI(TAG, "restart request received");
-                vTaskDelay(pdMS_TO_TICKS(5000));
-                esp_restart();
+                reply = true;
+                break;;
             }
-            memset(event, '\0', 30);
         }
+        delay(500);
+        i--;
     }
+    Serial.println("****\n");
 }
 
-/***************************
- * MAIN
-****************************/
-#if !CONFIG_AUTOSTART_ARDUINO
-void app_main()
+void setup()
 {
-    initArduino();
-    httpd_handle_t server = NULL;
-    rest_server_context_t * rest_context = NULL;
-    WiFi.softAP("hidrometro", "hidrometro");
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
+    // Set console baud rate
+    SerialMon.begin(115200);
+    delay(10);
+    // Onboard LED light, it can be used freely
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+    // POWER_PIN : This pin controls the power supply of the SIM7600
+    pinMode(POWER_PIN, OUTPUT);
+    digitalWrite(POWER_PIN, HIGH);
 
-    ESP_ERROR_CHECK(nvs_flash_init());
-    //ESP_ERROR_CHECK(esp_netif_init());
-    //ESP_ERROR_CHECK(esp_event_loop_create_default());
+    // PWR_PIN ： This Pin is the PWR-KEY of the SIM7600
+    // The time of active low level impulse of PWRKEY pin to power on module , type 500 ms
+    pinMode(PWR_PIN, OUTPUT);
+    digitalWrite(PWR_PIN, HIGH);
+    delay(500);
+    digitalWrite(PWR_PIN, LOW);
+    delay(1000);
+    SerialAT.begin(UART_BAUD, SERIAL_8N1, PIN_RX, PIN_TX);
+    Serial.println("Wait...");
 
-    #if CONFIG_USE_MDNS
-    init_mdns();
-    netbiosns_init();
-    #endif
+    int retry = 5;
 
-    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
-    ESP_ERROR_CHECK(init_webservice("/spiffs", &server, rest_context));
-#ifdef USE_CONSOLE
-    //console_init();
-#endif
-    flowsensor_init();
-#ifdef USE_RS485
-    rs485_init();
-#endif
-    settings_load();
-
-#ifdef CONTROLLER_FIRMWARE
-    settings_set_mode(CONTROLLER_DEVICE);
-    settings_set_id(255);
-    settings_update();
-    devices_load();
-#else
-    settings_set_mode(PERIPHERAL_DEVICE);
-    settings_update();
-#endif
-    
-#if CONFIG_USE_WIFI == 1
-    init_wifi_ap();
-#endif
-    ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
-    protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
-
-
-#ifdef CONTROLLER_FIRMWARE
-    sim7070g_init();
-
-    uint8_t retries = 5;
-    while(retries-- && !sim7070g_turn_modem_on());
-    sim7070g_check_signal_quality();
-
-#ifdef USE_RS485
-    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
-#endif
-#else
-#ifdef USE_RS485
-    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
-#endif
-#endif
-    event_handler_queue = xQueueCreate( 10, 30*sizeof( char ) );
-    xTaskCreate(events_handler, "events_handler", 2048, NULL, 1, NULL);
-    while(1)
+    while (!reply && retry--)
     {
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        printf("Hello World!\n");
+        modem_on();
+    }
+
+    if (reply)
+    {
+        Serial.println(F("***********************************************************"));
+        Serial.println(F(" You can now send AT commands"));
+        Serial.println(F(" Enter \"AT\" (without quotes), and you should see \"OK\""));
+        Serial.println(F(" If it doesn't work, select \"Both NL & CR\" in Serial Monitor"));
+        Serial.println(F(" DISCLAIMER: Entering AT commands without knowing what they do"));
+        Serial.println(F(" can have undesired consiquinces..."));
+        Serial.println(F("***********************************************************\n"));
+    }
+    else
+    {
+        Serial.println(F("***********************************************************"));
+        Serial.println(F(" Failed to connect to the modem! Check the baud and try again."));
+        Serial.println(F("***********************************************************\n"));
     }
 }
-#else
-static void hello_world(void *argv)
+
+void loop()
 {
-    while(1)
-    {
-        Serial.println("Hello!");
-        vTaskDelay(pdMS_TO_TICKS(500));
+    while (SerialAT.available()) {
+        Serial.write(SerialAT.read());
     }
-}
 
-void setup() {
-    httpd_handle_t server = NULL;
-    rest_server_context_t * rest_context = NULL;
-    // Set WiFi to station mode and disconnect from an AP if it was previously connected
-    Serial.begin(115200);
-    WiFi.softAP("hidrometro", "hidrometro");
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
+    while (Serial.available()) {
 
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(init_flash_storage("/spiffs", "spiffs"));
-    settings_load();
-    settings_set_mode(CONTROLLER_DEVICE);
-    settings_set_id(255);
-    //settings_update();
-    xTaskCreate(settings_update, "settings_update", 8192, NULL, 1, NULL);
+        SerialAT.write(Serial.read());
+
+    }
+
     /*
-    tcpip_adapter_init();
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    init_mdns();
-    //netbiosns_init();
+    SerialAT.println("AT");
 
+    delay(500);
 
-    ESP_ERROR_CHECK(init_webservice("/spiffs", &server, rest_context));
-    init_routes(server, rest_context);
-#ifdef CONTROLLER_FIRMWARE
-    settings_set_mode(CONTROLLER_DEVICE);
-    settings_set_id(255);
-    settings_update();
-    devices_load();
-    //init_settings_routes(server, rest_context);
-#else
-    settings_set_mode(PERIPHERAL_DEVICE);
-    settings_update();
-#endif
-    ESP_LOGI(TAG, "ID: %d - MODE: %s", settings_get_id(), ((uint8_t)settings_get_mode()==1?"CONTROLLER":"PERIPHERAL"));
-    protocol_init(((uint8_t)settings_get_mode()==1?CONTROLLER:PERIPHERAL), settings_get_id());
+    Serial.println(SerialAT.readString());
 
-    */
-    Serial.println("Hello");
-    delay(100);
-    xTaskCreate(hello_world, "hello_world", 8192, NULL, 1, NULL);
+    SerialAT.println("AT+CMGF=1");
+
+    delay(500);
+
+    Serial.println(SerialAT.readString());
+
+    SerialAT.println("AT+CMGS=\"41998271302\"");
+
+    delay(500);
+
+    //Serial.println(SerialAT.readString());
+
+    SerialAT.print("TESTE");
+
+    SerialAT.write(0x1A);
+
+    delay(500);
+
+    Serial.println(SerialAT.readString());
+
+    delay(60*1000);
+*/
 }
 
-void loop() {
-    // Wait a bit before scanning again
-    delay(5000);
-    Serial.println("Hello");
-}
-#endif
+
