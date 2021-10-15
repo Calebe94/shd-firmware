@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include "sim/sim7070g.h"
+#include "sensor/flowsensor.h"
 
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
 #define TIME_TO_SLEEP           60          /* Time ESP32 will go to sleep (in seconds) */
@@ -14,6 +15,7 @@ void setup()
     SerialMon.begin(115200);
     delay(10);
 
+    flowsensor_init();
     sim7070g_init();
     Serial.println("Wait...");
 
