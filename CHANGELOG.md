@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added  `CORE_DEBUG_LEVEL` to `build_flags` on `platformio.ini`;
+
 ### Changed
 
 * Upgraded `flowsensor` to Arduino framework;
