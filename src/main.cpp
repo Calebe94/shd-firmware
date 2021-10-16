@@ -8,6 +8,7 @@
 #include "sensor/flowsensor.h"
 #include "settings/settings.h"
 #include "settings/devices.h"
+#include "rs485/rs485.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 
@@ -29,6 +30,7 @@ void setup()
 
     settings_load();
     flowsensor_init();
+    rs485_init();
 #ifdef CONTROLLER_FIRMWARE
     devices_load();
     sim7070g_init();
