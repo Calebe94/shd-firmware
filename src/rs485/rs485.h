@@ -33,7 +33,7 @@ extern QueueHandle_t rs485_queue;
 void rs485_setup(void);
 void rs485_init(void);
 void rs485_send(const char *);
-uint32_t rs485_read(char *);
+size_t rs485_read(char *);
 void rs485_flush();
 
 #endif

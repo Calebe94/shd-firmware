@@ -44,14 +44,17 @@ void rs485_send(const char *data)
     digitalWrite(RS485_RTS, LOW);
 }
 
-uint32_t rs485_read(char *data)
+size_t rs485_read(char *data)
 {
+    uint32_t size = 0;
     if(RS485.available() && data != NULL)
     {
         String rs485_line = RS485.readString();
         const char *rs485_data = rs485_line.c_str();
         memcpy(data, rs485_data, RS485_BUFFER_SIZE);
+        size = strlen(rs485_data);
     }
+    return size;
 }
 
 void rs485_flush(void)
