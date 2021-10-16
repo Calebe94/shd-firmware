@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Ported `protocol` module to `Arduino` framework;
 * Ported `message_process` module to `Arduino` framework;
 * Added `WiFi` Access Point (`AP`) initialization;
+* Added `ESP Async WebServer` library as dependency;
+* Added `AsyncTCP` library as dependency;
 
 ### Changed
 
