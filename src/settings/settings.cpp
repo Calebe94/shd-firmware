@@ -18,6 +18,7 @@ static settings_t global_settings;
 
 void settings_load(void)
 {
+    ESP_LOGD(TAG, "Iniciando as configurações...");
     FILE *f = fopen(SETTINGS_FILE, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
@@ -52,19 +53,20 @@ void settings_load(void)
     strncpy(global_settings.local, doc["local"], 128);
     global_settings.interval = (int)doc["interval"];
 
-    ESP_LOGI(TAG, "SETTINGS LOADED");
-    ESP_LOGI(TAG, "SETTINGS.id: %d", global_settings.id);
-    ESP_LOGI(TAG, "SETTINGS.mode: %d", global_settings.mode);
+    ESP_LOGD(TAG, "Configurações carregadas!");
+    ESP_LOGD(TAG, "SETTINGS.id: %d", global_settings.id);
+    ESP_LOGD(TAG, "SETTINGS.mode: %d", global_settings.mode);
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
-        ESP_LOGI(TAG, "SETTINGS.phones[%d]: %s", index, global_settings.phone[index]);
+        ESP_LOGD(TAG, "SETTINGS.phones[%d]: %s", index, global_settings.phone[index]);
     }
-    ESP_LOGI(TAG, "SETTINGS.local: %s", global_settings.local);
-    ESP_LOGI(TAG, "SETTINGS.interval: %d", global_settings.interval);
+    ESP_LOGD(TAG, "SETTINGS.local: %s", global_settings.local);
+    ESP_LOGD(TAG, "SETTINGS.interval: %d", global_settings.interval);
 }
 
 void settings_update()
 {
+    ESP_LOGD(TAG, "Gravando as configurações...");
     FILE *json_file = NULL;
     String settings_string = "";
     DynamicJsonDocument doc(1024);
@@ -78,10 +80,11 @@ void settings_update()
     }
     serializeJsonPretty(doc, settings_string);
     const char *settings_char = settings_string.c_str();
-    ESP_LOGI(TAG, "%s", settings_char);
+    ESP_LOGD(TAG, "%s", settings_char);
     json_file = fopen(SETTINGS_FILE, "w");
     fprintf(json_file, settings_char);
     fclose(json_file);
+    ESP_LOGD(TAG, "Configurações gravadas!");
 }
 
 uint8_t settings_get_id(void)

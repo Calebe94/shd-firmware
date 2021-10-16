@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define SETTINGS_FILE "/spiffs/settings.json"
+#define SETTINGS_FILE   "/spiffs/settings.json"
 #define MAX_PHONES      12
 
 typedef enum {
