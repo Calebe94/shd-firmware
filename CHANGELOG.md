@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Added  `CORE_DEBUG_LEVEL` to `build_flags` on `platformio.ini`;
 * Added `SPIFFS` initialization;
+* Ported `settings` to `Arduino` framework;
 
 ### Changed
 
