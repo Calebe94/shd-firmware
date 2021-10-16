@@ -3,8 +3,12 @@
 ****************************/
 #include <Arduino.h>
 #include <WiFi.h>
+#include <SPIFFS.h>
 #include "sim/sim7070g.h"
 #include "sensor/flowsensor.h"
+#include "settings/settings.h"
+#include "esp_log.h"
+#include "esp32-hal-log.h"
 
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
 #define TIME_TO_SLEEP           60          /* Time ESP32 will go to sleep (in seconds) */
@@ -15,8 +19,15 @@ void setup()
     SerialMon.begin(115200);
     delay(10);
 
+    if(!SPIFFS.begin(false))
+    {
+        Serial.println("SPIFFS Mount Failed");
+        return;
+    }
+
     flowsensor_init();
     sim7070g_init();
+
     Serial.println("Wait...");
 
     int retry = 5;
