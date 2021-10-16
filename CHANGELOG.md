@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Ported `rs485` module to `Arduino` framework;
 * Ported `protocol` module to `Arduino` framework;
 * Ported `message_process` module to `Arduino` framework;
+* Added `WiFi` Access Point (`AP`) initialization;
 
 ### Changed
 

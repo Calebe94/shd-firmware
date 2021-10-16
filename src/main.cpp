@@ -13,6 +13,7 @@
 #include "protocol/message_process.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
+#include <WiFi.h>
 
 #define TAG                     "MAIN"
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
@@ -20,6 +21,8 @@
 
 void setup()
 {
+    int retry = 5;
+    bool reply= false;
     // Set console baud rate
     SerialMon.begin(115200);
     delay(10);
@@ -33,19 +36,21 @@ void setup()
     settings_load();
     flowsensor_init();
     rs485_init();
+
 #ifdef CONTROLLER_FIRMWARE
     devices_load();
     sim7070g_init();
     protocol_init(CONTROLLER, 255);
+    WiFi.softAP("hidrometro-controlador", "hidrometro");
 #else
+    char ssid[30];
+    snprintf(ssid, 30, "hidrometro-periferico-%d", settings_get_id());
+    WiFi.softAP(ssid, "hidrometro");
     protocol_init(PERIPHERAL, settings_get_id());
 #endif
 
-
     ESP_LOGI(TAG, "Wait...");
 
-    int retry = 5;
-    bool reply= false;
     while (!(reply = sim7070g_turn_on()) && retry--);
     if(reply)
     {
@@ -72,7 +77,9 @@ void setup()
         ESP_LOGI(TAG, F("***********************************************************\n"));
     }
 #endif
+#ifdef CONTROLLER_FIRMWARE
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
+#endif
 }
 
 void loop()
