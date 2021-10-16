@@ -10,6 +10,7 @@
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 
+#define TAG                     "MAIN"
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
 #define TIME_TO_SLEEP           60          /* Time ESP32 will go to sleep (in seconds) */
 
@@ -21,39 +22,42 @@ void setup()
 
     if(!SPIFFS.begin(false))
     {
-        Serial.println("SPIFFS Mount Failed");
+        ESP_LOGE(TAG, "SPIFFS Mount Failed");
         return;
     }
 
     flowsensor_init();
     sim7070g_init();
 
-    Serial.println("Wait...");
+    ESP_LOGI(TAG, "Wait...");
 
     int retry = 5;
     bool reply= false;
     while (!(reply = sim7070g_turn_on()) && retry--);
 
+#ifdef DEBUG
     if (reply)
     {
-        Serial.println(F("***********************************************************"));
-        Serial.println(F(" You can now send AT commands"));
-        Serial.println(F(" Enter \"AT\" (without quotes), and you should see \"OK\""));
-        Serial.println(F(" If it doesn't work, select \"Both NL & CR\" in Serial Monitor"));
-        Serial.println(F(" DISCLAIMER: Entering AT commands without knowing what they do"));
-        Serial.println(F(" can have undesired consiquinces..."));
-        Serial.println(F("***********************************************************\n"));
+        ESP_LOGI(TAG, F("***********************************************************"));
+        ESP_LOGI(TAG, F(" You can now send AT commands"));
+        ESP_LOGI(TAG, F(" Enter \"AT\" (without quotes), and you should see \"OK\""));
+        ESP_LOGI(TAG, F(" If it doesn't work, select \"Both NL & CR\" in Serial Monitor"));
+        ESP_LOGI(TAG, F(" DISCLAIMER: Entering AT commands without knowing what they do"));
+        ESP_LOGI(TAG, F(" can have undesired consiquinces..."));
+        ESP_LOGI(TAG, F("***********************************************************\n"));
     }
     else
     {
-        Serial.println(F("***********************************************************"));
-        Serial.println(F(" Failed to connect to the modem! Check the baud and try again."));
-        Serial.println(F("***********************************************************\n"));
+        ESP_LOGI(TAG, F("***********************************************************"));
+        ESP_LOGI(TAG, F(" Failed to connect to the modem! Check the baud and try again."));
+        ESP_LOGI(TAG, F("***********************************************************\n"));
     }
+#endif
 }
 
 void loop()
 {
+#ifdef DEBUG
     while (SerialAT.available())
     {
         Serial.write(SerialAT.read());
@@ -63,36 +67,7 @@ void loop()
     {
         SerialAT.write(Serial.read());
     }
-
-    /*
-    SerialAT.println("AT");
-
-    delay(500);
-
-    Serial.println(SerialAT.readString());
-
-    SerialAT.println("AT+CMGF=1");
-
-    delay(500);
-
-    Serial.println(SerialAT.readString());
-
-    SerialAT.println("AT+CMGS=\"41998271302\"");
-
-    delay(500);
-
-    //Serial.println(SerialAT.readString());
-
-    SerialAT.print("TESTE");
-
-    SerialAT.write(0x1A);
-
-    delay(500);
-
-    Serial.println(SerialAT.readString());
-
-    delay(60*1000);
-*/
+#endif
 }
 
 
