@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `DEBUG` flag to interact with `sim7070g` module;
 * Ported `devices` to `Arduino` framework;
 * Ported `rs485` module to `Arduino` framework;
+* Ported `protocol` module to `Arduino` framework;
+* Ported `message_process` module to `Arduino` framework;
 
 ### Changed
 

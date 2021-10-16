@@ -9,6 +9,8 @@
 #include "settings/settings.h"
 #include "settings/devices.h"
 #include "rs485/rs485.h"
+#include "protocol/protocol.h"
+#include "protocol/message_process.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 
@@ -34,9 +36,14 @@ void setup()
 #ifdef CONTROLLER_FIRMWARE
     devices_load();
     sim7070g_init();
+    protocol_init(CONTROLLER, 255);
+#else
+    protocol_init(PERIPHERAL, settings_get_id());
 #endif
 
+
     ESP_LOGI(TAG, "Wait...");
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
 
     int retry = 5;
     bool reply= false;
@@ -64,6 +71,8 @@ void setup()
 
 void loop()
 {
+    ESP_LOGI(TAG, "litros: %f", flowsensor_get_litros());
+    delay(1000);
 #ifdef DEBUG
     while (SerialAT.available())
     {
