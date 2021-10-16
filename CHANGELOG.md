@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `SPIFFS` initialization;
 * Ported `settings` to `Arduino` framework;
 * Added `DEBUG` flag to interact with `sim7070g` module;
+* Ported `devices` to `Arduino` framework;
 
 ### Changed
 

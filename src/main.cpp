@@ -7,6 +7,7 @@
 #include "sim/sim7070g.h"
 #include "sensor/flowsensor.h"
 #include "settings/settings.h"
+#include "settings/devices.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 
@@ -26,8 +27,12 @@ void setup()
         return;
     }
 
+    settings_load();
     flowsensor_init();
+#ifdef CONTROLLER_FIRMWARE
+    devices_load();
     sim7070g_init();
+#endif
 
     ESP_LOGI(TAG, "Wait...");
 
