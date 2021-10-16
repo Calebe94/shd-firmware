@@ -9,11 +9,11 @@
 // #define TINY_GSM_MODEM_SIM7600
 //#define TINY_GSM_MODEM_SIM7070
 // Set serial for debug console (to the Serial Monitor, default speed 115200)
-#define SerialMon Serial
+#define SerialMon               Serial
 
 // Set serial for AT commands (to the module)
 // Use Hardware Serial on Mega, Leonardo, Micro
-#define SerialAT Serial1
+#define SerialAT                Serial1
 
 #define PIN_TX                  27
 #define PIN_RX                  26
@@ -23,19 +23,27 @@
 #define POWER_PIN               25
 
 // Range to attempt to autobaud
-#define GSM_AUTOBAUD_MIN 9600
-#define GSM_AUTOBAUD_MAX 57600
+#define GSM_AUTOBAUD_MIN        9600
+#define GSM_AUTOBAUD_MAX        57600
 
 // See all AT commands, if wanted
 // #define DUMP_AT_COMMANDS
 
 // Define the serial console for debug prints, if needed
-#define TINY_GSM_DEBUG SerialMon
+#define TINY_GSM_DEBUG          SerialMon
+
+#define SIM7070G_MAX_LENGTH       1024
 
 void sim7070g_init();
 
 void sim7070g_send_at(String command);
 
 bool sim7070g_turn_on();
+
+size_t sim7070g_read(char *data);
+
+void sim7070g_flush(void);
+
+bool sim7070g_send_sms(const char*, const char*);
 
 #endif

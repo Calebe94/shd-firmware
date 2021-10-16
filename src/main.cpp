@@ -43,12 +43,17 @@ void setup()
 
 
     ESP_LOGI(TAG, "Wait...");
-    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
 
     int retry = 5;
     bool reply= false;
     while (!(reply = sim7070g_turn_on()) && retry--);
-
+    if(reply)
+    {
+        if(sim7070g_send_sms("41998271302", "Este é um teste, com Arduino!"))
+        {
+            ESP_LOGI(TAG, "Mensagem enviada com sucesso!");
+        }
+    }
 #ifdef DEBUG
     if (reply)
     {
@@ -67,6 +72,7 @@ void setup()
         ESP_LOGI(TAG, F("***********************************************************\n"));
     }
 #endif
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
 }
 
 void loop()
