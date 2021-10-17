@@ -11,9 +11,9 @@
 #include "rs485/rs485.h"
 #include "protocol/protocol.h"
 #include "protocol/message_process.h"
+#include "web/webservice.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
-#include <WiFi.h>
 
 #define TAG                     "MAIN"
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
@@ -49,6 +49,7 @@ void setup()
     protocol_init(PERIPHERAL, settings_get_id());
 #endif
 
+    webservice_init();
     ESP_LOGI(TAG, "Wait...");
 
     while (!(reply = sim7070g_turn_on()) && retry--);
