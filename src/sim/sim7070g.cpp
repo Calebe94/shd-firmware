@@ -6,6 +6,7 @@
 
 Ticker tick;
 TinyGsm modem(SerialAT);
+TaskHandle_t sim7070g_task_handle;
 
 static void sim7070g_parse_responses(String response)
 {
@@ -22,6 +23,10 @@ static void sim7070g_parse_responses(String response)
         ESP_LOGD(TAG, "Recebido um novo SMS");
         sim7070g_clear_sms_list();
         ESP_LOGD(TAG, "Limpando a lista de SMS");
+    }
+    else if(strstr(response.c_str(), "+CMGR:") != NULL)
+    {
+        ESP_LOGD(TAG, "Leitura de SMS");
     }
     else
     {
@@ -77,6 +82,7 @@ void sim7070g_init()
         ESP_LOGD(TAG, "Failed to restart modem, delaying 10s and retrying");
         return;
     }
+    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 10, &sim7070g_task_handle);
 #endif
     String name = modem.getModemName();
     ESP_LOGD(TAG, "Modem Name: %s", name.c_str());
@@ -109,7 +115,7 @@ bool sim7070g_turn_on()
             if ( r.indexOf("OK") >= 0 )
             {
                 reply = true;
-                break;;
+                break;
             }
         }
         delay(500);
@@ -145,19 +151,13 @@ bool sim7070g_send_sms(const char *number, const char *message)
     if(number != NULL && message != NULL)
     {
         snprintf(number_command, 25, "AT+CMGS=\"%s\"", number);
-        ESP_LOGD(TAG, "%s", SerialAT.readString());
         SerialAT.println("AT+CMGF=1");
         delay(500);
-        ESP_LOGD(TAG, "%s", SerialAT.readString());
         SerialAT.println(number_command);
         delay(500);
         SerialAT.print(message);
         SerialAT.write(0x1A);
         delay(500);
-        while(SerialAT.available())
-        {
-            ESP_LOGD(TAG, "%s", SerialAT.readString());
-        }
         status = true;
     }
 
@@ -185,6 +185,16 @@ String sim7070g_read_response()
     }
 
     return response;
+}
+
+void sim7070g_suspend_event_handler()
+{
+    vTaskSuspend(sim7070g_task_handle);
+}
+
+void sim7070g_resume_event_handler()
+{
+    vTaskResume(sim7070g_task_handle);
 }
 
 void sim7070g_event_handler_task(void *argv)

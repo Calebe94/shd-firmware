@@ -50,7 +50,6 @@ void setup()
     webservice_init();
 #if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
-    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 10, NULL);
 #endif
 }
 

@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `restart` form to webpage;
 * Added `/restart` route to `settings_api`;
 * Added `sim7070g_event_handler_task` function to handle `sim7070g` responses;
+* Added `sim7070g_suspend_event_handler` and `sim7070g_resume_event_handler` to control the `sim7070g` event handle task;
 
 ### Changed
 
