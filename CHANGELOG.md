@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Upgraded `flowsensor` to Arduino framework;
 * Changed `settings` debug level to `DEBUG`;
 * Changed `sim7070g` debug level to `DEBUG`;
+* Changed `char *` arguments to `const char *` on `settings` module to better integrate with `cpp`;
 
 ### Fixed
 

@@ -32,7 +32,7 @@ bool settings_set_phone(uint8_t, char*);
 
 char *settings_get_phone(uint8_t);
 
-uint8_t settings_find_phone_id(char *);
+uint8_t settings_find_phone_id(const char *);
 
 bool settings_delete_phone_by_id(uint8_t);
 
@@ -42,7 +42,7 @@ settings_mode_t settings_get_mode(void);
 
 void settings_set_mode(settings_mode_t);
 
-void settings_set_local(char*);
+void settings_set_local(const char*);
 
 char *settings_get_local(void);
 
