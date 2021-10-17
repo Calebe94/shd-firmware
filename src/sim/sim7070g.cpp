@@ -1,22 +1,88 @@
+#include <Ticker.h>
+#define TINY_GSM_MODEM_SIM7070
+#include <TinyGsmClient.h>
+
 #include "sim7070g.h"
+
+Ticker tick;
+TinyGsm modem(SerialAT);
+
+static void sim7070g_parse_responses(String response)
+{
+    if(strstr(response.c_str(), "OK") != NULL)
+    {
+        ESP_LOGD(TAG, "Recebido OK");
+    }
+    else if(strstr(response.c_str(), "ERROR") != NULL)
+    {
+        ESP_LOGD(TAG, "Recebido ERROR");
+    }
+    else if(strstr(response.c_str(), "+CMTI:") != NULL)
+    {
+        ESP_LOGD(TAG, "Recebido um novo SMS");
+        sim7070g_clear_sms_list();
+        ESP_LOGD(TAG, "Limpando a lista de SMS");
+    }
+    else
+    {
+        ESP_LOGD(TAG, "Não fazer nada!");
+    }
+}
 
 void sim7070g_init()
 {
-    // Onboard LED light, it can be used freely
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
-    // POWER_PIN : This pin controls the power supply of the SIM7600
-    pinMode(POWER_PIN, OUTPUT);
-    digitalWrite(POWER_PIN, HIGH);
+    pinMode(SIM7070G_INT, INPUT);
 
-    // PWR_PIN ： This Pin is the PWR-KEY of the SIM7600
+    attachInterrupt(SIM7070G_INT, []() {
+        detachInterrupt(SIM7070G_INT);
+        // If Modem starts normally, then set the onboard LED to flash once every 1 second
+        tick.attach_ms(1000, []() {
+            digitalWrite(SIM7070G_LED, !digitalRead(SIM7070G_LED));
+        });
+    }, CHANGE);
+    // Onboard LED light, it can be used freely
+    pinMode(SIM7070G_LED, OUTPUT);
+    digitalWrite(SIM7070G_LED, LOW);
+    // SIM7070G_POWER : This pin controls the power supply of the SIM7600
+    pinMode(SIM7070G_POWER, OUTPUT);
+    digitalWrite(SIM7070G_POWER, HIGH);
+
+    // SIM7070G_PWR ： This Pin is the PWR-KEY of the SIM7600
     // The time of active low level impulse of PWRKEY pin to power on module , type 500 ms
-    pinMode(PWR_PIN, OUTPUT);
-    digitalWrite(PWR_PIN, HIGH);
+    pinMode(SIM7070G_PWR, OUTPUT);
+    digitalWrite(SIM7070G_PWR, HIGH);
     delay(500);
-    digitalWrite(PWR_PIN, LOW);
+    digitalWrite(SIM7070G_PWR, LOW);
     delay(1000);
-    SerialAT.begin(UART_BAUD, SERIAL_8N1, PIN_RX, PIN_TX);
+    SerialAT.begin(SIM7070G_BAUD, SERIAL_8N1, SIM7070G_RXD, SIM7070G_TXD);
+
+    ESP_LOGD(TAG, "Initializing modem...");
+#ifdef DEBUG
+    bool reply = false;
+    int retry = 5;
+    while (!(reply = sim7070g_turn_on()) && retry--);
+    ESP_LOGI(TAG, "***********************************************************");
+    if(reply)
+    {
+        ESP_LOGI(TAG, " You can now send AT commands");
+    }
+    else
+    {
+        ESP_LOGD(TAG, " Failed to connect to the modem! Check the baud and try again.");
+    }
+    ESP_LOGI(TAG, "***********************************************************\n");
+#else
+    if (!modem.init())
+    {
+        ESP_LOGD(TAG, "Failed to restart modem, delaying 10s and retrying");
+        return;
+    }
+#endif
+    String name = modem.getModemName();
+    ESP_LOGD(TAG, "Modem Name: %s", name.c_str());
+
+    String modemInfo = modem.getModemInfo();
+    ESP_LOGD(TAG, "Modem Info: %s", modemInfo.c_str());
 }
 
 bool sim7070g_turn_on()
@@ -24,10 +90,10 @@ bool sim7070g_turn_on()
     bool reply = false;
     // Set-up modem  power pin
     ESP_LOGD(TAG, "\nStarting Up Modem...");
-    pinMode(PWR_PIN, OUTPUT);
-    digitalWrite(PWR_PIN, HIGH);
+    pinMode(SIM7070G_PWR, OUTPUT);
+    digitalWrite(SIM7070G_PWR, HIGH);
     delay(300);
-    digitalWrite(PWR_PIN, LOW);
+    digitalWrite(SIM7070G_PWR, LOW);
     delay(10000);
     int i = 10;
     ESP_LOGD(TAG, "\nTesting Modem Response...\n");
@@ -96,4 +162,53 @@ bool sim7070g_send_sms(const char *number, const char *message)
     }
 
     return status;
+}
+
+void sim7070g_clear_sms_list()
+{
+    SerialAT.println("AT+CMGF=1");
+    delay(500);
+    SerialAT.println("AT+CMGD=4,1");
+    delay(500);
+}
+
+String sim7070g_read_response()
+{
+    String response = "";
+    if(SerialAT.available() > 0)
+    {
+        while(SerialAT.available() > 0)
+        {
+            response += (char)SerialAT.read();
+        }
+        ESP_LOGD(TAG, "Recebido: %s - %d", response.c_str(), response.length());
+    }
+
+    return response;
+}
+
+void sim7070g_event_handler_task(void *argv)
+{
+    ESP_LOGD(TAG, "Iniciando event handler.");
+    String response = "";
+    for(;;)
+    {
+        if(SerialAT.available() > 0)
+        {
+            while(SerialAT.available() > 0)
+            {
+                char response_char = (char)SerialAT.read();
+                Serial.write(response_char);
+                response += response_char;
+            }
+        }
+
+        if(response.endsWith("\r\n") && response.length() > 2)
+        {
+            response.trim();
+            ESP_LOGD(TAG, "Recebido: %s - %d", response.c_str(), response.length());
+            sim7070g_parse_responses(response);
+            response = "";
+        }
+    }
 }

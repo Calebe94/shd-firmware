@@ -21,8 +21,6 @@
 
 void setup()
 {
-    int retry = 5;
-    bool reply= false;
     // Set console baud rate
     SerialMon.begin(115200);
     delay(10);
@@ -50,43 +48,14 @@ void setup()
 #endif
 
     webservice_init();
-    ESP_LOGI(TAG, "Wait...");
-
-    while (!(reply = sim7070g_turn_on()) && retry--);
-    if(reply)
-    {
-        if(sim7070g_send_sms("41998271302", "Este é um teste, com Arduino!"))
-        {
-            ESP_LOGI(TAG, "Mensagem enviada com sucesso!");
-        }
-    }
-#ifdef DEBUG
-    if (reply)
-    {
-        ESP_LOGI(TAG, F("***********************************************************"));
-        ESP_LOGI(TAG, F(" You can now send AT commands"));
-        ESP_LOGI(TAG, F(" Enter \"AT\" (without quotes), and you should see \"OK\""));
-        ESP_LOGI(TAG, F(" If it doesn't work, select \"Both NL & CR\" in Serial Monitor"));
-        ESP_LOGI(TAG, F(" DISCLAIMER: Entering AT commands without knowing what they do"));
-        ESP_LOGI(TAG, F(" can have undesired consiquinces..."));
-        ESP_LOGI(TAG, F("***********************************************************\n"));
-    }
-    else
-    {
-        ESP_LOGI(TAG, F("***********************************************************"));
-        ESP_LOGI(TAG, F(" Failed to connect to the modem! Check the baud and try again."));
-        ESP_LOGI(TAG, F("***********************************************************\n"));
-    }
-#endif
-#ifdef CONTROLLER_FIRMWARE
+#if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 10, NULL);
+    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 10, NULL);
 #endif
 }
 
 void loop()
 {
-    ESP_LOGI(TAG, "litros: %f", flowsensor_get_litros());
-    delay(1000);
 #ifdef DEBUG
     while (SerialAT.available())
     {
@@ -99,5 +68,4 @@ void loop()
     }
 #endif
 }
-
 
