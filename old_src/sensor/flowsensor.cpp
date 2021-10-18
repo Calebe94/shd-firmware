@@ -1,11 +1,16 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /***************************
  * INCLUDES
 ****************************/
-#include "Arduino.h"
+#include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/timers.h"
+#include "driver/gpio.h"
 
 #include "flowsensor.h"
 
@@ -26,12 +31,18 @@ static float litros = 0;
 
 void flowsensor_setup(void)
 {
-    pinMode(FLOWSENSOR_GPIO, INPUT_PULLUP);
-    attachInterrupt(FLOWSENSOR_GPIO, flowsensor_isr_handler, RISING);
+    gpio_pad_select_gpio((gpio_num_t)FLOWSENSOR_GPIO);
+    gpio_set_direction((gpio_num_t)FLOWSENSOR_GPIO, GPIO_MODE_INPUT);
+    gpio_pullup_en((gpio_num_t)FLOWSENSOR_GPIO);
+    gpio_set_intr_type((gpio_num_t)FLOWSENSOR_GPIO, GPIO_INTR_POSEDGE);
+
+    gpio_install_isr_service(0);
+    gpio_isr_handler_add((gpio_num_t)FLOWSENSOR_GPIO, flowsensor_isr_handler, (void*)FLOWSENSOR_GPIO);
 }
 
 void flowsensor_init(void)
 {
+    flowsensor_setup();
     flowsensor_queue = xQueueCreate(10, sizeof(uint32_t));
     xTaskCreate(flowsensor_task, "flowsensor_task", 2048, NULL, 10, NULL);
     TimerHandle_t xFlowTimer = xTimerCreate("Timer", pdMS_TO_TICKS( 1000 ), pdTRUE, ( void * ) flowsensor_queue, flowsensor_timer_callback);
@@ -41,12 +52,11 @@ void flowsensor_init(void)
         // The timer could not be set into the Active state.
         printf("Não foi possível criar o timer!\n");
     }
-    flowsensor_setup();
 }
 
-void IRAM_ATTR flowsensor_isr_handler()
+void flowsensor_isr_handler(void *arg)
 {
-    uint32_t gpio_num = (uint32_t) FLOWSENSOR_GPIO;
+    uint32_t gpio_num = (uint32_t) arg;
     xQueueSendFromISR(flowsensor_queue, &gpio_num, NULL);
 }
 
@@ -82,3 +92,6 @@ float flowsensor_get_litros(void)
     return litros;
 }
 
+#ifdef __cplusplus
+}
+#endif

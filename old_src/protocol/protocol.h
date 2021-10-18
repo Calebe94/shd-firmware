@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #ifndef _PROTOCOL_H_
 #define _PROTOCOL_H_
 
@@ -49,3 +53,6 @@ bool protocol_check_id(protocol_data_raw_t);
 
 #endif
 
+#ifdef __cplusplus
+}
+#endif

@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -5,7 +9,7 @@
 #include <stdbool.h>
 
 #include "esp_log.h"
-#include <ArduinoJson.h>
+#include "cJSON_Utils.h"
 
 #include "devices.h"
 
@@ -16,7 +20,7 @@ static uint8_t devices_ids_length;
 
 void devices_load(void)
 {
-    ESP_LOGD(TAG, "Iniciando a lista de dispositivos...");
+    ESP_LOGI(TAG, "Iniciando a lista de dispositivos...");
     FILE *f = fopen(DEVICES_FILE, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
@@ -28,40 +32,55 @@ void devices_load(void)
 
     string[fsize] = 0;
 
-    ESP_LOGD(TAG, "%s", string);
+    cJSON * json = cJSON_Parse(string);
+    cJSON *device_id_json = NULL;
+    cJSON *devices_ids_json = NULL;
 
-    DynamicJsonDocument doc(1024);
-    deserializeJson(doc, string);
+    ESP_LOGI(TAG, "%s", string);
+    devices_ids_json = cJSON_GetObjectItemCaseSensitive(json, "devices");
 
-    JsonArray devices_array = doc["devices"].as<JsonArray>();
-    
-    for(JsonVariant device: devices_array)
+    cJSON_ArrayForEach(device_id_json, devices_ids_json)
     {
-        device_add(device.as<int>());
-        ESP_LOGD(TAG, "device: %d", device.as<int>());
+        if(cJSON_IsNumber(device_id_json) )
+        {
+            device_add(device_id_json->valueint);
+        }
+    }
+
+    ESP_LOGI(TAG, "Resgatando ids da lista...");
+    for(uint8_t index = 0; index < devices_ids_length; index++)
+    {
+        ESP_LOGI(TAG, "Device List: %d", devices_ids[index]);
     }
 }
 
 void devices_update(void)
 {
-    ESP_LOGD(TAG, "Gravando os dispositivos...");
+    char *string = NULL;
     FILE *json_file = NULL;
-    String devices_string = "";
-    DynamicJsonDocument doc(1024);
+
+    cJSON *json_devices = NULL;
+    cJSON *json_id = NULL;
+    cJSON *json_devices_array = NULL;
+
+    json_devices = cJSON_CreateObject();
+    json_devices_array = cJSON_CreateArray();
+
+    cJSON_AddItemToObject(json_devices, "devices", json_devices_array);
 
     for (uint8_t index = 0; index < devices_ids_length; index++)
     {
-        doc["devices"][index] = device_get_id(index);
+        json_id = cJSON_CreateNumber(devices_ids[index]);
+        cJSON_AddItemToArray(json_devices_array, json_id);
     }
 
-    serializeJsonPretty(doc, devices_string);
-    const char *devices_char = devices_string.c_str();
-    ESP_LOGD(TAG, "%s", devices_char);
+    string = cJSON_Print(json_devices);
+    ESP_LOGI(TAG, "JSON File: \n%s", string);
     
     json_file = fopen(DEVICES_FILE, "w");
-    fprintf(json_file, devices_char);
+    fprintf(json_file, string);
     fclose(json_file);
-    ESP_LOGD(TAG, "Dispositivos gravados!");
+    cJSON_Delete(json_devices);
 }
 
 bool device_add(int device_id)
@@ -141,3 +160,6 @@ bool device_check_duplication(int device_id)
     return status;
 }
 
+#ifdef __cplusplus
+}
+#endif

@@ -9,7 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added  `CORE_DEBUG_LEVEL` to `build_flags` on `platformio.ini`;
+* Added `SPIFFS` initialization;
+* Ported `settings` to `Arduino` framework;
+* Added `DEBUG` flag to interact with `sim7070g` module;
+* Ported `devices` to `Arduino` framework;
+* Ported `rs485` module to `Arduino` framework;
+* Ported `protocol` module to `Arduino` framework;
+* Ported `message_process` module to `Arduino` framework;
+* Added `WiFi` Access Point (`AP`) initialization;
+* Added `ESP Async WebServer` library as dependency;
+* Added `AsyncTCP` library as dependency;
+* Ported `webserver` module to `Arduino` framework;
+
 ### Changed
+
+* Upgraded `flowsensor` to Arduino framework;
+* Changed `settings` debug level to `DEBUG`;
+* Changed `sim7070g` debug level to `DEBUG`;
+* Changed `char *` arguments to `const char *` on `settings` module to better integrate with `cpp`;
 
 ### Fixed
 
@@ -24,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `/restart` route to simulator;
 * Added `restart` form to webpage;
 * Added `/restart` route to `settings_api`;
+* Added `sim7070g_event_handler_task` function to handle `sim7070g` responses;
+* Added `sim7070g_suspend_event_handler` and `sim7070g_resume_event_handler` to control the `sim7070g` event handle task;
 
 ### Changed
 

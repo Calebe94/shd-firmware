@@ -1,7 +1,3 @@
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -12,7 +8,7 @@ extern "C"
 #include "freertos/task.h"
 
 #include "esp_log.h"
-#include "cJSON_Utils.h"
+#include <ArduinoJson.h>
 
 #include "settings.h"
 
@@ -22,6 +18,7 @@ static settings_t global_settings;
 
 void settings_load(void)
 {
+    ESP_LOGD(TAG, "Iniciando as configurações...");
     FILE *f = fopen(SETTINGS_FILE, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
@@ -32,143 +29,62 @@ void settings_load(void)
     fclose(f);
 
     string[fsize] = 0;
-
-    cJSON * json = cJSON_Parse(string);
-    if(json != NULL)
+    ESP_LOGI(TAG, "%s", string);
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, string);
+    global_settings.id = (int)doc["id"];
+    if(strcmp("controller", (const char*)doc["mode"]) == 0)
     {
-        cJSON * json_id = cJSON_GetObjectItemCaseSensitive(json, "id");
-        cJSON * json_mode = cJSON_GetObjectItemCaseSensitive(json, "mode");
-        cJSON * json_phones = cJSON_GetObjectItemCaseSensitive(json, "phones");
-        cJSON * json_local = cJSON_GetObjectItemCaseSensitive(json, "local");
-        cJSON * json_interval = cJSON_GetObjectItemCaseSensitive(json, "interval");
-        cJSON *json_phone = NULL;
-
-
-        if (cJSON_IsNumber(json_id))
-        {
-            global_settings.id = json_id->valueint;
-        }
-
-        if (cJSON_IsString(json_mode))
-        {
-            if(strcmp("controller", json_mode->valuestring) == 0)
-            {
-                global_settings.mode = CONTROLLER_DEVICE;
-            }
-            else
-            {
-                global_settings.mode = PERIPHERAL_DEVICE;
-            }
-        }
-
-        uint8_t index = 0;
-        cJSON_ArrayForEach(json_phone, json_phones)
-        {
-            if (cJSON_IsString(json_phone))
-            {
-                settings_set_phone(index++, json_phone->valuestring);
-            }
-        }
-
-        if (cJSON_IsString(json_local))
-        {
-            strncpy(global_settings.local, json_local->valuestring, 128);
-        }
-
-        if (cJSON_IsNumber(json_interval))
-        {
-            global_settings.interval = json_interval->valueint;
-        }
+        global_settings.mode = CONTROLLER_DEVICE;
     }
-    ESP_LOGI(TAG, "SETTINGS LOADED");
-    ESP_LOGI(TAG, "SETTINGS.id: %d", global_settings.id);
-    ESP_LOGI(TAG, "SETTINGS.mode: %d", (int)global_settings.mode);
-    ESP_LOGI(TAG, "SETTINGS.local: %s", (char*)global_settings.local);
-    ESP_LOGI(TAG, "SETTINGS.interval: %d", (int)global_settings.interval);
-    cJSON_Delete(json);
-}
-
-void settings_update(void *argv)
-{
-    char *string = NULL;
-    FILE *json_file = NULL;
-    cJSON *json_settings = NULL;
-    cJSON *json_id = NULL;
-    cJSON *json_mode = NULL;
-    cJSON *json_phones = NULL;
-    cJSON *json_local = NULL;
-    cJSON *json_interval = NULL;
-    
-    ESP_LOGI(TAG, "settings_update:");
-    json_settings = cJSON_CreateObject();
-    if(json_settings == NULL)
+    else
     {
-        ESP_LOGI(TAG, "json_settings is NULL");
-        vTaskDelete(NULL);
+        global_settings.mode = PERIPHERAL_DEVICE;
     }
-    json_id = cJSON_CreateNumber(global_settings.id);
-    if(json_id == NULL)
-    {
-        ESP_LOGI(TAG, "json_id is NULL");
-        vTaskDelete(NULL);
-    }
-    json_mode = cJSON_CreateString(((uint8_t)global_settings.mode==1?"controller":"peripheral"));
-    if(json_mode == NULL)
-    {
-        ESP_LOGI(TAG, "json_mode is NULL");
-        vTaskDelete(NULL);
-    }
-    json_phones = cJSON_CreateArray();
-    if(json_phones == NULL)
-    {
-        ESP_LOGI(TAG, "json_phones is NULL");
-        vTaskDelete(NULL);
-    }
-    cJSON_AddItemToObject(json_settings, "phones", json_phones);
 
-    ESP_LOGI(TAG, "created phone array");
+    JsonArray array = doc["phones"].as<JsonArray>();
+    int index = 0;
+    for(JsonVariant phone : array)
+    {
+        String phone_string = phone.as<String>();
+        const char *phone_char = phone_string.c_str();
+        strncpy(global_settings.phone[index++], phone_char, 20);
+    }
+    strncpy(global_settings.local, doc["local"], 128);
+    global_settings.interval = (int)doc["interval"];
+
+    ESP_LOGD(TAG, "Configurações carregadas!");
+    ESP_LOGD(TAG, "SETTINGS.id: %d", global_settings.id);
+    ESP_LOGD(TAG, "SETTINGS.mode: %d", global_settings.mode);
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
-        cJSON *json_phone = cJSON_CreateString(global_settings.phone[index]);
-        if(json_phone == NULL)
-        {
-            ESP_LOGI(TAG, "json_phone is NULL");
-            vTaskDelete(NULL);
-        }
-        cJSON_AddItemToArray(json_phones, json_phone);
-        ESP_LOGI(TAG, "global_settings.phone[index]: %s", global_settings.phone[index]);
+        ESP_LOGD(TAG, "SETTINGS.phones[%d]: %s", index, global_settings.phone[index]);
     }
+    ESP_LOGD(TAG, "SETTINGS.local: %s", global_settings.local);
+    ESP_LOGD(TAG, "SETTINGS.interval: %d", global_settings.interval);
+}
 
-    ESP_LOGI(TAG, "creating local, and interval notes");
-    json_local = cJSON_CreateString(global_settings.local);
-    if(json_local == NULL)
+void settings_update()
+{
+    ESP_LOGD(TAG, "Gravando as configurações...");
+    FILE *json_file = NULL;
+    String settings_string = "";
+    DynamicJsonDocument doc(1024);
+    doc["id"] = (int)global_settings.id;
+    doc["mode"] = ((int)global_settings.mode==1)?"controller":"peripheral";
+    doc["local"] = global_settings.local;
+    doc["interval"] = global_settings.interval;
+    for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
     {
-        ESP_LOGI(TAG, "json_local is NULL");
-        vTaskDelete(NULL);
+        doc["phones"][index] = global_settings.phone[index];
     }
-    json_interval = cJSON_CreateNumber(global_settings.interval);
-    if(json_interval == NULL)
-    {
-        ESP_LOGI(TAG, "json_interval is NULL");
-        vTaskDelete(NULL);
-    }
-
-    ESP_LOGI(TAG, "Adding objects to json_settings");
-    cJSON_AddItemToObject(json_settings, "id", json_id);
-    cJSON_AddItemToObject(json_settings, "mode", json_mode);
-    cJSON_AddItemToObject(json_settings, "phones", json_phones);
-    cJSON_AddItemToObject(json_settings, "local", json_local);
-    cJSON_AddItemToObject(json_settings, "interval", json_interval);
-
-    ESP_LOGI(TAG, "created other keys");
-    string = cJSON_Print(json_settings);
-
-    ESP_LOGI(TAG, "JSON File: \n%s", string);
+    serializeJsonPretty(doc, settings_string);
+    const char *settings_char = settings_string.c_str();
+    ESP_LOGD(TAG, "%s", settings_char);
     json_file = fopen(SETTINGS_FILE, "w");
-    fprintf(json_file, string);
+    fprintf(json_file, settings_char);
     fclose(json_file);
-    cJSON_Delete(json_settings);
-    vTaskDelete(NULL);
+    ESP_LOGD(TAG, "Configurações gravadas!");
 }
 
 uint8_t settings_get_id(void)
@@ -212,7 +128,7 @@ char *settings_get_phone(uint8_t index)
     return phone;
 }
 
-uint8_t settings_find_phone_id(char *phone)
+uint8_t settings_find_phone_id(const char *phone)
 {
     uint8_t id = 255;
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
@@ -233,7 +149,7 @@ bool settings_delete_phone_by_id(uint8_t phone_index)
     if (phone_index < MAX_PHONES)
     {
         memset(global_settings.phone[phone_index], 0, 20);
-        for (uint8_t index = phone_index; index < settings_get_phones_list_length() - 1; index++)
+        for (uint8_t index = phone_index; index < settings_get_phones_list_length(); index++)
         {
             memcpy(global_settings.phone[index], global_settings.phone[index+1], 20);
         }
@@ -257,7 +173,7 @@ uint8_t settings_get_phones_list_length()
     return lenght;
 }
 
-void settings_set_local(char *local)
+void settings_set_local(const char *local)
 {
     strncpy(global_settings.local, local, 128);
 }
@@ -277,6 +193,3 @@ void settings_set_interval(int interval)
     global_settings.interval = interval;
 }
 
-#ifdef __cplusplus
-}
-#endif

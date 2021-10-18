@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #ifndef _DEVICES_H_
 #define _DEVICES_H_
 
@@ -25,4 +28,7 @@ int devices_get_length(void);
 
 bool device_check_duplication(int);
 
+#endif
+#ifdef __cplusplus
+    }
 #endif
