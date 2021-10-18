@@ -49,7 +49,7 @@ void setup()
 
     webservice_init();
 #if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
-    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 1, NULL);
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
 #endif
 }
 
