@@ -5,6 +5,7 @@
 #include "sim7070g.h"
 
 Ticker tick;
+TinyGsm modem(SerialAT);
 TaskHandle_t sim7070g_task_handle;
 
 static void sim7070g_parse_responses(String response)
@@ -65,6 +66,11 @@ void sim7070g_init()
     bool reply = false;
     int retry = 5;
     while (!(reply = sim7070g_turn_on()) && retry--);
+    if (!modem.init())
+    {
+        ESP_LOGD(TAG, "Failed to restart modem, delaying 10s and retrying");
+        return;
+    }
 #ifdef USE_SMS_COMMANDS
     if(reply)
     {
@@ -140,20 +146,12 @@ void sim7070g_flush(void)
 
 bool sim7070g_send_sms(const char *number, const char *message)
 {
-    char number_command[25] = "";
     bool status = false;
 
     if(number != NULL && message != NULL)
     {
-        snprintf(number_command, 25, "AT+CMGS=\"%s\"", number);
-        SerialAT.println("AT+CMGF=1");
-        delay(500);
-        SerialAT.println(number_command);
-        delay(500);
-        SerialAT.print(message);
-        SerialAT.write(0x1A);
-        delay(500);
-        status = true;
+        ESP_LOGD(TAG, "Enviando SMS: %s - %s", number, message);
+        modem.sendSMS(number, message);
     }
 
     return status;
