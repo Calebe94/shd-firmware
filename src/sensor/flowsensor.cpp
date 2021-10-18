@@ -82,3 +82,7 @@ float flowsensor_get_litros(void)
     return litros;
 }
 
+void flowsensor_set_litros(float aux)
+{
+    litros = aux;
+}

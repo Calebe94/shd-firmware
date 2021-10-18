@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `ESP Async WebServer` library as dependency;
 * Added `AsyncTCP` library as dependency;
 * Ported `webserver` module to `Arduino` framework;
+* Added `reading` module to save and load water reading;
+* Added a `Ticker reading_autosave` to save water reading every 5 minutes;
 
 ### Changed
 

@@ -8,6 +8,7 @@
 #include "sensor/flowsensor.h"
 #include "settings/settings.h"
 #include "settings/devices.h"
+#include "settings/reading.h"
 #include "rs485/rs485.h"
 #include "protocol/protocol.h"
 #include "protocol/message_process.h"
@@ -15,9 +16,13 @@
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 
+#include <Ticker.h>
+
 #define TAG                     "MAIN"
 #define uS_TO_S_FACTOR          1000000ULL  /* Conversion factor for micro seconds to seconds */
 #define TIME_TO_SLEEP           60          /* Time ESP32 will go to sleep (in seconds) */
+
+Ticker reading_autosave;
 
 void setup()
 {
@@ -32,6 +37,8 @@ void setup()
     }
 
     settings_load();
+    reading_load();
+    flowsensor_set_litros((float)reading_get());
     flowsensor_init();
     rs485_init();
 
@@ -51,6 +58,11 @@ void setup()
 #if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
 #endif
+    // Save reading every 5 minutes
+    reading_autosave.attach_ms(5*1000, []() {
+        reading_set((float)flowsensor_get_litros());
+        reading_update();
+    });
 }
 
 void loop()

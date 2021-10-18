@@ -28,4 +28,6 @@ uint32_t flowsensor_get_pulses(void);
 
 float flowsensor_get_litros(void);
 
+void flowsensor_set_litros(float);
+
 #endif
