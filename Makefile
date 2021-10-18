@@ -5,8 +5,8 @@ data_folder=data/
 src_folder=webpage/
 sim_folder=web_sim/
 
-TEST_SRCS=test/test.c src/protocol/protocol.c
-CC=gcc
+TEST_SRCS=test/test.cpp src/protocol/protocol.cpp
+CC=g++
 TEST_BIN=test/test.bin
 
 device=controller
