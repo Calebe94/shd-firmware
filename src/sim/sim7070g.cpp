@@ -74,7 +74,7 @@ void sim7070g_init()
 #ifdef USE_SMS_COMMANDS
     if(reply)
     {
-        xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 1, &sim7070g_task_handle);
+        xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 4096, NULL, 5, &sim7070g_task_handle);
     }
 #endif
 
@@ -192,6 +192,7 @@ void sim7070g_resume_event_handler()
 
 void sim7070g_event_handler_task(void *argv)
 {
+    vTaskSuspend(NULL);
     ESP_LOGD(TAG, "Iniciando event handler.");
     String response = "";
     for(;;)
@@ -213,5 +214,6 @@ void sim7070g_event_handler_task(void *argv)
             sim7070g_parse_responses(response);
             response = "";
         }
+        delay(50);
     }
 }
