@@ -68,6 +68,7 @@ void setup()
         reading_set((float)flowsensor_get_litros());
         reading_update();
     });
+    sim7070g_resume_event_handler();
 }
 
 void loop()
