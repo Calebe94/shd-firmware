@@ -1,7 +1,7 @@
 #ifndef _READINGS_H_
 #define _READINGS_H_
 
-#define READING_FILE    "leitura.json"
+#define READING_FILE    "/spiffs/leitura.json"
 
 /*
  * Funções de controle e manuseio das informações de leitura do dispositivo(controlador e perfiférico).

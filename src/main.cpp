@@ -44,10 +44,15 @@ void setup()
 
 #ifdef CONTROLLER_FIRMWARE
     devices_load();
+    settings_set_mode(CONTROLLER_DEVICE);
+    settings_set_id(255);
+    settings_update();
     sim7070g_init();
     protocol_init(CONTROLLER, 255);
     WiFi.softAP("hidrometro-controlador", "hidrometro");
 #else
+    settings_set_mode(PERIPHERAL_DEVICE);
+    settings_update();
     char ssid[30];
     snprintf(ssid, 30, "hidrometro-periferico-%d", settings_get_id());
     WiFi.softAP(ssid, "hidrometro");
@@ -59,7 +64,7 @@ void setup()
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
 #endif
     // Save reading every 5 minutes
-    reading_autosave.attach_ms(5*1000, []() {
+    reading_autosave.attach_ms(5*60*1000, []() {
         reading_set((float)flowsensor_get_litros());
         reading_update();
     });
