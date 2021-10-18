@@ -5,7 +5,6 @@
 #include "sim7070g.h"
 
 Ticker tick;
-TinyGsm modem(SerialAT);
 TaskHandle_t sim7070g_task_handle;
 
 static void sim7070g_parse_responses(String response)
@@ -62,10 +61,18 @@ void sim7070g_init()
     SerialAT.begin(SIM7070G_BAUD, SERIAL_8N1, SIM7070G_RXD, SIM7070G_TXD);
 
     ESP_LOGD(TAG, "Initializing modem...");
-#ifdef DEBUG
+
     bool reply = false;
     int retry = 5;
     while (!(reply = sim7070g_turn_on()) && retry--);
+#ifdef USE_SMS_COMMANDS
+    if(reply)
+    {
+        xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 1, &sim7070g_task_handle);
+    }
+#endif
+
+#ifdef DEBUG
     ESP_LOGI(TAG, "***********************************************************");
     if(reply)
     {
@@ -76,19 +83,7 @@ void sim7070g_init()
         ESP_LOGD(TAG, " Failed to connect to the modem! Check the baud and try again.");
     }
     ESP_LOGI(TAG, "***********************************************************\n");
-#else
-    if (!modem.init())
-    {
-        ESP_LOGD(TAG, "Failed to restart modem, delaying 10s and retrying");
-        return;
-    }
-    xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 8192, NULL, 10, &sim7070g_task_handle);
 #endif
-    String name = modem.getModemName();
-    ESP_LOGD(TAG, "Modem Name: %s", name.c_str());
-
-    String modemInfo = modem.getModemInfo();
-    ESP_LOGD(TAG, "Modem Info: %s", modemInfo.c_str());
 }
 
 bool sim7070g_turn_on()
