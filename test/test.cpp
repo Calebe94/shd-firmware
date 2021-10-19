@@ -5,17 +5,13 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "commands_test.h"
+#include "minunit.h"
 /******************
  * INCLUDES TO TEST
  ******************/
 #include "../src/protocol/protocol.h"
 
-/******************
- * DEFINES
- ******************/
-#define mu_assert(message, test) do { if (!(test)) return message; } while (0)
-#define mu_run_test(test) do { char *message = test(); tests_run++; \
-                                if (message) return message; } while (0)
 
 /******************
  * GLOBAL VARIABLES
@@ -121,6 +117,6 @@ int main(void)
         printf("ALL TESTS PASSED\n");
     }
     printf("Tests run: %d\n", tests_run);
-
+    test_commands();
     return result != 0;
 }
