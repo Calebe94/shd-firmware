@@ -54,7 +54,11 @@ void sim7070g_suspend_event_handler();
 
 void sim7070g_resume_event_handler();
 
-void sim7070g_clear_sms_list();
+bool sim7070g_clear_sms_list();
+
+String sim7070g_list_all_sms();
+
+String sim7070g_read_sms_by_id(int slot);
 
 void sim7070g_event_handler_task(void *argv);
 

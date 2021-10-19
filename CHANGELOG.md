@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added a `Ticker reading_autosave` to save water reading every 5 minutes;
 * Added `send_address_by_sms` to send the `address` to every phone number;
 * Added `sim7070g_utils` as a helper to parse sms messages;
+* Added `sim7070g_read_sms_by_id` function to get sms stored on device by `ID`;
+* Added `sim7070g_list_all_sms` function to get all sms stored on device;
+* Added `sim7070g_clear_sms_list` function delete all sms stored on device;
 
 ### Changed
 

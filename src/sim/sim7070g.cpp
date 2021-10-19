@@ -2,6 +2,7 @@
 #define TINY_GSM_MODEM_SIM7070
 #include <TinyGsmClient.h>
 
+#include "sim7070g_utils.h"
 #include "sim7070g.h"
 
 Ticker tick;
@@ -21,8 +22,16 @@ static void sim7070g_parse_responses(String response)
     else if(strstr(response.c_str(), "+CMTI:") != NULL)
     {
         ESP_LOGD(TAG, "Recebido um novo SMS");
-        sim7070g_clear_sms_list();
+        int id = sim7070g_from_cmti_get_id(response.c_str());
+        ESP_LOGD(TAG, "ID from CMTI: %d", id);
+        String sms = sim7070g_read_sms_by_id(id);
+        sms.replace("\r\nOK", "");
+        ESP_LOGD(TAG, "SMS: %s", sms.c_str());
+        String command = sim7070g_from_cmgr_get_message(sms.c_str());
+        ESP_LOGD(TAG, "SMS command: %s", command.c_str());
+
         ESP_LOGD(TAG, "Limpando a lista de SMS");
+        sim7070g_clear_sms_list();
     }
     else if(strstr(response.c_str(), "+CMGR:") != NULL)
     {
@@ -157,12 +166,73 @@ bool sim7070g_send_sms(const char *number, const char *message)
     return status;
 }
 
-void sim7070g_clear_sms_list()
+bool sim7070g_clear_sms_list()
 {
-    SerialAT.println("AT+CMGF=1");
-    delay(500);
-    SerialAT.println("AT+CMGD=4,1");
-    delay(500);
+    String res;
+    bool status = false;
+    modem.sendAT(GF("+CMGF=1"));
+    if (modem.waitResponse(1000L, res) != 1)
+    {
+        ESP_LOGE(TAG, "AT+CMGF=1 Não recebeu nada como resposta!");
+        status = false;
+    }
+    else
+    {
+        res.trim();
+        ESP_LOGD(TAG, "Resposta(AT+CMGF=1): %s", res.c_str());
+        status = true;
+    }
+
+    modem.sendAT(GF("+CMGD=1,4"));
+    res = "";
+    if (modem.waitResponse(1000L, res) != 1)
+    {
+        ESP_LOGE(TAG, "AT+CMGD=1,4 Não recebeu nada como resposta!");
+        status = false;
+    }
+    else
+    {
+        res.trim();
+        ESP_LOGD(TAG, "Resposta(AT+CMGD=1,4): %s", res.c_str());
+        status = true;
+    }
+    return status;
+}
+
+String sim7070g_list_all_sms()
+{
+    String res = "";
+    modem.sendAT(GF("+CMGL=\"ALL\""));
+    if (modem.waitResponse(1000L, res) != 1)
+    {
+        ESP_LOGE(TAG, "AT+CMGL=\"ALL\" Não recebeu nada como resposta!");
+    }
+    else
+    {
+        res.trim();
+        ESP_LOGD(TAG, "Resposta(AT+CMGL=\"ALL\"): %s", res.c_str());
+    }
+
+    return res;
+}
+
+String sim7070g_read_sms_by_id(int slot)
+{
+    String res = "";
+    char cmgr_command[11];
+    snprintf(cmgr_command, 11, "+CMGR=%d", slot);
+    modem.sendAT(GF(cmgr_command));
+    if (modem.waitResponse(1000L, res) != 1)
+    {
+        ESP_LOGE(TAG, "AT%s Não recebeu nada como resposta!", cmgr_command);
+    }
+    else
+    {
+        res.trim();
+        ESP_LOGD(TAG, "Resposta(AT%s): %s", cmgr_command, res.c_str());
+    }
+
+    return res;
 }
 
 String sim7070g_read_response()
