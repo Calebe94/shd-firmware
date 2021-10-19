@@ -22,6 +22,8 @@
  ******************/
 uint8_t hello[] = "HELLO\0";
 int tests_run;
+const char *cmti_response = "+CMTI: \"SM\",15";
+const char *cmgr_response = "+CMGR: \"REC UNREAD\",\"+5541998271302\",,\"21/10/05,21:51:45-12\"\nteste";
 
 /******************
  * TEST FUNCTIONS
@@ -73,11 +75,32 @@ static char * test_parse_message()
     return 0;
 }
 
+static char *test_cmti_response()
+{
+    int slot = 0;
+    mu_assert("error, there is no index on response" ,sscanf(cmti_response, "+CMTI: \"SM\",%d", &slot));
+    mu_assert("error, index slot != 15", slot==15);
+    return 0;
+}
+
+static char *test_cmgr_response()
+{
+    char phone[30], message_status[30], sts[30], date[30], hour[30];
+    int ret = sscanf(cmgr_response, "+CMGR: %[^','],%[^','],%[^','],%[^','],%[^',']", message_status, phone, sts, date, hour);
+    mu_assert("error, did not found phone", strcmp(phone, "\"+5541998271302\"")==0);
+    return 0;
+}
+
+/********************
+ * ALL TEST FUNCTION
+ *******************/
 static char * all_tests() 
 {
     mu_run_test(test_create_message);
     mu_run_test(test_parse_message_to_device);
     mu_run_test(test_parse_message);
+    mu_run_test(test_cmti_response);
+    mu_run_test(test_cmgr_response);
     return 0;
 }
 
