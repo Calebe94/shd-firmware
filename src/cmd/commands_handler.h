@@ -6,9 +6,9 @@
 
 #define CMD_MAX_BUF_SIZE        128
 
-QueueHandle_t commands_queue;
-
 void commands_handler_init();
+
+bool send_command_to_parser(const char *command);
 
 void commands_handler_task(void *argv);
 

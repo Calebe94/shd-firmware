@@ -8,10 +8,26 @@
 #include "commands.h"
 #include "commands_handler.h"
 
+QueueHandle_t commands_queue;
+
 void commands_handler_init()
 {
     commands_init();
     commands_queue = xQueueCreate(10, sizeof(char)*CMD_MAX_BUF_SIZE);
+    xTaskCreate(commands_handler_task, "commands_handler_task", 2048, NULL, 5, NULL);
+}
+
+bool send_command_to_parser(const char *command)
+{
+    bool status = false;
+    if(command != NULL)
+    {
+        if(xQueueSend(commands_queue, (void *)command, (TickType_t) 10 ) == pdPASS )
+        {
+            status = true;
+        }
+    }
+    return status;
 }
 
 void commands_handler_task(void *argv)
@@ -26,25 +42,26 @@ void commands_handler_task(void *argv)
 
             if (err == ESP_ERR_NOT_FOUND)
             {
-                ESP_LOGW(__func__, "Unrecognized command\n");
+                ESP_LOGW(__func__, "Comando não reconhecido!");
             }
             else if (err == ESP_ERR_INVALID_ARG)
             {
                 // command was empty
-                ESP_LOGD(__func__, "comando vazio\n");
+                ESP_LOGD(__func__, "Comando vazio!");
             }
             else if (err == ESP_OK && ret != ESP_OK)
             {
-                ESP_LOGD(__func__, "Command returned non-zero error code: 0x%x (%s)\n", ret, esp_err_to_name(ret));
+                ESP_LOGD(__func__, "Comando retornou o seguinte código de erro(non-zero): 0x%x (%s)", ret, esp_err_to_name(ret));
             }
             else if (err != ESP_OK)
             {
-                ESP_LOGD(__func__, "Internal error: %s\n", esp_err_to_name(err));
+                ESP_LOGD(__func__, "Erro interno: %s", esp_err_to_name(err));
             }
             else
             {
-                ESP_LOGD(__func__, "Retorno - %s", esp_err_to_name(ret));
+                ESP_LOGD(__func__, "Comando executado com sucesso: %s", esp_err_to_name(ret));
             }
         }
     }
 }
+
