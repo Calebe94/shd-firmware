@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `reading` module to save and load water reading;
 * Added a `Ticker reading_autosave` to save water reading every 5 minutes;
 * Added `send_address_by_sms` to send the `address` to every phone number;
+* Added `sim7070g_utils` as a helper to parse sms messages;
 
 ### Changed
 
