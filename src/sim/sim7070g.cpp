@@ -128,11 +128,41 @@ void sim7070g_flush(void)
 bool sim7070g_send_sms(const char *number, const char *message)
 {
     bool status = false;
+    char number_cmd[35] = "";
+    String res = "";
 
     if(number != NULL && message != NULL)
     {
-        ESP_LOGD(TAG, "Enviando SMS: %s - %s", number, message);
-        modem.sendSMS(number, message);
+        ESP_LOGD(__func__, "Enviando SMS: %s - %s", number, message);
+        modem.sendAT(GF("+CMGF=1"));
+        if (modem.waitResponse(1000L, res))
+        {
+            res.trim();
+            modem.sendAT(GF("+CSCS=\"GSM\""));
+            modem.waitResponse();
+            res = "";
+            sprintf(number_cmd, "+CMGS=\"%s\"", number);
+            modem.sendAT(GF(number_cmd));
+
+            int new_line_index = 0;
+            if(modem.waitResponse(GF(">")))
+            {
+                for(int index = 0; index < strlen(message); index++)
+                {
+                    modem.stream.write(static_cast<char>(message[index]));
+                    new_line_index++;
+                    if(new_line_index == 30)
+                    {
+                        modem.stream.write(static_cast<char>('\n'));
+                        new_line_index = 0;
+                    }
+                }
+                //modem.stream.print(message);  // Actually send the message
+                modem.stream.write(static_cast<char>(0x1A));  // Terminate the message
+                modem.stream.flush();
+                status = modem.waitResponse(60000L) == 1;
+            }
+        }
     }
 
     return status;
