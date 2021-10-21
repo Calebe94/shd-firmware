@@ -51,7 +51,7 @@ static void send_reading_to_master(void)
 }
 #endif
 
-static void send_address_by_sms()
+void send_address_by_sms()
 {
     ESP_LOGD(TAG, "Enviando endereço (%s) para todos os números...", settings_get_local());
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
@@ -61,13 +61,19 @@ static void send_address_by_sms()
         ESP_LOGD(TAG, "Número: %s", phone);
         if(strcmp(phone, "") > 0)
         {
-            sim7070g_send_sms(phone, settings_get_local());
-            vTaskDelay(pdMS_TO_TICKS(1000));
+            if(sim7070g_send_sms(phone, settings_get_local()))
+            {
+                ESP_LOGD(__func__, "Status do envio da mensagem: %s (TRUE)", settings_get_local());
+            }
+            else
+            {
+                ESP_LOGD(__func__, "Status do envio da mensagem: %s (FALSE)", settings_get_local());
+            }
         }
     }
 }
 
-static void send_readings_by_sms(char *message)
+void send_readings_by_sms(char *message)
 {
     ESP_LOGD(TAG, "Enviando SMS: %s", message);
     for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
@@ -77,8 +83,14 @@ static void send_readings_by_sms(char *message)
         ESP_LOGD(TAG, "Número: %s", phone);
         if(strcmp(phone, "") > 0)
         {
-            sim7070g_send_sms(phone, message);
-            vTaskDelay(pdMS_TO_TICKS(10000));
+            if(sim7070g_send_sms(phone, message))
+            {
+                ESP_LOGD(__func__, "Status do envio da mensagem: %s (TRUE)", message);
+            }
+            else
+            {
+                ESP_LOGD(__func__, "Status do envio da mensagem: %s (FALSE)", message);
+            }
         }
     }
 }
