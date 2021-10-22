@@ -39,6 +39,13 @@
 #define SIM7070G_MAX_LENGTH       1024
 #define SIM7070G_MAX_RESPONSE     128
 
+#define SMS_MAX_CHAR                160
+
+typedef struct sms {
+    char phone[15];
+    char message[SMS_MAX_CHAR];
+} sms_t;
+
 void sim7070g_init();
 
 void sim7070g_send_at(String command);
@@ -70,5 +77,7 @@ bool sim7070g_set_cmgf_to_text();
 bool sim7070g_send_response_to_parser(const char *response);
 
 void sim7070g_responses_parser_task(void *argv);
+
+void sim7070g_send_sms_task_handler(void *argv);
 
 #endif

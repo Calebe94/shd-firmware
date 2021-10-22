@@ -10,6 +10,7 @@ Ticker tick;
 TinyGsm modem(SerialAT);
 TaskHandle_t sim7070g_task_handle;
 QueueHandle_t responses_queue;
+QueueHandle_t sms_queue;
 
 void sim7070g_init()
 {
@@ -54,6 +55,7 @@ void sim7070g_init()
         xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 4096, NULL, 5, &sim7070g_task_handle);
         responses_queue = xQueueCreate(10, sizeof(char)*SIM7070G_MAX_RESPONSE);
         xTaskCreate(sim7070g_responses_parser_task, "sim7070g_responses_parser_task", 4096, NULL, 5, NULL);
+        xTaskCreate(sim7070g_send_sms_task_handler, "sim7070g_send_sms_task_handler", 4096, NULL, 5, NULL);
     }
 #endif
 
@@ -127,6 +129,24 @@ void sim7070g_flush(void)
 }
 
 bool sim7070g_send_sms(const char *number, const char *message)
+{
+    bool status = false;
+
+    if(number != NULL && message != NULL)
+    {
+        sms_t sms;
+        strncpy(sms.phone, number, 15);
+        strncpy(sms.message, message, SMS_MAX_CHAR);
+
+        if(xQueueSend(sms_queue, (void *)&sms, (TickType_t) 10 ) == pdPASS )
+        {
+            status = true;
+        }
+    }
+    return status;
+}
+
+static bool _sim7070g_send_sms(const char *number, const char *message)
 {
     bool status = false;
     char number_cmd[35] = "";
@@ -341,7 +361,12 @@ void sim7070g_responses_parser_task(void *argv)
                     ESP_LOGD(TAG, "SMS: %s", sms.c_str());
                     String command = sim7070g_from_cmgr_get_message(sms.c_str());
                     ESP_LOGD(TAG, "SMS command: %s", command.c_str());
-                    send_command_to_parser(command.c_str());
+                    String phone = sim7070g_from_cmgr_get_phone(sms.c_str());
+                    ESP_LOGD(TAG, "Phone number: %s", phone.c_str());
+                    sms_command_t sms_command;
+                    strncpy(sms_command.command, command.c_str(), CMD_MAX_BUF_SIZE);
+                    strncpy(sms_command.phone, phone.c_str(), 15);
+                    send_command_to_parser(sms_command);
                 }
                 ESP_LOGD(TAG, "Limpando a lista de SMS");
                 sim7070g_clear_sms_list();
@@ -353,6 +378,27 @@ void sim7070g_responses_parser_task(void *argv)
             else
             {
                 ESP_LOGD(TAG, "Recebido: %s - não fazer nada!", response_buffer);
+            }
+        }
+    }
+}
+
+void sim7070g_send_sms_task_handler(void *argv)
+{
+    ESP_LOGD(TAG, "Iniciando a tarefa de envio de SMS do SIM7070G...");
+    sms_queue = xQueueCreate(20, sizeof(sms_t));
+    for(;;)
+    {
+        sms_t sms;
+        if(xQueueReceive(sms_queue, &sms, portMAX_DELAY))
+        {
+            if(_sim7070g_send_sms(sms.phone, sms.message))
+            {
+                ESP_LOGD(__func__, "Mensagem (%s) enviada para (%s) com sucesso!", sms.message, sms.phone);
+            }
+            else
+            {
+                ESP_LOGD(__func__, "Falha ao enviar (%s) para (%s)!", sms.message, sms.phone);
             }
         }
     }
