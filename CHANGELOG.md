@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `commands` module to parse SMS commands;
 * Added `commands_utils` module to help with the commands;
 * Added task to handle the process of sending sms to `sim7070g`;  
+* Added command response to `command_handler`. Now it responds the phone number with the result of the command;
 
 ### Changed
 

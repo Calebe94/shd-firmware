@@ -6,8 +6,9 @@
 #include "argtable3/argtable3.h"
 
 #include "settings/settings.h"
-#include "commands_utils.h"
 
+#include "commands_handler.h"
+#include "commands_utils.h"
 #include "commands.h"
 
 static const char *TAG = "COMMANDS";
@@ -48,11 +49,13 @@ int phone_command_handler(int argc, char **argv)
             {
                 ESP_LOGD(__func__, "Telefone %s adicionado com sucesso!", phone);
                 settings_set_phone(settings_get_phones_list_length(), phone);
+                commands_set_response("OK");
                 status = 0;
             }
             else
             {
                 ESP_LOGD(__func__, "Erro ao adicionar o telefone %s.", phone);
+                commands_set_response("ERRO");
                 status = 1;
             }
         }
@@ -66,6 +69,7 @@ int phone_command_handler(int argc, char **argv)
             phones += "\n";
         }
         ESP_LOGD(__func__, "Telefones cadastrados: %s.", phones.c_str());
+        commands_set_response(phones.c_str());
     }
     return status;
 }
