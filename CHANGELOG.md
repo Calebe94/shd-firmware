@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `sim7070g_list_all_sms` function to get all sms stored on device;
 * Added `sim7070g_clear_sms_list` function delete all sms stored on device;
 * Added `commands` module to parse SMS commands;
+* Added `commands_utils` module to help with the commands;
 
 ### Changed
 
