@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "commands_test.h"
 #include "minunit.h"
@@ -100,6 +101,52 @@ static char * all_tests()
     return 0;
 }
 
+static bool command_validate_phone_number(const char *phone)
+{
+    bool status = false;
+    int digits = 0;
+    char number[15];
+    printf( "Verificando se %s é um telefone válido...\n", phone);
+    sscanf(phone, " %11[0-9] %n", number, &digits);
+    /*
+    if (digits == 0)  // no digits
+    {
+        printf("%s - sem dígitos\n", __func__);
+        return false;
+    }
+    if (number[digits]) // junk after the digits
+    {
+        printf("%s - dígitos extras\n", __func__);
+        return false;
+    }
+    if (strlen(number) == 11 || strlen(number) == 9)
+    {
+        return true;
+    }
+    else
+    {
+        printf("%s - não tem o tamanho de um número\n", __func__);
+        return false; // not 7 digits
+    }*/
+
+    if (digits == 0 && number[digits])  // no digits
+    {
+        status = false;
+    }
+    else
+    {
+        if (strlen(number) == 11 || strlen(number) == 9)
+        {
+            status = true;
+        }
+        else
+        {
+            status = false;
+        }
+    }
+    
+    return status;
+}
 /******************
  * MAIN FUNCTION
  ******************/
@@ -118,5 +165,16 @@ int main(void)
     }
     printf("Tests run: %d\n", tests_run);
     test_commands();
+
+    printf("telefone: %s\n", 
+            command_validate_phone_number("04141998271302")?"True":"False");
+    printf("telefone: %s\n", 
+            command_validate_phone_number("041998271302")?"True":"False");
+    printf("telefone: %s\n", 
+            command_validate_phone_number("998271302")?"True":"False");
+    printf("telefone: %s\n", 
+            command_validate_phone_number("+5541998271302")?"True":"False");
+    printf("telefone: %s\n", 
+            command_validate_phone_number("ok")?"True":"False");
     return result != 0;
 }
