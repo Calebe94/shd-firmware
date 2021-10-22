@@ -1,5 +1,6 @@
 #include <string.h>
 #include "esp_log.h"
+#include "Arduino.h"
 #include "esp32-hal-log.h"
 #include "esp_console.h"
 #include "argtable3/argtable3.h"
@@ -13,6 +14,7 @@ static const char *TAG = "COMMANDS";
 
 struct arg_str  *phone_arg = arg_str0(NULL, NULL, "<telefone>", "Numero do telefone");
 struct arg_end  *end     = arg_end(20);
+
 void* phone_argtable[] = {phone_arg, end};
 
 int id_command_handler(int argc, char **argv)
@@ -54,7 +56,16 @@ int phone_command_handler(int argc, char **argv)
                 status = 1;
             }
         }
-
+    }
+    else
+    {
+        String phones = "";
+        for(uint8_t index = 0; index < settings_get_phones_list_length(); index++)
+        {
+            phones += settings_get_phone(index);
+            phones += "\n";
+        }
+        ESP_LOGD(__func__, "Telefones cadastrados: %s.", phones.c_str());
     }
     return status;
 }
