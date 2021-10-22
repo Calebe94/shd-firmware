@@ -17,7 +17,7 @@ void commands_handler_init()
 {
     commands_init();
     commands_queue = xQueueCreate(10, sizeof(char)*CMD_MAX_BUF_SIZE);
-    xTaskCreate(commands_handler_task, "commands_handler_task", 2048, NULL, 5, NULL);
+    xTaskCreate(commands_handler_task, "commands_handler_task", 8192, NULL, 5, NULL);
 }
 
 bool send_command_to_parser(const char *command)
