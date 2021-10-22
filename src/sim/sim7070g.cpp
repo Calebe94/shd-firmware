@@ -2,6 +2,7 @@
 #define TINY_GSM_MODEM_SIM7070
 #include <TinyGsmClient.h>
 
+#include "cmd/commands_handler.h"
 #include "sim7070g_utils.h"
 #include "sim7070g.h"
 
@@ -332,13 +333,16 @@ void sim7070g_responses_parser_task(void *argv)
             {
                 ESP_LOGD(TAG, "Recebido um novo SMS");
                 int id = sim7070g_from_cmti_get_id(response_buffer);
-                ESP_LOGD(TAG, "ID from CMTI: %d", id);
-                String sms = sim7070g_read_sms_by_id(id);
-                sms.replace("\r\nOK", "");
-                ESP_LOGD(TAG, "SMS: %s", sms.c_str());
-                String command = sim7070g_from_cmgr_get_message(sms.c_str());
-                ESP_LOGD(TAG, "SMS command: %s", command.c_str());
-
+                if(id != -1)
+                {
+                    ESP_LOGD(TAG, "ID from CMTI: %d", id);
+                    String sms = sim7070g_read_sms_by_id(id);
+                    sms.replace("\r\nOK", "");
+                    ESP_LOGD(TAG, "SMS: %s", sms.c_str());
+                    String command = sim7070g_from_cmgr_get_message(sms.c_str());
+                    ESP_LOGD(TAG, "SMS command: %s", command.c_str());
+                    send_command_to_parser(command.c_str());
+                }
                 ESP_LOGD(TAG, "Limpando a lista de SMS");
                 sim7070g_clear_sms_list();
             }

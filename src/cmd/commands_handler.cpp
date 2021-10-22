@@ -1,9 +1,12 @@
+#include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
 #include "esp_log.h"
 #include "esp32-hal-log.h"
+
+#include "settings/settings.h"
 
 #include "commands.h"
 #include "commands_handler.h"
@@ -38,6 +41,7 @@ void commands_handler_task(void *argv)
         int ret;
         if(xQueueReceive(commands_queue, cmd_buffer, portMAX_DELAY))
         {
+            cmd_buffer[strlen(cmd_buffer)-1] = '\0';
             esp_err_t err = esp_console_run(cmd_buffer, &ret);
 
             if (err == ESP_ERR_NOT_FOUND)
@@ -59,6 +63,7 @@ void commands_handler_task(void *argv)
             }
             else
             {
+                settings_update();
                 ESP_LOGD(__func__, "Comando executado com sucesso: %s", esp_err_to_name(ret));
             }
         }

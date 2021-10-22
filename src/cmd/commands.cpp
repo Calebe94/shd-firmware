@@ -1,7 +1,11 @@
+#include <string.h>
 #include "esp_log.h"
 #include "esp32-hal-log.h"
 #include "esp_console.h"
 #include "argtable3/argtable3.h"
+
+#include "settings/settings.h"
+#include "commands_utils.h"
 
 #include "commands.h"
 
@@ -32,6 +36,25 @@ int phone_command_handler(int argc, char **argv)
     if(phone_arg->count > 0)
     {
         ESP_LOGD(TAG, "recebido: %s", phone_arg->sval[0]);
+        // Verifica se é um número de telefone
+        char phone[30];
+        strncpy(phone, phone_arg->sval[0], 30);
+
+        if(command_validate_phone_number(phone))
+        {
+            if(settings_get_phones_list_length() < MAX_PHONES)
+            {
+                ESP_LOGD(__func__, "Telefone %s adicionado com sucesso!", phone);
+                settings_set_phone(settings_get_phones_list_length(), phone);
+                status = 0;
+            }
+            else
+            {
+                ESP_LOGD(__func__, "Erro ao adicionar o telefone %s.", phone);
+                status = 1;
+            }
+        }
+
     }
     return status;
 }
