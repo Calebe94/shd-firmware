@@ -19,6 +19,10 @@ void commands_set_response(const char*);
 
 void commands_clear_response();
 
+void commands_set_update_settings(bool status);
+
+bool commands_get_update_settings();
+
 void commands_handler_task(void *argv);
 
 #endif

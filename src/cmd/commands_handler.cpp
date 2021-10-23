@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdbool.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -14,6 +15,7 @@
 
 QueueHandle_t commands_queue;
 char sms_response[160] = "";
+bool update_settings = false;
 
 void commands_handler_init()
 {
@@ -41,6 +43,16 @@ void commands_set_response(const char *response)
 void commands_clear_response()
 {
     memset(sms_response, 0, 160);
+}
+
+void commands_set_update_settings(bool status)
+{
+    update_settings = status;
+}
+
+bool commands_get_update_settings()
+{
+    return update_settings;
 }
 
 void commands_handler_task(void *argv)
@@ -85,7 +97,11 @@ void commands_handler_task(void *argv)
                     sim7070g_send_sms(cmd_buffer.phone, sms_response);
                     commands_clear_response();
                 }
-                settings_update();
+                if(commands_get_update_settings())
+                {
+                    settings_update();
+                    commands_set_update_settings(false);
+                }
             }
         }
     }

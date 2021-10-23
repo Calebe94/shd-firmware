@@ -55,6 +55,7 @@ int phone_command_handler(int argc, char **argv)
                 ESP_LOGD(__func__, "Telefone %s adicionado com sucesso!", phone);
                 settings_set_phone(settings_get_phones_list_length(), phone);
                 commands_set_response("OK");
+                commands_set_update_settings(true);
                 status = 0;
             }
             else
@@ -97,21 +98,27 @@ int interval_command_handler(int argc, char **argv)
         commands_set_response("ERRO");
         status = 1;
     }
-    if(argc > 0)
+    if(argc > 1)
     {
         int interval = (int)strtol(argv[1], (char**)NULL, 10);
         if(interval > 0)
         {
             ESP_LOGD(__func__, "Intervalo %d recebido", interval);
             settings_set_interval(interval);
+            commands_set_update_settings(true);
             commands_set_response("OK");
         }
         else
         {
-            ESP_LOGD(__func__, "Nenhum intervalo recebido, enviar o atual! (%d)", settings_get_interval());
-            String leitura = String(settings_get_interval());
-            commands_set_response(leitura.c_str());
+            commands_set_response("ERRO");
+            status = 1;
         }
+    }
+    else
+    {
+        ESP_LOGD(__func__, "Nenhum intervalo recebido, enviar o atual! (%d)", settings_get_interval());
+        String leitura = String(settings_get_interval());
+        commands_set_response(leitura.c_str());
     }
     return status;
 }
