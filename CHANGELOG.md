@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added radiobutons to select interval by `daily`, `weekly` and `monthly`;
+
 ### Changed
 
 ### Fixed
+
+* Fixed `/set/interval` route, there should be a cast to `int` but there was a cast to `uint8_t` instead;
 
 ### Removed
 

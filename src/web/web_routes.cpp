@@ -239,7 +239,7 @@ void set_interval_handler(AsyncWebServerRequest *request)
     if (request->hasParam("interval", true))
     {
         interval = request->getParam("interval", true)->value().toInt();
-        settings_set_interval((uint8_t)interval);
+        settings_set_interval((int)interval);
         settings_update();
         web_create_success_response(response, (char*)"Sucesso!", (char*)"Configuração realizada com sucesso!");
     }
