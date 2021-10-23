@@ -160,8 +160,18 @@ function check_interval_input_field()
         const obj = JSON.parse(result);
         if (obj.interval)
         {
-            var input_interval = document.getElementsByName("interval")[0]; 
-            input_interval.placeholder = obj.interval;
+            if(obj.interval === 1440)
+            {
+                document.getElementById("interval_daily").checked = true;
+            }
+            else if(obj.interval === 10080)
+            {
+                document.getElementById("interval_weekly").checked = true;
+            }
+            else if(obj.interval === 43200)
+            {
+                document.getElementById("interval_monthly").checked = true;
+            }
         }
     });
 }
