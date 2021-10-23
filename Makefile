@@ -6,6 +6,7 @@ src_folder=webpage/
 sim_folder=web_sim/
 
 TEST_SRCS=test/test.cpp src/protocol/protocol.cpp
+TEST_LIBS=-largtable2
 CC=g++
 TEST_BIN=test/test.bin
 
@@ -17,7 +18,7 @@ ${sim_folder}:
 	mkdir -p ${sim_folder}
 
 test:
-	${CC} ${TEST_SRCS} -o ${TEST_BIN}
+	${CC} ${TEST_SRCS} ${TEST_LIBS} -o ${TEST_BIN}
 	./${TEST_BIN}
 
 webpage:

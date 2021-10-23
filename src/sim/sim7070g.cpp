@@ -2,46 +2,15 @@
 #define TINY_GSM_MODEM_SIM7070
 #include <TinyGsmClient.h>
 
+#include "cmd/commands_handler.h"
 #include "sim7070g_utils.h"
 #include "sim7070g.h"
 
 Ticker tick;
 TinyGsm modem(SerialAT);
 TaskHandle_t sim7070g_task_handle;
-
-static void sim7070g_parse_responses(String response)
-{
-    if(strstr(response.c_str(), "OK") != NULL)
-    {
-        ESP_LOGD(TAG, "Recebido OK");
-    }
-    else if(strstr(response.c_str(), "ERROR") != NULL)
-    {
-        ESP_LOGD(TAG, "Recebido ERROR");
-    }
-    else if(strstr(response.c_str(), "+CMTI:") != NULL)
-    {
-        ESP_LOGD(TAG, "Recebido um novo SMS");
-        int id = sim7070g_from_cmti_get_id(response.c_str());
-        ESP_LOGD(TAG, "ID from CMTI: %d", id);
-        String sms = sim7070g_read_sms_by_id(id);
-        sms.replace("\r\nOK", "");
-        ESP_LOGD(TAG, "SMS: %s", sms.c_str());
-        String command = sim7070g_from_cmgr_get_message(sms.c_str());
-        ESP_LOGD(TAG, "SMS command: %s", command.c_str());
-
-        ESP_LOGD(TAG, "Limpando a lista de SMS");
-        sim7070g_clear_sms_list();
-    }
-    else if(strstr(response.c_str(), "+CMGR:") != NULL)
-    {
-        ESP_LOGD(TAG, "Leitura de SMS");
-    }
-    else
-    {
-        ESP_LOGD(TAG, "Não fazer nada!");
-    }
-}
+QueueHandle_t responses_queue;
+QueueHandle_t sms_queue;
 
 void sim7070g_init()
 {
@@ -84,6 +53,9 @@ void sim7070g_init()
     if(reply)
     {
         xTaskCreate(sim7070g_event_handler_task, "sim7070g_event_handler_task", 4096, NULL, 5, &sim7070g_task_handle);
+        responses_queue = xQueueCreate(10, sizeof(char)*SIM7070G_MAX_RESPONSE);
+        xTaskCreate(sim7070g_responses_parser_task, "sim7070g_responses_parser_task", 4096, NULL, 5, NULL);
+        xTaskCreate(sim7070g_send_sms_task_handler, "sim7070g_send_sms_task_handler", 4096, NULL, 5, NULL);
     }
 #endif
 
@@ -99,6 +71,8 @@ void sim7070g_init()
     }
     ESP_LOGI(TAG, "***********************************************************\n");
 #endif
+
+    sim7070g_set_cmgf_to_text();
 }
 
 bool sim7070g_turn_on()
@@ -116,6 +90,7 @@ bool sim7070g_turn_on()
     ESP_LOGD(TAG, "****");
     while (i)
     {
+
         SerialAT.print("AT\r");
         delay(500);
         if (SerialAT.available())
@@ -159,17 +134,65 @@ bool sim7070g_send_sms(const char *number, const char *message)
 
     if(number != NULL && message != NULL)
     {
-        ESP_LOGD(TAG, "Enviando SMS: %s - %s", number, message);
-        modem.sendSMS(number, message);
+        sms_t sms;
+        strncpy(sms.phone, number, 15);
+        strncpy(sms.message, message, SMS_MAX_CHAR);
+
+        if(xQueueSend(sms_queue, (void *)&sms, (TickType_t) 10 ) == pdPASS )
+        {
+            status = true;
+        }
+    }
+    return status;
+}
+
+static bool _sim7070g_send_sms(const char *number, const char *message)
+{
+    bool status = false;
+    char number_cmd[35] = "";
+    String res = "";
+
+    if(number != NULL && message != NULL)
+    {
+        ESP_LOGD(__func__, "Enviando SMS: %s - %s", number, message);
+        modem.sendAT(GF("+CMGF=1"));
+        if (modem.waitResponse(1000L, res))
+        {
+            res.trim();
+            modem.sendAT(GF("+CSCS=\"GSM\""));
+            modem.waitResponse();
+            res = "";
+            sprintf(number_cmd, "+CMGS=\"%s\"", number);
+            modem.sendAT(GF(number_cmd));
+
+            int new_line_index = 0;
+            if(modem.waitResponse(GF(">")))
+            {
+                for(int index = 0; index < strlen(message); index++)
+                {
+                    modem.stream.write(static_cast<char>(message[index]));
+                    new_line_index++;
+                    if(new_line_index == 30)
+                    {
+                        modem.stream.write(static_cast<char>('\n'));
+                        new_line_index = 0;
+                    }
+                }
+                //modem.stream.print(message);  // Actually send the message
+                modem.stream.write(static_cast<char>(0x1A));  // Terminate the message
+                modem.stream.flush();
+                status = modem.waitResponse(60000L) == 1;
+            }
+        }
     }
 
     return status;
 }
 
-bool sim7070g_clear_sms_list()
+bool sim7070g_set_cmgf_to_text()
 {
-    String res;
     bool status = false;
+    String res = "";
     modem.sendAT(GF("+CMGF=1"));
     if (modem.waitResponse(1000L, res) != 1)
     {
@@ -182,6 +205,14 @@ bool sim7070g_clear_sms_list()
         ESP_LOGD(TAG, "Resposta(AT+CMGF=1): %s", res.c_str());
         status = true;
     }
+    return status;
+}
+
+bool sim7070g_clear_sms_list()
+{
+    String res;
+    bool status = false;
+    sim7070g_set_cmgf_to_text();
 
     modem.sendAT(GF("+CMGD=1,4"));
     res = "";
@@ -281,9 +312,94 @@ void sim7070g_event_handler_task(void *argv)
         {
             response.trim();
             ESP_LOGD(TAG, "Recebido: %s - %d", response.c_str(), response.length());
-            sim7070g_parse_responses(response);
+            //sim7070g_parse_responses(response);
+            sim7070g_send_response_to_parser(response.c_str());
             response = "";
         }
         delay(50);
+    }
+}
+
+bool sim7070g_send_response_to_parser(const char *response)
+{
+    bool status = false;
+    if(response != NULL)
+    {
+        if(xQueueSend(responses_queue, (void *)response, (TickType_t) 10 ) == pdPASS )
+        {
+            status = true;
+        }
+    }
+    return status;
+}
+
+void sim7070g_responses_parser_task(void *argv)
+{
+    ESP_LOGD(TAG, "Iniciando a tarefa de analise das respostas do SIM7070G...");
+    for(;;)
+    {
+        char response_buffer[SIM7070G_MAX_RESPONSE];
+        if(xQueueReceive(responses_queue, response_buffer, portMAX_DELAY))
+        {
+            if(strstr(response_buffer, "OK") != NULL)
+            {
+                ESP_LOGD(TAG, "Recebido OK");
+            }
+            else if(strstr(response_buffer, "ERROR") != NULL)
+            {
+                ESP_LOGD(TAG, "Recebido ERROR");
+            }
+            else if(strstr(response_buffer, "+CMTI:") != NULL)
+            {
+                ESP_LOGD(TAG, "Recebido um novo SMS");
+                int id = sim7070g_from_cmti_get_id(response_buffer);
+                if(id != -1)
+                {
+                    ESP_LOGD(TAG, "ID from CMTI: %d", id);
+                    String sms = sim7070g_read_sms_by_id(id);
+                    sms.replace("\r\nOK", "");
+                    ESP_LOGD(TAG, "SMS: %s", sms.c_str());
+                    String command = sim7070g_from_cmgr_get_message(sms.c_str());
+                    ESP_LOGD(TAG, "SMS command: %s", command.c_str());
+                    String phone = sim7070g_from_cmgr_get_phone(sms.c_str());
+                    ESP_LOGD(TAG, "Phone number: %s", phone.c_str());
+                    sms_command_t sms_command;
+                    strncpy(sms_command.command, command.c_str(), CMD_MAX_BUF_SIZE);
+                    strncpy(sms_command.phone, phone.c_str(), 15);
+                    send_command_to_parser(sms_command);
+                }
+                ESP_LOGD(TAG, "Limpando a lista de SMS");
+                sim7070g_clear_sms_list();
+            }
+            else if(strstr(response_buffer, "+CMGR:") != NULL)
+            {
+                ESP_LOGD(TAG, "Leitura de SMS");
+            }
+            else
+            {
+                ESP_LOGD(TAG, "Recebido: %s - não fazer nada!", response_buffer);
+            }
+        }
+    }
+}
+
+void sim7070g_send_sms_task_handler(void *argv)
+{
+    ESP_LOGD(TAG, "Iniciando a tarefa de envio de SMS do SIM7070G...");
+    sms_queue = xQueueCreate(20, sizeof(sms_t));
+    for(;;)
+    {
+        sms_t sms;
+        if(xQueueReceive(sms_queue, &sms, portMAX_DELAY))
+        {
+            if(_sim7070g_send_sms(sms.phone, sms.message))
+            {
+                ESP_LOGD(__func__, "Mensagem (%s) enviada para (%s) com sucesso!", sms.message, sms.phone);
+            }
+            else
+            {
+                ESP_LOGD(__func__, "Falha ao enviar (%s) para (%s)!", sms.message, sms.phone);
+            }
+        }
     }
 }

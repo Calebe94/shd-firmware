@@ -2,6 +2,8 @@
 #define _SIM7070G_H_
 
 #include "Arduino.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
 
 // Select your modem:
 // #define TINY_GSM_MODEM_SIM868
@@ -35,6 +37,14 @@
 #define TINY_GSM_DEBUG          SerialMon
 
 #define SIM7070G_MAX_LENGTH       1024
+#define SIM7070G_MAX_RESPONSE     128
+
+#define SMS_MAX_CHAR                160
+
+typedef struct sms {
+    char phone[15];
+    char message[SMS_MAX_CHAR];
+} sms_t;
 
 void sim7070g_init();
 
@@ -61,5 +71,13 @@ String sim7070g_list_all_sms();
 String sim7070g_read_sms_by_id(int slot);
 
 void sim7070g_event_handler_task(void *argv);
+
+bool sim7070g_set_cmgf_to_text();
+
+bool sim7070g_send_response_to_parser(const char *response);
+
+void sim7070g_responses_parser_task(void *argv);
+
+void sim7070g_send_sms_task_handler(void *argv);
 
 #endif

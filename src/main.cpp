@@ -12,6 +12,7 @@
 #include "rs485/rs485.h"
 #include "protocol/protocol.h"
 #include "protocol/message_process.h"
+#include "cmd/commands_handler.h"
 #include "web/webservice.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
@@ -60,15 +61,16 @@ void setup()
 #endif
 
     webservice_init();
-#if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
-    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
-#endif
     // Save reading every 5 minutes
     reading_autosave.attach_ms(5*60*1000, []() {
         reading_set((float)flowsensor_get_litros());
         reading_update();
     });
+#if defined(CONTROLLER_FIRMWARE) && !defined(DEBUG)
+    xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
+    commands_handler_init();
     sim7070g_resume_event_handler();
+#endif
 }
 
 void loop()

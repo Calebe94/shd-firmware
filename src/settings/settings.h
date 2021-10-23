@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #define SETTINGS_FILE   "/spiffs/settings.json"
-#define MAX_PHONES      12
+#define MAX_PHONES      20
 
 typedef enum {
     PERIPHERAL_DEVICE=0,
