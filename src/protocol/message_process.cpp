@@ -171,8 +171,8 @@ void get_readings_timer_callback(void *argv)
 {
     while(1)
     {
+        vTaskDelay(pdMS_TO_TICKS(60*1000));
         ESP_LOGI(TAG, "get_readings_timer_callback");
-
         for (uint8_t index = 0; index < devices_get_length(); index++)
         {
             char data[RS485_BUFFER_SIZE], data_to_send[MAX_DATA_LENGTH];
