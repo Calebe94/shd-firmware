@@ -76,7 +76,9 @@
 <fieldset id="interval_fieldset">
     <legend>Intervalo de envio(minutos):</legend>
     <form target="_top" action="/set/interval" id="interval" method="POST">
-        <input type="text" name="interval" id="interval_field" placeholder="Minutos (padrão 30 min.)" pattern="^[1-9][0-9]*$">
+        <input type="radio" name="interval" id="interval_daily" value="1440">Diariamente<br>
+        <input type="radio" name="interval" id="interval_weekly" value="10080">Semanalmente<br>
+        <input type="radio" name="interval" id="interval_monthly" value="43200">Mensalmente<br>
         <input onclick="redirect();" type="submit" value="Confirmar">
     </form>
 </fieldset>
