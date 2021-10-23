@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [1.0.0]
+
+### Added
+
 * Added  `CORE_DEBUG_LEVEL` to `build_flags` on `platformio.ini`;
 * Added `SPIFFS` initialization;
 * Ported `settings` to `Arduino` framework;
@@ -45,6 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed `test` target;
 
 ### Removed
+
+* Removido arquivos de códigos fontes antigos(framework `esp-idf`);
 
 ## [0.17.0]
 
@@ -414,7 +426,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removed old .cpp main file
 
-[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.17.0...main
+[unreleased]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/1.0.0...main
+[1.0.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.17.0...1.0.0
 [0.17.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.16.0...0.17.0
 [0.16.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.15.0...0.16.0
 [0.15.0]: https://gitlab.com/projeto-leitor-hidrometro/shd-firmware/-/compare/0.14.1...0.15.0
