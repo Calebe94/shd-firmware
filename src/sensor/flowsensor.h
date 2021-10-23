@@ -18,7 +18,7 @@ void flowsensor_setup(void);
 
 void flowsensor_init(void);
 
-void flowsensor_isr_handler(void *arg);
+void flowsensor_isr_handler();
 
 void flowsensor_task(void *arg);
 
@@ -27,5 +27,7 @@ void flowsensor_timer_callback(void *arg);
 uint32_t flowsensor_get_pulses(void);
 
 float flowsensor_get_litros(void);
+
+void flowsensor_set_litros(float);
 
 #endif

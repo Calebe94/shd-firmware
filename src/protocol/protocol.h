@@ -48,3 +48,4 @@ bool protocol_get_data(protocol_data_raw_t, char *);
 bool protocol_check_id(protocol_data_raw_t);
 
 #endif
+
