@@ -13,6 +13,7 @@ static char *help_command_string[] = {
 int test_commands()
 {
     struct arg_lit  *help    = arg_lit0(NULL,"help",                    "print this help and exit");
+    struct arg_int  *interval_arg = arg_int0(NULL, NULL, "<intervalo>", "Intervalo entre os envios");
     struct arg_end  *end     = arg_end(20);
     void* argtable[] = {help, end};
     const char* progname = "test";

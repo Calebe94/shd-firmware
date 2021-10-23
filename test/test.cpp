@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 #include "commands_test.h"
@@ -176,5 +177,7 @@ int main(void)
             command_validate_phone_number("+5541998271302")?"True":"False");
     printf("telefone: %s\n", 
             command_validate_phone_number("ok")?"True":"False");
+
+    printf("%d\n", (int)strtol("intervalo 30", (char**)NULL, 10));
     return result != 0;
 }
