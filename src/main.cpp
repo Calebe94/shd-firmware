@@ -70,6 +70,8 @@ void setup()
     xTaskCreate(get_readings_timer_callback, "get_readings_timer_callback", 8192, NULL, 5, NULL);
     commands_handler_init();
     sim7070g_resume_event_handler();
+#elif defined(PERIPHERAL_FIRMWARE) && !defined(DEBUG)
+    xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
 #endif
 }
 
