@@ -400,6 +400,7 @@ void sim7070g_send_sms_task_handler(void *argv)
             {
                 ESP_LOGD(__func__, "Falha ao enviar (%s) para (%s)!", sms.message, sms.phone);
             }
+            delay(5000);
         }
     }
 }

@@ -217,7 +217,7 @@ void get_readings_timer_callback(void *argv)
         }
 
         char message[512];
-        snprintf(message, 512, "controlador - %.2f", flowsensor_get_litros());
+        snprintf(message, 512, "cont: %.2f", flowsensor_get_litros());
         send_address_by_sms();
         send_readings_by_sms(message);
         vTaskDelay(pdMS_TO_TICKS(settings_get_interval()*60*1000));

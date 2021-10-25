@@ -126,7 +126,7 @@ int interval_command_handler(int argc, char **argv)
 int reading_command_handler(int argc, char **argv)
 {
     ESP_LOGD(TAG, "Comando 'leitura' invocado!");
-    String leitura = String(reading_get());
+    String leitura = String("leitura: ")+String(reading_get());
     commands_set_response(leitura.c_str());
     return 0;
 }
