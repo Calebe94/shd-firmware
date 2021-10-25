@@ -146,22 +146,25 @@ void message_process_handler(void *pvParameters)
     {
         if(RS485.available())
         {
-            char data[RS485_BUFFER_SIZE];
-            size_t lenght = rs485_read(data);
+            //char data[RS485_BUFFER_SIZE];
+            String data = rs485_read();
+            size_t lenght = (size_t)data.length();
             if(lenght > 0)
             {
-                ESP_LOGD(TAG, "[RS485 DATA]: len(%d) %s", lenght, data);
+                ESP_LOGD(TAG, "[RS485 DATA]: len(%d) %s", lenght, data.c_str());
                 protocol_data_raw_t data_parsed;
-                if(protocol_message_parse((char*)data, &data_parsed))
+                if(protocol_message_parse((char*)data.c_str(), &data_parsed))
                 {
                     if(protocol_check_id(data_parsed))
                     {
-                        ESP_LOGD(TAG, "A mensagem %s é para mim! \n", (const char*)data);
+                        ESP_LOGD(TAG, "A mensagem %s é para mim! \n", (const char*)data.c_str());
                         on_message_event_handler(data_parsed);
                     }
                 }
             }
+            delay(50);
         }
+        delay(50);
     }
     vTaskDelete(NULL);
 }
@@ -175,7 +178,7 @@ void get_readings_timer_callback(void *argv)
         ESP_LOGI(TAG, "get_readings_timer_callback");
         for (uint8_t index = 0; index < devices_get_length(); index++)
         {
-            char data[RS485_BUFFER_SIZE], data_to_send[MAX_DATA_LENGTH];
+            char data_to_send[MAX_DATA_LENGTH];
             size_t length = 0;
             protocol_data_raw_t response, leitura;
 
@@ -190,11 +193,12 @@ void get_readings_timer_callback(void *argv)
             rs485_send((char*)data_to_send);
 
             vTaskDelay(pdMS_TO_TICKS(1000));
-            length = (size_t)rs485_read(data);
+            String data = rs485_read();
+            length = (size_t)data.length();
             if(length > 0)
             {
                 ESP_LOGI(TAG, "Dados recebidos! %d", length);
-                if(protocol_message_parse((char*)data, &response))
+                if(protocol_message_parse((char*)data.c_str(), &response))
                 {
                     if(response.id == settings_get_id())
                     {

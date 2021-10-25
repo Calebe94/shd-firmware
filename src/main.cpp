@@ -73,6 +73,7 @@ void setup()
 #elif defined(PERIPHERAL_FIRMWARE) && !defined(DEBUG)
     xTaskCreate(message_process_handler, "message_process_handler", 4096, NULL, 1, NULL);
 #endif
+    xTaskCreate(rs485_task_handler, "rs485_task_handler", 4096, NULL, 5, NULL);
 }
 
 void loop()

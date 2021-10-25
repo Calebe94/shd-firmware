@@ -44,22 +44,52 @@ void rs485_send(const char *data)
     digitalWrite(RS485_RTS, LOW);
 }
 
-size_t rs485_read(char *data)
+String rs485_read()
 {
     uint32_t size = 0;
-    if(RS485.available() && data != NULL)
+    String response = "";
+    if(RS485.available() > 0)
     {
-        String rs485_line = RS485.readString();
-        const char *rs485_data = rs485_line.c_str();
-        memcpy(data, rs485_data, RS485_BUFFER_SIZE);
-        size = strlen(rs485_data);
+        while(RS485.available() > 0)
+        {
+            response += (char)RS485.read();
+        }
+        ESP_LOGD(TAG, "Recebido: %s - %d", response.c_str(), response.length());
     }
-    return size;
+    return response;
 }
 
 void rs485_flush(void)
 {
     RS485.flush();
+}
+
+void rs485_task_handler(void *argv)
+{
+    ESP_LOGD(TAG, "Iniciando RS485 event handler.");
+    String response = "";
+    for(;;)
+    {
+        if(RS485.available() > 0)
+        {
+            while(RS485.available() > 0)
+            {
+                char response_char = (char)RS485.read();
+                Serial.write(response_char);
+                response += response_char;
+            }
+        }
+
+        if(response.endsWith("\r\n") && response.length() > 2)
+        {
+            response.trim();
+            ESP_LOGD(TAG, "Recebido: %s - %d", response.c_str(), response.length());
+            //sim7070g_parse_responses(response);
+            //sim7070g_send_response_to_parser(response.c_str());
+            response = "";
+        }
+        delay(50);
+    }
 }
 #endif
 
